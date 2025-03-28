@@ -50,4 +50,50 @@ export async function createConnectionManagerTools(
       }
     }
   );
+
+    // @ts-ignore
+    server.tool(
+        "check-installation",
+        `Check if there is an active installation for ${provider}`,
+        {
+          query: z.string(),
+        },
+        async ({ query }: { query: string }) => {
+          const options = {
+            method: "GET",
+            headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
+          };
+    
+          try {
+            const response = await fetch(
+              `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/integrations/${process.env.AMPERSAND_INTEGRATION_ID}/installations`,
+              options
+            );
+            const data = await response.json();
+            console.log("[DEBUG] installation response", data);
+    
+            if (data.length > 0) {
+              return {
+                content: [
+                  {
+                    type: "text",
+                    text: `Installation found for ${provider}`,
+                  },
+                ],
+              };
+            } else {
+              return {
+                content: [
+                  {
+                    type: "text",
+                    text: `No existing installations found for ${provider}`,
+                  },
+                ],
+              };
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      );
 }
