@@ -79,6 +79,10 @@ export async function createConnectionManagerTools(
                 type: "text",
                 text: `Installation found for ${provider}`,
               },
+              {
+                type: "text",
+                text: `Installation ID: ${data[0].id}`,
+              },
             ],
           };
         } else {
@@ -139,6 +143,10 @@ export async function createConnectionManagerTools(
             {
               type: "text",
               text: `Installation was ${created ? "created" : "not created"} for ${provider}`,
+            },
+            {
+              type: "text",
+              text: `Installation ID: ${data[0].id}`,
             },
           ],
         };
