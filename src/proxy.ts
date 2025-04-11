@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { ensureConnectionExists } from "./connectionManager";
 
 export async function createProxyTool(
   server: Server,
@@ -21,6 +22,7 @@ export async function createProxyTool(
         .describe("Headers to send with the request"),
       installationId: z
         .string()
+        .optional()
         .describe(
           "The installation ID to use for the proxy call. If not provided, get installation ID by getting the connection or creating a new connection."
         ),
@@ -39,6 +41,7 @@ export async function createProxyTool(
       installationId: string;
     }) => {
       try {
+        installationId = (await ensureConnectionExists(provider)) || installationId;
         console.log(
           "DEBUG",
           installationId,

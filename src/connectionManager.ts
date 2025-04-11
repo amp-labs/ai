@@ -156,3 +156,73 @@ export async function createConnectionManagerTools(
     }
   );
 }
+
+export async function ensureConnectionExists(provider: string): Promise<string> {
+  // Check for existing connection
+  const connectionResponse = await fetch(
+    `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/connections?provider=${provider}`,
+    {
+      method: "GET",
+      headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
+    }
+  );
+  const connectionData = await connectionResponse.json();
+  console.log("[DEBUG] connection response", connectionData);
+
+  if (connectionData.length === 0) {
+    throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
+  }
+
+  const connectionId = connectionData[0].id;
+  const groupRef = connectionData[0].group?.groupRef;
+
+  // Check for existing installation
+  const installationResponse = await fetch(
+    `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/integrations/${process.env.AMPERSAND_INTEGRATION_ID}/installations`,
+    {
+      method: "GET",
+      headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
+    }
+  );
+  const installationData = await installationResponse.json();
+  console.log("[DEBUG] installation response", installationData);
+
+  if (installationData.length === 0) {
+    // Create installation if it doesn't exist
+    const createOptions = {
+      method: "POST",
+      headers: {
+        "X-Api-Key": process.env.AMPERSAND_API_KEY || "",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        config: {
+          createdBy: "api:create-installation",
+          content: {
+            provider: "hubspot",
+            proxy: { enabled: true }
+          }
+        },
+        groupRef: groupRef,
+        connectionId: connectionId
+      })
+    };
+
+    const createResponse = await fetch(
+      `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/integrations/${process.env.AMPERSAND_INTEGRATION_ID}/installations`,
+      createOptions
+    );
+    const createData = await createResponse.json();
+    console.log("[DEBUG] installation creation response", createData);
+
+    if (createData.createTime !== undefined) {
+      console.log(`Installation created for ${provider}, Installation ID: ${createData[0].id}`);
+      return createData[0].id;
+    } else {
+      throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
+    }
+  } else {
+    console.log(`Installation already exists for ${provider}`);
+    return installationData[0].id;
+  }
+}
