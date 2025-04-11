@@ -7,7 +7,7 @@ export async function createProxyTool(
 ): Promise<void> {
   // @ts-ignore
   server.tool(
-    "proxy",
+    "call-api",
     `Call ${provider} APIs via the Ampersand proxy`,
     {
       body: z
