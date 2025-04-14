@@ -10,9 +10,9 @@ export async function createConnectionManagerTools(
     "check-connection",
     `Check if there is an active connection for ${provider}`,
     {
-      query: z.string(),
+      provider: z.string(),
     },
-    async ({ query }: { query: string }) => {
+    async ({ provider }: { provider: string }) => {
       const options = {
         method: "GET",
         headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
@@ -24,7 +24,6 @@ export async function createConnectionManagerTools(
           options
         );
         const data = await response.json();
-        console.log("[DEBUG] connection response", data);
 
         if (data.length > 0) {
           return {
@@ -56,9 +55,9 @@ export async function createConnectionManagerTools(
     "check-installation",
     `Check if there is an active installation for ${provider}`,
     {
-      query: z.string(),
+      provider: z.string(),
     },
-    async ({ query }: { query: string }) => {
+    async ({ provider }: { provider: string }) => {
       const options = {
         method: "GET",
         headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
@@ -167,7 +166,6 @@ export async function ensureConnectionExists(provider: string): Promise<string> 
     }
   );
   const connectionData = await connectionResponse.json();
-  console.log("[DEBUG] connection response", connectionData);
 
   if (connectionData.length === 0) {
     throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
