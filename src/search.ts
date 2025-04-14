@@ -21,7 +21,7 @@ const DEFAULT_BASE_URL = 'https://api.mintlifytrieve.com';
 
 export async function fetchSearchConfigurationAndOpenApi(subdomain: string): Promise<SearchConfig> {
     try {
-        const url = `${SERVER_URL}/api/mcp/cli/${subdomain}`;
+        const url = `${SERVER_URL}/api/mcp/config/${subdomain}`;
         const response = await fetch(url, { method: 'GET' });
 
         if (!response.ok) {
