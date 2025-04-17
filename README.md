@@ -31,6 +31,49 @@
 `pnpm start`
 
 
+## Connecting to the mcp server from an MCP Client
+
+Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.json` when using Claude desktop.
+
+> Note: This server runs in HTTP SSE mode 
+
+#### When using the official hosted mcp server 
+
+```
+{
+  "mcpServers": {
+    "@amp-labs/mcp-server": {
+      "url": "https://mcp.withampersand.com/sse",
+      "env": {
+        "AMPERSAND_API_KEY": "<API_KEY>",
+        "AMPERSAND_PROJECT_ID": "<AMP_PROJECT_ID>",
+        "AMPERSAND_INTEGRATION_ID": "<AMP_INTEGRATION_ID>",
+        "AMPERSAND_GROUP_REF": "<UniqueGroupRef>"
+      }
+    }
+  }
+}
+````
+
+#### When running the docs server locally
+```
+{
+  "mcpServers": {
+    "@amp-labs/mcp-docs-server": {
+      "url": "http://localhost:3001/sse",
+      "env": {
+        "AMPERSAND_API_KEY": "<API_KEY>",
+        "AMPERSAND_PROJECT_ID": "<AMP_PROJECT_ID>",
+        "AMPERSAND_INTEGRATION_ID": "<AMP_INTEGRATION_ID>",
+        "AMPERSAND_GROUP_REF": "<UniqueGroupRef>"
+      }
+    }
+  }
+}
+
+```
+
+
 ## Debugging & troubleshooting
  
 Use the MCP inspector tool to know more about the mcp server and debug tools, prompts, resources 
