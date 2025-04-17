@@ -1,16 +1,17 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { ensureConnectionExists } from "./connectionManager";
+import { providerSchema } from "./schemas";
 
 export async function createProxyTool(
   server: Server,
-  provider: string
 ): Promise<void> {
   // @ts-ignore
   server.tool(
     "call-api",
-    `Call ${provider} APIs via the Ampersand proxy`,
+    `Call provider APIs via the Ampersand proxy`,
     {
+      provider: providerSchema,
       body: z
         .record(z.string(), z.string())
         .optional()
@@ -33,12 +34,14 @@ export async function createProxyTool(
       method,
       headers,
       installationId,
+      provider,
     }: {
       body: Record<string, string>;
       suffix: string;
       method: string;
       headers: Record<string, string>;
       installationId: string;
+      provider: string;
     }) => {
       try {
         installationId = (await ensureConnectionExists(provider)) || installationId;
