@@ -1,16 +1,15 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-
+import { providerSchema } from "./schemas";
 export async function createConnectionManagerTools(
   server: Server,
-  provider: string
 ): Promise<void> {
   // @ts-ignore
   server.tool(
     "check-connection",
-    `Check if there is an active connection for ${provider}`,
+    `Check if there is an active connection for provider`,
     {
-      provider: z.string(),
+      provider: providerSchema,
     },
     async ({ provider }: { provider: string }) => {
       const options = {
@@ -53,9 +52,9 @@ export async function createConnectionManagerTools(
   // @ts-ignore
   server.tool(
     "check-installation",
-    `Check if there is an active installation for ${provider}`,
+    `Check if there is an active installation for provider`,
     {
-      provider: z.string(),
+      provider: providerSchema,
     },
     async ({ provider }: { provider: string }) => {
       const options = {
@@ -103,12 +102,13 @@ export async function createConnectionManagerTools(
   // @ts-ignore
   server.tool(
     "create-installation",
-    `Create a new installation for ${provider}`,
+    `Create a new installation for provider`,
     {
+      provider: providerSchema,
       connectionId: z.string(),
       groupRef: z.string(),
     },
-    async ({ connectionId, groupRef }: { connectionId: string, groupRef: string }) => {
+    async ({ provider, connectionId, groupRef }: { provider: string, connectionId: string, groupRef: string }) => {
       const options = {
         method: "POST",
         headers: {
@@ -119,7 +119,7 @@ export async function createConnectionManagerTools(
           config: {
             createdBy: "api:create-installation",
             content: {
-              provider: "hubspot",
+              provider: provider,
               proxy: { enabled: true }
             }
           },

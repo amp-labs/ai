@@ -1,19 +1,20 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SERVER_AMPERSAND_PROJECT_ID } from "./settings.js";
+import { providerSchema } from "./schemas";
 
 export async function createAuthTool(
   server: Server,
-  provider: string
 ): Promise<void> {
   // @ts-ignore
   server.tool(
     "oauth",
-    `Connect to ${provider} using the Ampersand OAuth flow. The tool will return a clickablelink to the OAuth flow for the user to click.`,
+    `Connect to a SaaS tool provider using the Ampersand OAuth flow. The tool will return a clickablelink to the OAuth flow for the user to click.`,
     {
       query: z.string(),
+      provider: providerSchema,
     },
-    async ({ query }: { query: string }) => {
+    async ({ query, provider }: { query: string, provider: string }) => {
       let oAuthUrl = "";
       const consumerRef = crypto.randomUUID();
       const groupRef = "mcp_server_client_" + process.env.AMPERSAND_GROUP_REF;

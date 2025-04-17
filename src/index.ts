@@ -12,11 +12,11 @@ async function main(): Promise<express.Application> {
     // @ts-ignore
     const server = initialize() as Server;
     await createSearchTool(server);
-    await createAuthTool(server, 'hubspot');
-    await createProxyTool(server, 'hubspot');
-    await createConnectionManagerTools(server, 'hubspot');
-    await createCreateTool(server, 'hubspot');
-    await createUpdateTool(server, 'hubspot');
+    await createAuthTool(server);
+    await createProxyTool(server);
+    await createConnectionManagerTools(server);
+    await createCreateTool(server);
+    await createUpdateTool(server);
     const app = connectServer(server);
     return app;
 }

@@ -1,28 +1,28 @@
-import { record, z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { providerSchema } from "./schemas";
+import { z } from "zod";
 
 export async function createCreateTool(
   server: Server,
-  provider: string
 ): Promise<void> {
-  createWriteActionTool(server, provider, "create", "create");
+  createWriteActionTool(server, "create", "create");
 }
 
 export async function createUpdateTool(
   server: Server,
-  provider: string
 ): Promise<void> {
-  createWriteActionTool(server, provider, "update", "update");
+  createWriteActionTool(server, "update", "update");
 }
 
 
 
-const createWriteActionTool = async (server: Server, provider: string, type: string, name: string) => {
+const createWriteActionTool = async (server: Server, type: string, name: string) => {
     // @ts-ignore
     return server.tool(
       name,
-      `Perform a ${type} action on ${provider}`,
+      `Perform a ${type} action on provider`,
       {
+        provider: providerSchema,
         objectName: z.string().describe("The name of the object to write to"),
         type: z.enum([type]).describe("The type of write operation"),
         record: z.record(z.any()).describe("The record data to write"),
@@ -97,7 +97,7 @@ const createWriteActionTool = async (server: Server, provider: string, type: str
             };
           }
   
-          console.log(`${type} operation on ${provider} succeeded:`, data);
+          console.log(`${type} operation on provider succeeded:`, data);
           return {
             content: [
               {
