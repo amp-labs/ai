@@ -81,6 +81,9 @@ importers:
       rollup-plugin-node-polyfills:
         specifier: ^0.2.1
         version: 0.2.1
+      sdk-node-platform:
+        specifier: link:@types/@amp-labs/sdk-node-platform
+        version: link:@types/@amp-labs/sdk-node-platform
       sdk-node-write:
         specifier: link:@types/@amp-labs/sdk-node-write
         version: link:@types/@amp-labs/sdk-node-write
