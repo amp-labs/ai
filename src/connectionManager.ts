@@ -1,6 +1,14 @@
+import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { providerSchema } from "./schemas";
+import { Installation, UpdateInstallationConnection } from "@amp-labs/sdk-node-platform/models/operations/updateinstallation";
+
+// Instantiate the Ampersand Node Platform Client
+const ampersandClient = new SDKNodePlatform({
+  apiKeyHeader: process.env.AMPERSAND_API_KEY || "",
+});
+
 export async function createConnectionManagerTools(
   server: Server,
 ): Promise<void> {
@@ -12,24 +20,22 @@ export async function createConnectionManagerTools(
       provider: providerSchema,
     },
     async ({ provider }: { provider: string }) => {
-      const options = {
-        method: "GET",
-        headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
-      };
-
       try {
-        const response = await fetch(
-          `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/connections?provider=${provider}`,
-          options
-        );
-        const data = await response.json();
+        const data = await ampersandClient.connections.list({
+          projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
+          provider: provider,
+        });
 
+        // @ts-ignore
         if (data.length > 0) {
+          // @ts-ignore
+          const connection = data[0];
+          console.log("[DEBUG] connection response", connection);
           return {
             content: [
               {
                 type: "text",
-                text: `Connection found for ${provider} connectionId: ${data[0].id}, groupRef: ${data[0].group?.groupRef}`,
+                text: `Connection found for ${provider} connectionId: ${connection.id}, groupRef: ${connection.group?.groupRef}`,
               },
             ],
           };
@@ -44,7 +50,15 @@ export async function createConnectionManagerTools(
           };
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error checking connection:", err);
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error checking connection for ${provider}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+            },
+          ],
+        };
       }
     }
   );
@@ -57,20 +71,22 @@ export async function createConnectionManagerTools(
       provider: providerSchema,
     },
     async ({ provider }: { provider: string }) => {
-      const options = {
-        method: "GET",
-        headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
-      };
-
       try {
-        const response = await fetch(
-          `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/integrations/${process.env.AMPERSAND_INTEGRATION_ID}/installations`,
-          options
-        );
-        const data = await response.json();
-        console.log("[DEBUG] installation response", data);
+        const data = await ampersandClient.installations.list({
+          projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
+          integrationId: process.env.AMPERSAND_INTEGRATION_ID || "",
+        });
 
-        if (data.length > 0) {
+        // @ts-ignore
+        const relevantInstallations = data.filter(
+          // @ts-ignore
+          (inst) => inst.connection?.provider === provider
+        );
+
+        console.log("[DEBUG] installation response", relevantInstallations, data);
+
+        if (relevantInstallations.length > 0) {
+          const installation = relevantInstallations[0];
           return {
             content: [
               {
@@ -79,7 +95,7 @@ export async function createConnectionManagerTools(
               },
               {
                 type: "text",
-                text: `Installation ID: ${data[0].id}`,
+                text: `Installation ID: ${installation.id}`,
               },
             ],
           };
@@ -94,7 +110,15 @@ export async function createConnectionManagerTools(
           };
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error checking installation:", err);
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error checking installation for ${provider}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+            },
+          ],
+        };
       }
     }
   );
@@ -109,118 +133,119 @@ export async function createConnectionManagerTools(
       groupRef: z.string(),
     },
     async ({ provider, connectionId, groupRef }: { provider: string, connectionId: string, groupRef: string }) => {
-      const options = {
-        method: "POST",
-        headers: {
-          "X-Api-Key": process.env.AMPERSAND_API_KEY || "",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          config: {
-            createdBy: "api:create-installation",
-            content: {
-              provider: provider,
-              proxy: { enabled: true }
-            }
-          },
-          groupRef: groupRef,
-          connectionId: connectionId
-        })
-      };
-
       try {
-        console.log("[DEBUG] creating installation", options);
-        const response = await fetch(
-          `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/integrations/${process.env.AMPERSAND_INTEGRATION_ID}/installations`,
-          options
-        );
-        const data = await response.json();
-        console.log("[DEBUG] installation response", data);
-        const created = data.createTime !== undefined;
+        console.log("[DEBUG] creating installation for connection:", connectionId, "group:", groupRef);
+        const data = await ampersandClient.installations.create({
+          projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
+          integrationId: process.env.AMPERSAND_INTEGRATION_ID || "",
+          requestBody: {
+            connectionId: connectionId,
+            groupRef: groupRef,
+            config: {
+              createdBy: "api:create-installation",
+              content: {
+                provider: provider,
+                proxy: { enabled: true }
+              }
+            }
+          }
+        });
+
+        console.log("[DEBUG] installation creation response", data);
+        // @ts-ignore
+        const created = data.id !== undefined;
         return {
           content: [
             {
               type: "text",
               text: `Installation was ${created ? "created" : "not created"} for ${provider}`,
             },
-            {
-              type: "text",
-              text: `Installation ID: ${data[0].id}`,
-            },
+            ...(created ? [{
+              type: "text" as const,
+              // @ts-ignore
+              text: `Installation ID: ${data.id}`,
+            }] : []),
           ],
         };
       } catch (err) {
-        console.error(err);
+        console.error("Error creating installation:", err);
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error creating installation for ${provider}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+            },
+          ],
+        };
       }
     }
   );
 }
 
 export async function ensureConnectionExists(provider: string): Promise<string> {
-  // Check for existing connection
-  const connectionResponse = await fetch(
-    `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/connections?provider=${provider}`,
-    {
-      method: "GET",
-      headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
-    }
-  );
-  const connectionData = await connectionResponse.json();
+  const connectionData = await ampersandClient.connections.list({
+    projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
+    provider: provider,
+  });
 
+  // @ts-ignore
   if (connectionData.length === 0) {
     throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
   }
 
-  const connectionId = connectionData[0].id;
-  const groupRef = connectionData[0].group?.groupRef;
+  // @ts-ignore
+  const connection = connectionData[0];
+  const connectionId = connection.id;
+  const groupRef = connection.group?.ref;
 
-  // Check for existing installation
-  const installationResponse = await fetch(
-    `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/integrations/${process.env.AMPERSAND_INTEGRATION_ID}/installations`,
-    {
-      method: "GET",
-      headers: { "X-Api-Key": process.env.AMPERSAND_API_KEY || "" },
-    }
+  if (!groupRef) {
+    throw new Error(`Connection ${connectionId} for provider ${provider} does not have a groupRef.`);
+  }
+
+  const installationData = await ampersandClient.installations.list({
+    projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
+    integrationId: process.env.AMPERSAND_INTEGRATION_ID || "",
+  });
+
+  // @ts-ignore
+  const relevantInstallations = installationData.filter(
+    // @ts-ignore
+    (inst: Installation) => inst.connection?.provider === provider && inst.groupRef === groupRef && inst.connectionId === connectionId
   );
-  const installationData = await installationResponse.json();
-  console.log("[DEBUG] installation response", installationData);
 
-  if (installationData.length === 0) {
-    // Create installation if it doesn't exist
-    const createOptions = {
-      method: "POST",
-      headers: {
-        "X-Api-Key": process.env.AMPERSAND_API_KEY || "",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+  console.log("[DEBUG] existing installation check", relevantInstallations);
+
+  if (relevantInstallations.length === 0) {
+    console.log("[DEBUG] No existing installation found, creating one for connection:", connectionId, "group:", groupRef);
+    const createData = await ampersandClient.installations.create({
+      projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
+      integrationId: process.env.AMPERSAND_INTEGRATION_ID || "",
+      requestBody: {
+        connectionId: connectionId,
+        groupRef: groupRef,
         config: {
-          createdBy: "api:create-installation",
+          createdBy: "api:ensureConnectionExists",
           content: {
-            provider: "hubspot",
+            provider: provider,
             proxy: { enabled: true }
           }
-        },
-        groupRef: groupRef,
-        connectionId: connectionId
-      })
-    };
+        }
+      }
+    });
 
-    const createResponse = await fetch(
-      `https://api.withampersand.com/v1/projects/${process.env.AMPERSAND_PROJECT_ID}/integrations/${process.env.AMPERSAND_INTEGRATION_ID}/installations`,
-      createOptions
-    );
-    const createData = await createResponse.json();
     console.log("[DEBUG] installation creation response", createData);
 
-    if (createData.createTime !== undefined) {
-      console.log(`Installation created for ${provider}, Installation ID: ${createData[0].id}`);
-      return createData[0].id;
+    // @ts-ignore
+    if (createData.installation?.id) {
+      // @ts-ignore
+      console.log(`Installation created for ${provider}, Installation ID: ${createData.installation.id}`);
+      // @ts-ignore
+      return createData.installation.id;
     } else {
-      throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
+      throw new Error(`Failed to create installation for ${provider}. API response: ${JSON.stringify(createData)}`);
     }
   } else {
-    console.log(`Installation already exists for ${provider}`);
-    return installationData[0].id;
+    console.log(`Installation already exists for ${provider} with ID: ${relevantInstallations[0].id}`);
+    return relevantInstallations[0].id;
   }
 }
