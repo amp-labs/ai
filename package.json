@@ -23,6 +23,8 @@
   "author": "Ampersand",
   "description": "MCP server for Ampersand docs",
   "dependencies": {
+    "@amp-labs/sdk-node-platform": "^0.2.3",
+    "@amp-labs/sdk-node-write": "^0.2.3",
     "@modelcontextprotocol/sdk": "^1.6.1",
     "axios": "^1.8.1",
     "build": "^0.1.4",
@@ -47,6 +49,8 @@
     "process": "^0.11.10",
     "rollup": "^4.37.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
+    "sdk-node-platform": "link:@types/@amp-labs/sdk-node-platform",
+    "sdk-node-write": "link:@types/@amp-labs/sdk-node-write",
     "stream-browserify": "^3.0.0",
     "typescript": "^5.7.3",
     "vite": "^5.4.14",
