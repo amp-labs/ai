@@ -1,13 +1,33 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { Request, Response } from 'express';
 
-export async function connectServer(server: Server): Promise<express.Application> {
+export async function connectServer(server: Server, useStdioTransport: boolean, settings: any): Promise<express.Application | undefined> {
+    if (useStdioTransport) {
+        console.log('Connecting to MCP server over stdio');
+        const transport = new StdioServerTransport();
+        await server.connect(transport);
+        return;
+    }
+
     const app = express();
     const port = 3001;
     let currentTransport: SSEServerTransport | null = null;
 
     app.get('/sse', async (req: Request, res: Response) => {
+        if (req.query.project) {
+            settings.project = req.query.project;
+        }
+        if (req.query.integrationId) {
+            settings.integrationId = req.query.integrationId;
+        }
+        if (req.query.apiKey) {
+            settings.apiKey = req.query.apiKey;
+        }
+        if (req.query.groupRef) {
+            settings.groupRef = req.query.groupRef;
+        }
         currentTransport = new SSEServerTransport('/messages', res);
         await server.connect(currentTransport);
     });

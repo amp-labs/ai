@@ -2,9 +2,11 @@ import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { ensureConnectionExists } from "./connectionManager";
 import { providerSchema } from "./schemas";
+import { ClientSettings } from ".";
 
 export async function createProxyTool(
   server: Server,
+  settings?: ClientSettings
 ): Promise<void> {
   // @ts-ignore
   server.tool(
@@ -46,11 +48,11 @@ export async function createProxyTool(
       try {
         installationId = (await ensureConnectionExists(provider)) || installationId;
         console.log(
-          "DEBUG",
+          "[PROXY] Call:",
           installationId,
           body,
-          process.env.AMPERSAND_PROJECT_ID,
-          process.env.AMPERSAND_INTEGRATION_ID,
+          settings?.project,
+          settings?.integrationId,
           suffix,
           method,
           headers
@@ -62,8 +64,8 @@ export async function createProxyTool(
             headers: {
               ...headers,
               "Content-Type": "application/json",
-              "x-amp-project-id": process.env.AMPERSAND_PROJECT_ID || "",
-              "x-api-key": process.env.AMPERSAND_API_KEY || "",
+              "x-amp-project-id": settings?.project || "",
+              "x-api-key": settings?.apiKey || "",
               "x-amp-proxy-version": "1",
               "x-amp-installation-id": installationId,
             },
