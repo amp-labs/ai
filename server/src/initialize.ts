@@ -1,5 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { SERVER_NAME, SERVER_VERSION } from '../settings.js';
+import { SERVER_NAME, SERVER_VERSION } from './settings.js';
 
 export function initialize(): McpServer {
     console.error('Initializing MCP Server...');
