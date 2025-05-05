@@ -87,6 +87,7 @@ export async function createSearchTool(server: Server): Promise<void> {
         server.tool('search', `Search across the ${config.name} documentation to fetch relevant context for a given query`, {
         query: z.string(),
     }, async ({ query }: { query: string }) => {
+        console.log("[SEARCH] call: ", query);
         const results = await search(query, config);
         const content = results.map((result) => {
             const { title, content, link } = result;

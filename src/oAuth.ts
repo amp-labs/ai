@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { SERVER_AMPERSAND_PROJECT_ID } from "./settings.js";
 import { providerSchema } from "./schemas";
+import { ClientSettings } from ".";
 
 export async function createAuthTool(
   server: Server,
+  settings?: ClientSettings
 ): Promise<void> {
   // @ts-ignore
   server.tool(
@@ -17,9 +18,9 @@ export async function createAuthTool(
     async ({ query, provider }: { query: string, provider: string }) => {
       let oAuthUrl = "";
       const consumerRef = crypto.randomUUID();
-      const groupRef = "mcp_server_client_" + process.env.AMPERSAND_GROUP_REF;
-      console.log("[DEBUG] groupRef", groupRef);
-      const projectId = SERVER_AMPERSAND_PROJECT_ID;
+      const groupRef = settings?.groupRef || process.env.AMPERSAND_GROUP_REF;
+      console.log("[OAUTH] call: ", provider, groupRef, settings);
+      const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID;
       const options = {
         method: "POST",
         headers: { "Content-Type": "application/json" },

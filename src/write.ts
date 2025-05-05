@@ -2,20 +2,23 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { providerSchema } from "./schemas";
 import { z } from "zod";
 import { SDKNodeWrite } from "@amp-labs/sdk-node-write";
+import { ClientSettings } from ".";
 
-export async function createCreateTool(server: Server): Promise<void> {
-  createWriteActionTool(server, "create", "create");
+export async function createCreateTool(server: Server, settings?: ClientSettings): Promise<void> {
+  createWriteActionTool(server, "create", "create", settings);
 }
 
-export async function createUpdateTool(server: Server): Promise<void> {
-  createWriteActionTool(server, "update", "update");
+export async function createUpdateTool(server: Server, settings?: ClientSettings): Promise<void> {
+  createWriteActionTool(server, "update", "update", settings);
 }
 
 const createWriteActionTool = async (
   server: Server,
   type: string,
-  name: string
+  name: string,
+  settings?: ClientSettings
 ) => {
+
   // @ts-ignore
   return server.tool(
     name,
@@ -64,13 +67,14 @@ const createWriteActionTool = async (
         }>;
       }>;
     }) => {
+      console.log("[CREATE-WRITE-ACTION-TOOL] call: ", name, type);
       try {
         const writeSDK = new SDKNodeWrite({
-          apiKeyHeader: process.env.AMPERSAND_API_KEY || "",
+          apiKeyHeader: settings?.apiKey || "",
         });
         const writeData = {
-          projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
-          integrationId: process.env.AMPERSAND_INTEGRATION_ID || "",
+          projectIdOrName: settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
+          integrationId: settings?.integrationId || process.env.AMPERSAND_INTEGRATION_ID || "",
           objectName,
           requestBody: {
             groupRef,
