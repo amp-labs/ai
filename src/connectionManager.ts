@@ -95,7 +95,7 @@ export async function createConnectionManagerTools(
         // @ts-ignore
         const relevantInstallations = data.filter(
           // @ts-ignore
-          (inst) => inst.connection?.provider === provider
+          (inst) => inst.connection?.provider === provider.toLowerCase()
         );
 
         console.log(
@@ -231,7 +231,7 @@ export async function ensureConnectionExists(
   provider: string,
   settings?: ClientSettings
 ): Promise<string> {
-  console.log("[ENSURE-CONNECTION-EXISTS] call: ", provider);
+  console.log("[ENSURE-CONNECTION-EXISTS] call: ", provider, settings);
   // Instantiate the Ampersand Node Platform Client
   const ampersandClient = new SDKNodePlatform({
     apiKeyHeader: settings?.apiKey || "",
@@ -252,7 +252,7 @@ export async function ensureConnectionExists(
   // @ts-ignore
   const connection = connectionData[0];
   const connectionId = connection.id;
-  const groupRef = connection.group?.ref;
+  const groupRef = connection.group?.groupRef;
 
   if (!groupRef) {
     throw new Error(
@@ -270,10 +270,10 @@ export async function ensureConnectionExists(
   // @ts-ignore
   const relevantInstallations = installationData.filter(
     // @ts-ignore
-    (inst: Installation) => inst.connection?.provider === provider && inst.groupRef === groupRef && inst.connectionId === connectionId
+    (inst: Installation) => inst.connection?.provider === provider && inst.group?.groupRef === groupRef && inst.connection?.id === connectionId
   );
 
-  console.log("[DEBUG] existing installation check", relevantInstallations);
+  console.log("[DEBUG] existing installation check", relevantInstallations, installationData);
 
   if (relevantInstallations.length === 0) {
     console.log(
@@ -283,8 +283,8 @@ export async function ensureConnectionExists(
       groupRef
     );
     const createData = await ampersandClient.installations.create({
-      projectIdOrName: process.env.AMPERSAND_PROJECT_ID || "",
-      integrationId: process.env.AMPERSAND_INTEGRATION_ID || "",
+      projectIdOrName: settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
+      integrationId: settings?.integrationId || process.env.AMPERSAND_INTEGRATION_ID || "",
       requestBody: {
         connectionId: connectionId,
         groupRef: groupRef,
