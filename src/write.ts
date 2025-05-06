@@ -28,9 +28,6 @@ const createWriteActionTool = async (
       objectName: z.string().describe("The name of the object to write to"),
       type: z.enum([type]).describe("The type of write operation"),
       record: z.record(z.any()).describe("The record data to write"),
-      groupRef: z
-        .string()
-        .describe("The group reference for the write operation"),
       associations: z
         .array(
           z.object({
@@ -52,13 +49,11 @@ const createWriteActionTool = async (
       objectName,
       type,
       record,
-      groupRef,
       associations,
     }: {
       objectName: string;
       type: "create" | "update";
       record: Record<string, any>;
-      groupRef: string;
       associations?: Array<{
         to: { id: string };
         types: Array<{
@@ -77,7 +72,7 @@ const createWriteActionTool = async (
           integrationId: settings?.integrationId || process.env.AMPERSAND_INTEGRATION_ID || "",
           objectName,
           requestBody: {
-            groupRef,
+            groupRef: settings?.groupRef || "",
             type,
             record,
             ...(associations && { associations }),

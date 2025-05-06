@@ -18,7 +18,7 @@ export async function createProxyTool(
         .record(z.string(), z.string())
         .optional()
         .describe("Body of the request"),
-      suffix: z.string().describe("Suffix of the request URL"),
+      suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
       method: z.string().describe("HTTP method to use"),
       headers: z
         .record(z.string(), z.string())
@@ -46,7 +46,7 @@ export async function createProxyTool(
       provider: string;
     }) => {
       try {
-        installationId = (await ensureConnectionExists(provider)) || installationId;
+        installationId = installationId || (await ensureConnectionExists(provider, settings));
         console.log(
           "[PROXY] Call:",
           installationId,
@@ -55,7 +55,8 @@ export async function createProxyTool(
           settings?.integrationId,
           suffix,
           method,
-          headers
+          headers,
+          settings
         );
         const response = await fetch(
           `https://proxy.withampersand.com/${suffix}`,
@@ -69,7 +70,7 @@ export async function createProxyTool(
               "x-amp-proxy-version": "1",
               "x-amp-installation-id": installationId,
             },
-            body: body ? JSON.stringify(body) : undefined,
+            body: body && Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
           }
         );
         const data = await response.text();
