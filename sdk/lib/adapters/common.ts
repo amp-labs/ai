@@ -51,6 +51,9 @@ export const createActionSchema = z.object({
 export const updateActionSchema = z.object({
   ...baseWriteSchema,
   type: z.enum(["update"]).describe("The type of write operation"),
+  groupRef: z
+  .string()
+  .describe("The group reference for the write operation"),
 });
 
 // Common output schema
@@ -81,6 +84,7 @@ export type UpdateParams = {
   objectName: string;
   type: "update";
   record: Record<string, any>;
+  groupRef: string;
   associations?: Array<{
     to: { id: string };
     types: Array<{

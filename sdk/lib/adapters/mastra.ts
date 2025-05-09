@@ -50,15 +50,14 @@ export const updateActionTool = createTool({
   outputSchema: writeOutputSchema,
   execute: async ({ context }) => {
     console.log("Calling updateActionTool");
-    const { provider, objectName, type, record, associations } = context;
+    const { provider, objectName, type, record, groupRef, associations } = context;
     
     // Use the common function from mcp-server
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
-      // For the update case, use env var for groupRef
-      groupRef: process.env.AMPERSAND_GROUP_REF || "",
+      groupRef,
       associations,
     });
     

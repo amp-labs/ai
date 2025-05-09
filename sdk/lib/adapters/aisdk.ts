@@ -46,7 +46,7 @@ export const createRecordTool = tool({
 export const updateRecordTool = tool({
   description: "Perform an update operation on a provider (e.g. Salesforce, Hubspot)",
   parameters: updateActionSchema,
-  execute: async ({ provider, objectName, type, record, associations }: UpdateParams) => {
+  execute: async ({ provider, objectName, type, record, groupRef, associations }: UpdateParams) => {
     console.log("Calling updateRecordTool with Vercel AI SDK");
     
     // Use the common function from mcp-server
@@ -54,8 +54,7 @@ export const updateRecordTool = tool({
       objectName,
       type,
       record,
-      // For the update case, use env var for groupRef
-      groupRef: process.env.AMPERSAND_GROUP_REF || "",
+      groupRef: groupRef,
       associations,
     });
     
