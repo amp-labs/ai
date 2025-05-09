@@ -1,6 +1,6 @@
 {
   "name": "@amp-labs/ai",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.1",
   "type": "commonjs",
   "main": "dist/index.cjs",
   "exports": {
@@ -27,7 +27,7 @@
     "url": "git+https://github.com/amp-labs/mcp-docs-server.git"
   },
   "author": "Ampersand",
-  "description": "MCP server for Ampersand docs",
+  "description": "Ampersand AI SDK",
   "dependencies": {
     "@amp-labs/sdk-node-platform": "^0.2.3",
     "@amp-labs/sdk-node-write": "^0.2.3",
