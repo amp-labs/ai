@@ -40,6 +40,106 @@ importers:
         specifier: ^5.7.3
         version: 5.8.3
 
+  mcp-server:
+    dependencies:
+      '@amp-labs/ai':
+        specifier: ^0.0.1-alpha.1
+        version: link:../sdk
+      '@amp-labs/sdk-node-platform':
+        specifier: ^0.2.3
+        version: 0.2.3(@modelcontextprotocol/sdk@1.11.0)(zod@3.24.4)
+      '@amp-labs/sdk-node-write':
+        specifier: ^0.2.3
+        version: 0.2.4(@modelcontextprotocol/sdk@1.11.0)(zod@3.24.4)
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.6.1
+        version: 1.11.0
+      axios:
+        specifier: ^1.8.1
+        version: 1.9.0
+      build:
+        specifier: ^0.1.4
+        version: 0.1.4
+      dashify:
+        specifier: ^2.0.0
+        version: 2.0.0
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.5.0
+      express:
+        specifier: ^4.21.2
+        version: 4.21.2
+      trieve-ts-sdk:
+        specifier: ^0.0.62
+        version: 0.0.62
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.4
+    devDependencies:
+      '@esbuild-plugins/node-globals-polyfill':
+        specifier: ^0.2.3
+        version: 0.2.3(esbuild@0.25.3)
+      '@esbuild-plugins/node-modules-polyfill':
+        specifier: ^0.2.2
+        version: 0.2.2(esbuild@0.25.3)
+      '@types/dashify':
+        specifier: ^1.0.3
+        version: 1.0.3
+      '@types/dotenv':
+        specifier: ^8.2.0
+        version: 8.2.3
+      '@types/express':
+        specifier: ^5.0.1
+        version: 5.0.1
+      '@types/minimist':
+        specifier: ^1.2.5
+        version: 1.2.5
+      '@types/node':
+        specifier: ^22.13.5
+        version: 22.15.3
+      '@types/react':
+        specifier: ^18.2.64
+        version: 18.3.20
+      '@types/react-dom':
+        specifier: ^18.2.21
+        version: 18.3.7(@types/react@18.3.20)
+      '@types/rollup':
+        specifier: ^0.54.0
+        version: 0.54.0
+      events:
+        specifier: ^3.3.0
+        version: 3.3.0
+      process:
+        specifier: ^0.11.10
+        version: 0.11.10
+      rollup:
+        specifier: ^4.37.0
+        version: 4.40.1
+      rollup-plugin-node-polyfills:
+        specifier: ^0.2.1
+        version: 0.2.1
+      sdk-node-platform:
+        specifier: link:@types/@amp-labs/sdk-node-platform
+        version: link:@types/@amp-labs/sdk-node-platform
+      sdk-node-write:
+        specifier: link:@types/@amp-labs/sdk-node-write
+        version: link:@types/@amp-labs/sdk-node-write
+      stream-browserify:
+        specifier: ^3.0.0
+        version: 3.0.0
+      typescript:
+        specifier: ^5.7.3
+        version: 5.8.3
+      vite:
+        specifier: ^5.4.14
+        version: 5.4.19(@types/node@22.15.3)
+      vite-plugin-node:
+        specifier: ^5.0.0
+        version: 5.0.1(vite@5.4.19)
+      vite-plugin-node-polyfills:
+        specifier: ^0.23.0
+        version: 0.23.0(rollup@4.40.1)(vite@5.4.19)
+
   sdk:
     dependencies:
       '@amp-labs/sdk-node-platform':
@@ -139,106 +239,6 @@ importers:
       vite-plugin-dts:
         specifier: ^4.5.3
         version: 4.5.3(@types/node@22.15.3)(rollup@4.40.1)(typescript@5.8.3)(vite@5.4.19)
-      vite-plugin-node:
-        specifier: ^5.0.0
-        version: 5.0.1(vite@5.4.19)
-      vite-plugin-node-polyfills:
-        specifier: ^0.23.0
-        version: 0.23.0(rollup@4.40.1)(vite@5.4.19)
-
-  server:
-    dependencies:
-      '@amp-labs/ai':
-        specifier: workspace:*
-        version: link:../sdk
-      '@amp-labs/sdk-node-platform':
-        specifier: ^0.2.3
-        version: 0.2.3(@modelcontextprotocol/sdk@1.11.0)(zod@3.24.4)
-      '@amp-labs/sdk-node-write':
-        specifier: ^0.2.3
-        version: 0.2.4(@modelcontextprotocol/sdk@1.11.0)(zod@3.24.4)
-      '@modelcontextprotocol/sdk':
-        specifier: ^1.6.1
-        version: 1.11.0
-      axios:
-        specifier: ^1.8.1
-        version: 1.9.0
-      build:
-        specifier: ^0.1.4
-        version: 0.1.4
-      dashify:
-        specifier: ^2.0.0
-        version: 2.0.0
-      dotenv:
-        specifier: ^16.4.7
-        version: 16.5.0
-      express:
-        specifier: ^4.21.2
-        version: 4.21.2
-      trieve-ts-sdk:
-        specifier: ^0.0.62
-        version: 0.0.62
-      zod:
-        specifier: ^3.24.2
-        version: 3.24.4
-    devDependencies:
-      '@esbuild-plugins/node-globals-polyfill':
-        specifier: ^0.2.3
-        version: 0.2.3(esbuild@0.25.3)
-      '@esbuild-plugins/node-modules-polyfill':
-        specifier: ^0.2.2
-        version: 0.2.2(esbuild@0.25.3)
-      '@types/dashify':
-        specifier: ^1.0.3
-        version: 1.0.3
-      '@types/dotenv':
-        specifier: ^8.2.0
-        version: 8.2.3
-      '@types/express':
-        specifier: ^5.0.1
-        version: 5.0.1
-      '@types/minimist':
-        specifier: ^1.2.5
-        version: 1.2.5
-      '@types/node':
-        specifier: ^22.13.5
-        version: 22.15.3
-      '@types/react':
-        specifier: ^18.2.64
-        version: 18.3.20
-      '@types/react-dom':
-        specifier: ^18.2.21
-        version: 18.3.7(@types/react@18.3.20)
-      '@types/rollup':
-        specifier: ^0.54.0
-        version: 0.54.0
-      events:
-        specifier: ^3.3.0
-        version: 3.3.0
-      process:
-        specifier: ^0.11.10
-        version: 0.11.10
-      rollup:
-        specifier: ^4.37.0
-        version: 4.40.1
-      rollup-plugin-node-polyfills:
-        specifier: ^0.2.1
-        version: 0.2.1
-      sdk-node-platform:
-        specifier: link:@types/@amp-labs/sdk-node-platform
-        version: link:@types/@amp-labs/sdk-node-platform
-      sdk-node-write:
-        specifier: link:@types/@amp-labs/sdk-node-write
-        version: link:@types/@amp-labs/sdk-node-write
-      stream-browserify:
-        specifier: ^3.0.0
-        version: 3.0.0
-      typescript:
-        specifier: ^5.7.3
-        version: 5.8.3
-      vite:
-        specifier: ^5.4.14
-        version: 5.4.19(@types/node@22.15.3)
       vite-plugin-node:
         specifier: ^5.0.0
         version: 5.0.1(vite@5.4.19)
