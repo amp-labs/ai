@@ -48,7 +48,7 @@ import { createRecordTool, updateRecordTool } from "@amp-labs/ai/mastra";
 // Use in your Mastra workflow
 const tools = [createRecordTool, updateRecordTool];
 ```
-`
+
 
 ## Debugging & Troubleshooting
 
