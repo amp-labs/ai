@@ -22,7 +22,7 @@ export const createWriteActionTool = async (
       record: z.record(z.any()).describe("The record data to write"),
       groupRef: z
         .string()
-        .describe("The group reference for the write operation"),
+        .describe("The group reference for the SaaS instance that should be written to"),
       associations: associationsSchema,
     },
     async ({
