@@ -5,7 +5,9 @@ import {
   createActionSchema, 
   updateActionSchema, 
   writeOutputSchema,
-  executeAmpersandWrite
+  executeAmpersandWrite,
+  createRecordToolDescription,
+  updateRecordToolDescription
 } from "./common";
 
 /**
@@ -15,13 +17,12 @@ import {
  */
 
 // Example implementation for mastra's createActionTool
-export const createActionTool = createTool({
+export const createRecordTool = createTool({
   id: "create-record",
-  description: `Perform a create operation on provider`,
+  description: createRecordToolDescription,
   inputSchema: createActionSchema,
   outputSchema: writeOutputSchema,
   execute: async ({ context }) => {
-    console.log("Calling createActionTool");
     const { provider, objectName, type, record, groupRef, associations } = context;
     
     // Use the common function from mcp-server
@@ -43,13 +44,12 @@ export const createActionTool = createTool({
 });
 
 // Example implementation for mastra's updateActionTool 
-export const updateActionTool = createTool({
+export const updateRecordTool = createTool({
   id: "update-record",
-  description: `Perform an update operation on provider`,
+  description: updateRecordToolDescription,
   inputSchema: updateActionSchema,
   outputSchema: writeOutputSchema,
   execute: async ({ context }) => {
-    console.log("Calling updateActionTool");
     const { provider, objectName, type, record, groupRef, associations } = context;
     
     // Use the common function from mcp-server

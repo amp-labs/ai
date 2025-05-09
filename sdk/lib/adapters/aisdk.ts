@@ -4,7 +4,9 @@ import {
   updateActionSchema,
   executeAmpersandWrite,
   CreateParams,
-  UpdateParams
+  UpdateParams,
+  createRecordToolDescription,
+  updateRecordToolDescription
 } from "./common";
 
 /**
@@ -14,10 +16,9 @@ import {
  * npm install ai
  */
 export const createRecordTool = tool({
-  description: "Perform a create operation on a provider (e.g. Salesforce, Hubspot)",
+  description: createRecordToolDescription,
   parameters: createActionSchema,
   execute: async ({ provider, objectName, type, record, groupRef, associations }: CreateParams) => {
-    console.log("Calling createRecordTool with Vercel AI SDK");
     
     // Use the common function from mcp-server
     const result = await executeAmpersandWrite({
@@ -44,10 +45,9 @@ export const createRecordTool = tool({
  * npm install ai
  */
 export const updateRecordTool = tool({
-  description: "Perform an update operation on a provider (e.g. Salesforce, Hubspot)",
+  description: updateRecordToolDescription,
   parameters: updateActionSchema,
   execute: async ({ provider, objectName, type, record, groupRef, associations }: UpdateParams) => {
-    console.log("Calling updateRecordTool with Vercel AI SDK");
     
     // Use the common function from mcp-server
     const result = await executeAmpersandWrite({

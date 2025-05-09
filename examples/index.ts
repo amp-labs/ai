@@ -1,8 +1,8 @@
-import { createActionTool, updateActionTool } from "@amp-labs/ai/mastra";
-import { createRecordTool, updateRecordTool } from "@amp-labs/ai/aisdk";  
+import { createRecordTool as createRecordToolMastra, updateRecordTool as updateRecordToolMastra } from "@amp-labs/ai/mastra";
+import { createRecordTool as createRecordToolAISDK, updateRecordTool as updateRecordToolAISDK } from "@amp-labs/ai/aisdk";  
 
 // Use in your AI agent configuration
-const toolsVercel = [createRecordTool, updateRecordTool];
+const toolsVercel = [createRecordToolAISDK, updateRecordToolAISDK];
 
 // Use in your Mastra workflow
-const toolsMastra = [createActionTool, updateActionTool];
+const toolsMastra = [createRecordToolMastra, updateRecordToolMastra];
