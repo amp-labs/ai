@@ -44,6 +44,7 @@ export default defineConfig({
         "mintlify-validation",
         "mintlify-openapi-parser",
         "@amp-labs/ai",
+        "@amp-labs/ai/mcp",
       ],
     },
     sourcemap: true,
