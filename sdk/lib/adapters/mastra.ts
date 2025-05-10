@@ -138,9 +138,7 @@ export const oauthTool = createTool({
   inputSchema: oauthInputSchema,
   outputSchema: oauthOutputSchema,
   execute: async ({ context }) => {
-    const { provider, query } = context;
-    const consumerRef = (globalThis as any).crypto?.randomUUID?.() ?? Math.random().toString(36).substring(2, 15);
-    const groupRef = process.env.AMPERSAND_GROUP_REF || "";
+    const { provider, query, groupRef, consumerRef } = context;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
 
     const options: RequestInit = {

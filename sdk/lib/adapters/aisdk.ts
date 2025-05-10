@@ -115,10 +115,8 @@ export const checkInstallationTool = tool({
 export const oauthTool = tool({
   description: oauthToolDescription,
   parameters: oauthInputSchema,
-  execute: async ({ provider, query }: { provider: string; query: string }) => {
+  execute: async ({ provider, query, groupRef, consumerRef }: { provider: string; query: string, groupRef?: string | undefined, consumerRef?: string | undefined }) => {
     const _query = query; // currently unused but accepted by schema
-    const consumerRef = (globalThis as any).crypto?.randomUUID?.() ?? Math.random().toString(36).substring(2, 15);
-    const groupRef = process.env.AMPERSAND_GROUP_REF || "";
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
 
     const options: RequestInit = {
