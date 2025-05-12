@@ -1,7 +1,7 @@
 import { Agent } from "@mastra/core/agent";
 import { openai } from "@ai-sdk/openai";
-import { createRecordTool, updateRecordTool } from "@amp-labs/ai/aisdk";  
-import { createActionTool, updateActionTool } from "@amp-labs/ai/mastra";
+import { createRecordTool as createRecordToolAISDK, updateRecordTool as updateRecordToolAISDK } from "@amp-labs/ai/aisdk";
+import { createRecordTool, updateRecordTool } from "@amp-labs/ai/mastra";
  
 
 // Mastra Agent with AI SDK tools 
@@ -11,8 +11,8 @@ export const aiSDKToolsAgent: Agent = new Agent({
     "You can use tools defined in AI SDK.",
   model: openai("gpt-4o-mini"),
   tools: {
-    createRecordTool,
-    updateRecordTool,
+    createRecordToolAISDK,
+    updateRecordToolAISDK,
   },
 });
 
@@ -25,7 +25,7 @@ export const mastraToolsAgent: Agent = new Agent({
     "You can use tools defined in Mastra.",
   model: openai("gpt-4o-mini"),
   tools: {
-    createActionTool,
-    updateActionTool,
+    createRecordTool,
+    updateRecordTool,
   },
 });
