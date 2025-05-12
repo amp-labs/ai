@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![Star us on GitHub](https://img.shields.io/github/stars/amp-labs/connectors?color=FFD700&label=Stars&logo=Github)](https://github.com/amp-labs/connectors) [![Discord](https://img.shields.io/badge/Join%20The%20Community-black?logo=discord)](https://discord.gg/BWP4BpKHvf) [![Documentation](https://img.shields.io/badge/Read%20our%20Documentation-black?logo=book)](https://docs.withampersand.com) ![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=white" alt="License">
+[![Discord](https://img.shields.io/badge/Join%20The%20Community-black?logo=discord)](https://discord.gg/BWP4BpKHvf) [![Documentation](https://img.shields.io/badge/Read%20our%20Documentation-black?logo=book)](https://docs.withampersand.com) ![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=white" alt="License">
 </div>
 
 </div>
@@ -49,6 +49,22 @@ import { createRecordTool, updateRecordTool } from "@amp-labs/ai/mastra";
 const tools = [createRecordTool, updateRecordTool];
 ```
 
+## Available Tools
+
+The SDK provides the following tools for interacting with SaaS platforms:
+
+| Tool | Description | Purpose |
+|------|-------------|---------|
+| `createRecordTool` | Creates a new record in the connected SaaS platform | Create new entries like contacts, deals, tickets etc. |
+| `updateRecordTool` | Updates an existing record in the connected SaaS platform | Modify existing entries with new data |
+| `checkConnectionTool` | Verifies if there is an active connection to the SaaS provider | Validate connection status before operations |
+| `createInstallationTool` | Creates a new installation for a provider | Set up new tool installations |
+| `checkInstallationTool` | Checks if there is an active installation for a provider | Verify installation status |
+| `oauthTool` | Initiates OAuth flow for connecting to a provider | Handle authentication setup |
+| `proxyTool` | Makes authenticated API calls to the provider through Ampersand | Execute custom API operations |
+
+
+#### Have a tool in mind that we could add? Let us know! 
 
 ## Debugging & Troubleshooting
 
