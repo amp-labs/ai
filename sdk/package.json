@@ -1,13 +1,13 @@
 {
   "name": "@amp-labs/ai",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.1-alpha.5",
   "type": "commonjs",
   "main": "dist/index.cjs",
   "exports": {
     "./mastra": {
       "types": "./dist/mastra.d.ts",
-      "import": "./dist/mastra.cjs",
-      "require": "./dist/mastra.cjs"
+      "import": "./dist/mastra/index.cjs",
+      "require": "./dist/mastra/index.cjs"
     },
     "./mcp": {
       "types": "./dist/mcp.d.ts",
