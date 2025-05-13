@@ -1,13 +1,24 @@
 {
   "name": "@amp-labs/ai",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "type": "commonjs",
   "main": "dist/index.cjs",
   "exports": {
-    ".": "./dist/index.cjs",
-    "./mastra": "./dist/mastra/index.cjs",
-    "./mcp": "./dist/mcp/index.cjs",
-    "./aisdk": "./dist/aisdk/index.cjs"
+    "./mastra": {
+      "types": "./dist/mastra.d.ts",
+      "import": "./dist/mastra.cjs",
+      "require": "./dist/mastra.cjs"
+    },
+    "./mcp": {
+      "types": "./dist/mcp.d.ts",
+      "import": "./dist/mcp/index.cjs",
+      "require": "./dist/mcp/index.cjs"
+    },
+    "./aisdk": {
+      "types": "./dist/aisdk.d.ts",
+      "import": "./dist/aisdk/index.cjs",
+      "require": "./dist/aisdk/index.cjs"
+    }
   },
   "scripts": {
     "build": "vite build --mode lib",
