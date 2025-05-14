@@ -1,3 +1,8 @@
+/**
+ * This file contains Vercel AI SDK compatible tools for integrating with Ampersand.
+ * Each tool is designed to work with the Vercel AI SDK's tool system.
+ */
+
 import { tool } from "ai";
 import { 
   createActionSchema, 
@@ -21,20 +26,36 @@ import {
   checkInstallationToolDescription,
   oauthToolDescription,
   proxyToolDescription,
+  CheckConnectionInputType,
+  CheckConnectionOutputType,
+  CreateInstallationInputType,
+  CreateInstallationOutputType,
+  CheckInstallationInputType,
+  CheckInstallationOutputType,
+  OAuthInputType,
+  OAuthOutputType,
+  ProxyInputType,
+  ProxyOutputType,
+  WriteOutputType
 } from "./common";
 
 /**
- * Vercel AI SDK compatible version of the Ampersand create record tool
+ * Creates a new record in the Ampersand system using Vercel AI SDK.
+ * @remarks
+ * Requires the 'ai' package to be installed via npm.
  * 
- * Note: You'll need to install the 'ai' package:
- * npm install ai
+ * @param provider - The provider to create the record in
+ * @param objectName - The name of the object to create
+ * @param type - The type of operation (create)
+ * @param record - The record data to write
+ * @param groupRef - The group reference for the target SaaS instance
+ * @param associations - Optional associations for the record
+ * @returns Object containing status, recordId, and response from Ampersand
  */
 export const createRecordTool = tool({
   description: createRecordToolDescription,
   parameters: createActionSchema,
   execute: async ({ provider, objectName, type, record, groupRef, associations }: CreateParams) => {
-    
-    // Use the common function from mcp-server
     const result = await executeAmpersandWrite({
       objectName,
       type,
@@ -42,8 +63,6 @@ export const createRecordTool = tool({
       groupRef,
       associations,
     });
-    
-    // Return the results (AI SDK doesn't require a specific format)
     return {
       status: result.status,
       recordId: result.recordId,
@@ -53,26 +72,28 @@ export const createRecordTool = tool({
 });
 
 /**
- * Vercel AI SDK compatible version of the Ampersand update record tool
+ * Updates an existing record in the Ampersand system using Vercel AI SDK.
+ * @remarks
  * 
- * Note: You'll need to install the 'ai' package:
- * npm install ai
+ * @param provider - The provider to update the record in
+ * @param objectName - The name of the object to update
+ * @param type - The type of operation (update)
+ * @param record - The updated record data
+ * @param groupRef - The group reference for the target SaaS instance
+ * @param associations - Optional associations for the record
+ * @returns Object containing status, recordId, and response from Ampersand
  */
 export const updateRecordTool = tool({
   description: updateRecordToolDescription,
   parameters: updateActionSchema,
   execute: async ({ provider, objectName, type, record, groupRef, associations }: UpdateParams) => {
-    
-    // Use the common function from mcp-server
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
-      groupRef: groupRef,
+      groupRef,
       associations,
     });
-    
-    // Return the results
     return {
       status: result.status,
       recordId: result.recordId,
@@ -81,44 +102,67 @@ export const updateRecordTool = tool({
   },
 });
 
-// Check Connection Tool
+/**
+ * Checks if there is an active connection for a provider using Vercel AI SDK.
+ * @param provider - The provider to check connection for
+ * @returns Connection status and details if found
+ */
 export const checkConnectionTool = tool({
   description: checkConnectionToolDescription,
   parameters: checkConnectionInputSchema,
-  execute: async ({ provider }: { provider: string }) => {
+  execute: async (params: CheckConnectionInputType): Promise<CheckConnectionOutputType> => {
+    const { provider } = params;
     const res = await checkConnection({ provider });
     return res;
   },
 });
 
-// Create Installation Tool
+/**
+ * Creates a new installation for a provider using Vercel AI SDK.
+ * @param provider - The provider to create installation for
+ * @param connectionId - The ID of the connection
+ * @param groupRef - The group reference
+ * @returns Installation creation status and details
+ */
 export const createInstallationTool = tool({
   description: createInstallationToolDescription,
   parameters: createInstallationInputSchema,
-  execute: async ({ provider, connectionId, groupRef }: { provider: string; connectionId: string; groupRef: string }) => {
+  execute: async (params: CreateInstallationInputType): Promise<CreateInstallationOutputType> => {
+    const { provider, connectionId, groupRef } = params;
     const res = await createInstallation({ provider, connectionId, groupRef });
     return res;
   },
 });
 
-// Check Installation Tool
+/**
+ * Checks if there is an active installation for a provider using Vercel AI SDK.
+ * @param provider - The provider to check installation for
+ * @returns Installation status and details if found
+ */
 export const checkInstallationTool = tool({
   description: checkInstallationToolDescription,
   parameters: checkInstallationInputSchema,
-  execute: async ({ provider }: { provider: string }) => {
+  execute: async (params: CheckInstallationInputType): Promise<CheckInstallationOutputType> => {
+    const { provider } = params;
     const res = await checkInstallation({ provider });
     return res;
   },
 });
 
-// OAuth Tool – returns a URL string
+/**
+ * Initiates OAuth flow for a provider using Vercel AI SDK.
+ * @param provider - The provider to authenticate with
+ * @param query - The search query
+ * @param groupRef - Optional group reference
+ * @param consumerRef - Optional consumer reference
+ * @returns Object containing the OAuth URL for authentication
+ */
 export const oauthTool = tool({
   description: oauthToolDescription,
   parameters: oauthInputSchema,
-  execute: async ({ provider, query, groupRef, consumerRef }: { provider: string; query: string, groupRef?: string | undefined, consumerRef?: string | undefined }) => {
-    const _query = query; // currently unused but accepted by schema
+  execute: async (params: OAuthInputType): Promise<OAuthOutputType> => {
+    const { provider, query, groupRef, consumerRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-
     const options: RequestInit = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -136,13 +180,22 @@ export const oauthTool = tool({
   },
 });
 
-// Proxy Call Tool
+/**
+ * Makes proxy API calls to Ampersand services using Vercel AI SDK.
+ * @param provider - The provider to make the API call to
+ * @param body - The request body
+ * @param suffix - The API endpoint suffix
+ * @param method - The HTTP method
+ * @param headers - Optional additional headers
+ * @param installationId - Optional installation ID
+ * @returns Object containing status and response from the API call
+ */
 export const proxyTool = tool({
   description: proxyToolDescription,
   parameters: proxyInputSchema,
-  execute: async ({ provider, body, suffix, method, headers = {}, installationId }: any) => {
+  execute: async (params: ProxyInputType): Promise<ProxyOutputType> => {
+    const { provider, body, suffix, method, headers = {}, installationId } = params;
     const finalInstallationId = installationId ?? (await ensureInstallationExists(provider));
-
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";
 
@@ -156,11 +209,14 @@ export const proxyTool = tool({
         "x-amp-proxy-version": "1",
         "x-amp-installation-id": finalInstallationId,
       },
-      body: body && Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
+      body: body ? JSON.stringify(body) : undefined,
     });
 
-    const data = await response.text();
-    return { status: response.status, response: data };
+    const responseData = await response.json();
+    return {
+      status: response.status,
+      response: responseData,
+    };
   },
 });
 
