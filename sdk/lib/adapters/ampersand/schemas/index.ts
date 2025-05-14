@@ -127,4 +127,22 @@ export const proxyInputSchema = z.object({
 export const proxyOutputSchema = z.object({
   status: z.number(),
   response: z.any(),
-}); 
+});
+
+
+// Infered type definitions
+export type AssociationsType = z.infer<typeof associationsSchema>;
+export type ProviderType = z.infer<typeof providerSchema>;
+export type CreateActionType = z.infer<typeof createActionSchema>;
+export type UpdateActionType = z.infer<typeof updateActionSchema>;
+export type WriteOutputType = z.infer<typeof writeOutputSchema>;
+export type CheckConnectionInputType = z.infer<typeof checkConnectionInputSchema>;
+export type CheckConnectionOutputType = z.infer<typeof checkConnectionOutputSchema>;
+export type CreateInstallationInputType = z.infer<typeof createInstallationInputSchema>;
+export type CreateInstallationOutputType = z.infer<typeof createInstallationOutputSchema>;
+export type CheckInstallationInputType = z.infer<typeof checkInstallationInputSchema>;
+export type CheckInstallationOutputType = z.infer<typeof checkInstallationOutputSchema>;
+export type OAuthInputType = z.infer<typeof oauthInputSchema>;
+export type OAuthOutputType = z.infer<typeof oauthOutputSchema>;
+export type ProxyInputType = z.infer<typeof proxyInputSchema>;
+export type ProxyOutputType = z.infer<typeof proxyOutputSchema>; 

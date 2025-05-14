@@ -1,3 +1,7 @@
+/**
+ * This file contains Model Context Protocol (MCP) compatible tools for integrating with Ampersand.
+ */
+
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { z } from "zod";
 import { 
@@ -18,11 +22,32 @@ import {
   checkInstallationToolDescription,
   oauthToolDescription,
   proxyToolDescription,
+  CreateActionType,
+  UpdateActionType,
+  CheckConnectionInputType,
+  CreateInstallationInputType,
+  CheckInstallationInputType,
+  OAuthInputType,
+  ProxyInputType,
 } from "./common";
 
+type MCPResponse = {
+  content: Array<{ type: string; text: string }>;
+  isError?: boolean;
+};
+
+/**
+ * Creates a write action tool for the MCP server.
+ * This is a factory function that creates either a create or update tool based on the type parameter.
+ * 
+ * @param server - The MCP server instance
+ * @param type - The type of write action ("create" or "update")
+ * @param name - The name of the tool
+ * @returns A configured MCP tool for performing write operations
+ */
 export const createWriteActionTool = async (
   server: Server,
-  type: string,
+  type: "create" | "update",
   name: string
 ) => {
   // @ts-ignore
@@ -39,25 +64,8 @@ export const createWriteActionTool = async (
         .describe("The group reference for the SaaS instance that should be written to"),
       associations: associationsSchema,
     },
-    async ({
-      objectName,
-      type,
-      record,
-      groupRef,
-      associations,
-    }: {
-      objectName: string;
-      type: "create" | "update";
-      record: Record<string, any>;
-      groupRef: string;
-      associations?: Array<{
-        to: { id: string };
-        types: Array<{
-          associationCategory: string;
-          associationTypeId: number;
-        }>;
-      }>;
-    }) => {
+    async (params: CreateActionType | UpdateActionType): Promise<MCPResponse> => {
+      const { objectName, type, record, groupRef, associations } = params;
       const result = await executeAmpersandWrite({
         objectName,
         type,
@@ -99,21 +107,27 @@ export const createWriteActionTool = async (
   );
 };
 
+/**
+ * Creates a connection checking tool for the MCP server.
+ * 
+ * @param server - The MCP server instance
+ * @returns A configured MCP tool for checking provider connections
+ */
 export const createCheckConnectionTool = async (server: Server) => {
   // @ts-ignore
   return server.tool(
     "check-connection",
     checkConnectionToolDescription,
     checkConnectionInputSchema.shape,
-    async ({ provider }: { provider: string }) => {
+    async (params: CheckConnectionInputType): Promise<MCPResponse> => {
       try {
-        const res = await checkConnection({ provider });
+        const res = await checkConnection(params);
         if (res.found) {
           return {
             content: [
               {
                 type: "text",
-                text: `Connection found for ${provider} connectionId: ${res.connectionId}, groupRef: ${res.groupRef}`,
+                text: `Connection found for ${params.provider} connectionId: ${res.connectionId}, groupRef: ${res.groupRef}`,
               },
             ],
           };
@@ -122,7 +136,7 @@ export const createCheckConnectionTool = async (server: Server) => {
             content: [
               {
                 type: "text",
-                text: `No existing connections found for ${provider}`,
+                text: `No existing connections found for ${params.provider}`,
               },
             ],
           };
@@ -142,20 +156,26 @@ export const createCheckConnectionTool = async (server: Server) => {
   );
 };
 
+/**
+ * Creates an installation creation tool for the MCP server.
+ * 
+ * @param server - The MCP server instance
+ * @returns A configured MCP tool for creating provider installations
+ */
 export const createCreateInstallationTool = async (server: Server) => {
   // @ts-ignore
   return server.tool(
     "create-installation",
     createInstallationToolDescription,
     createInstallationInputSchema.shape,
-    async ({ provider, connectionId, groupRef }: { provider: string; connectionId: string; groupRef: string }) => {
+    async (params: CreateInstallationInputType): Promise<MCPResponse> => {
       try {
-        const res = await createInstallation({ provider, connectionId, groupRef });
+        const res = await createInstallation(params);
         return {
           content: [
             {
               type: "text",
-              text: `Installation ${res.created ? "created" : "not created"} for ${provider}. ID: ${res.installationId}`,
+              text: `Installation ${res.created ? "created" : "not created"} for ${params.provider}. ID: ${res.installationId}`,
             },
           ],
         };
@@ -171,23 +191,29 @@ export const createCreateInstallationTool = async (server: Server) => {
   );
 };
 
+/**
+ * Creates an installation checking tool for the MCP server.
+ * 
+ * @param server - The MCP server instance
+ * @returns A configured MCP tool for checking provider installations
+ */
 export const createCheckInstallationTool = async (server: Server) => {
   // @ts-ignore
   return server.tool(
     "check-installation",
     checkInstallationToolDescription,
     checkInstallationInputSchema.shape,
-    async ({ provider }: { provider: string }) => {
+    async (params: CheckInstallationInputType): Promise<MCPResponse> => {
       try {
-        const res = await checkInstallation({ provider });
+        const res = await checkInstallation(params);
         if (res.found) {
           return {
             content: [
-              { type: "text", text: `Installation found for ${provider} ID: ${res.installationId}` },
+              { type: "text", text: `Installation found for ${params.provider} ID: ${res.installationId}` },
             ],
           };
         }
-        return { content: [ { type: "text", text: `No installation found for ${provider}` } ] };
+        return { content: [ { type: "text", text: `No installation found for ${params.provider}` } ] };
       } catch (err) {
         return { isError: true, content: [ { type: "text", text: `Error: ${err instanceof Error ? err.message : err}` } ] };
       }
@@ -195,13 +221,20 @@ export const createCheckInstallationTool = async (server: Server) => {
   );
 };
 
+/**
+ * Creates an OAuth tool for the MCP server.
+ * 
+ * @param server - The MCP server instance
+ * @returns A configured MCP tool for handling OAuth flows
+ */
 export const createOAuthTool = async (server: Server) => {
   // @ts-ignore
   return server.tool(
     "oauth",
     oauthToolDescription,
     oauthInputSchema.shape,
-    async ({ query, provider, groupRef, consumerRef }: { query: string; provider: string; groupRef?: string; consumerRef?: string }) => {
+    async (params: OAuthInputType): Promise<MCPResponse> => {
+      const { query, provider, groupRef, consumerRef } = params;
       const finalConsumerRef = consumerRef || (crypto as any).randomUUID?.() || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = groupRef || process.env.AMPERSAND_GROUP_REF || "";
       const projectId = process.env.AMPERSAND_PROJECT_ID || "";
@@ -213,25 +246,42 @@ export const createOAuthTool = async (server: Server) => {
           body: JSON.stringify({ provider, consumerRef: finalConsumerRef, groupRef: finalGroupRef, projectId }),
         });
         url = await response.text();
+        return {
+          content: [
+            { type: "text", text: `OAuth URL generated for ${provider}: ${url}` },
+          ],
+        };
       } catch (err) {
-        return { isError: true, content: [ { type: "text", text: `Error initiating OAuth: ${err instanceof Error ? err.message : err}` } ] };
+        return {
+          isError: true,
+          content: [
+            { type: "text", text: `Error generating OAuth URL: ${err instanceof Error ? err.message : err}` },
+          ],
+        };
       }
-      return { content: [ { type: "text", text: url } ] };
     }
   );
 };
 
+/**
+ * Creates a proxy tool for the MCP server.
+ * 
+ * @param server - The MCP server instance
+ * @returns A configured MCP tool for making proxy API calls
+ */
 export const createProxyTool = async (server: Server) => {
   // @ts-ignore
   return server.tool(
     "call-api",
     proxyToolDescription,
     proxyInputSchema.shape,
-    async ({ provider, body, suffix, method, headers = {}, installationId }: any) => {
+    async (params: ProxyInputType): Promise<MCPResponse> => {
+      const { provider, body, suffix, method, headers = {}, installationId } = params;
       try {
-        const finalInstallationId = installationId || (await ensureInstallationExists(provider));
+        const finalInstallationId = installationId ?? (await ensureInstallationExists(provider));
         const projectId = process.env.AMPERSAND_PROJECT_ID || "";
         const apiKey = process.env.AMPERSAND_API_KEY || "";
+
         const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
           method,
           headers: {
@@ -242,12 +292,23 @@ export const createProxyTool = async (server: Server) => {
             "x-amp-proxy-version": "1",
             "x-amp-installation-id": finalInstallationId,
           },
-          body: body && Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
+          body: body ? JSON.stringify(body) : undefined,
         });
-        const data = await response.text();
-        return { content: [ { type: "text", text: `Status ${response.status}: ${data}` } ] };
+
+        const responseData = await response.json();
+        return {
+          content: [
+            { type: "text", text: `API call successful. Status: ${response.status}` },
+            { type: "text", text: `Response: ${JSON.stringify(responseData)}` },
+          ],
+        };
       } catch (err) {
-        return { isError: true, content: [ { type: "text", text: `Error in proxy call: ${err instanceof Error ? err.message : err}` } ] };
+        return {
+          isError: true,
+          content: [
+            { type: "text", text: `Error making API call: ${err instanceof Error ? err.message : err}` },
+          ],
+        };
       }
     }
   );
