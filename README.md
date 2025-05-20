@@ -74,7 +74,7 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 {
   "mcpServers": {
     "@amp-labs/mcp-server": {
-      "url": "https://mcp.withampersand.com/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationId=<AMPERSAND_INTEGRATION_ID>&groupRef=<AMPERSAND_GROUP_REF>"
+      "url": "https://mcp.withampersand.com/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationId=<AMPERSAND_INTEGRATION_ID_OR_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
     }
   }
 }
@@ -96,7 +96,7 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
         "--project",
         "<AMPERSAND_PROJECT_ID>",
         "--integrationId",
-        "<AMPERSAND_INTEGRATION_ID>",
+        "<AMPERSAND_INTEGRATION_ID_OR_NAME>",
         "--groupRef",
         "<AMPERSAND_GROUP_REF>"
       ],

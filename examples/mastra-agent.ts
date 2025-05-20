@@ -42,7 +42,7 @@ export const mcp = new MCPClient({
         "--project",
         process.env.AMPERSAND_PROJECT_ID || "",
         "--integrationId",
-        process.env.AMPERSAND_INTEGRATION_ID || "",
+        process.env.AMPERSAND_INTEGRATION_ID_OR_NAME || "",
         "--groupRef",
         process.env.AMPERSAND_GROUP_REF || "",
       ],

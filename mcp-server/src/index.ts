@@ -16,7 +16,7 @@ const groupRef = args.includes('--groupRef') ? args[args.indexOf('--groupRef') +
 
 export const clientSettings = {
     project: project || process.env.AMPERSAND_PROJECT_ID || "",
-    integrationId: integrationId || process.env.AMPERSAND_INTEGRATION_ID || "",
+    integrationId: integrationId || process.env.AMPERSAND_INTEGRATION_ID_OR_NAME || "",
     apiKey: process.env.AMPERSAND_API_KEY || "",
     groupRef: groupRef || process.env.AMPERSAND_GROUP_REF || ""
 }

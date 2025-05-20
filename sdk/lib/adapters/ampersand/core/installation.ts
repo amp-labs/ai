@@ -5,7 +5,7 @@ interface CheckInstallationParams {
   provider: string;
   apiKey?: string;
   projectId?: string;
-  integrationId?: string;
+  integrationIdOrName?: string;
 }
 
 export interface CheckInstallationResult {
@@ -20,7 +20,7 @@ interface CreateInstallationParams {
   groupRef: string;
   apiKey?: string;
   projectId?: string;
-  integrationId?: string;
+  integrationIdOrName?: string;
 }
 
 export interface CreateInstallationResult {
@@ -36,7 +36,7 @@ export async function checkInstallation({
   provider,
   apiKey = process.env.AMPERSAND_API_KEY || "",
   projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationId = process.env.AMPERSAND_INTEGRATION_ID || "",
+  integrationIdOrName = process.env.AMPERSAND_INTEGRATION_ID_OR_NAME || "",
 }: CheckInstallationParams): Promise<CheckInstallationResult> {
   try {
     const client = new SDKNodePlatform({
@@ -45,7 +45,7 @@ export async function checkInstallation({
 
     const installations = await client.installations.list({
       projectIdOrName: projectId,
-      integrationId,
+      integrationId: integrationIdOrName,
     });
 
     // @ts-ignore – Filter by provider (Ampersand lower-cases internally)
@@ -72,7 +72,7 @@ export async function createInstallation({
   groupRef,
   apiKey = process.env.AMPERSAND_API_KEY || "",
   projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationId = process.env.AMPERSAND_INTEGRATION_ID || "",
+  integrationIdOrName = process.env.AMPERSAND_INTEGRATION_ID_OR_NAME || "",
 }: CreateInstallationParams): Promise<CreateInstallationResult> {
   try {
     const client = new SDKNodePlatform({
@@ -81,7 +81,7 @@ export async function createInstallation({
 
     const data = await client.installations.create({
       projectIdOrName: projectId,
-      integrationId,
+      integrationId: integrationIdOrName,
       requestBody: {
         connectionId,
         groupRef,
