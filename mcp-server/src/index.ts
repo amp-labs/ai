@@ -30,8 +30,8 @@ async function main(): Promise<express.Application | undefined> {
     await createAuthTool(server, clientSettings);
     await createProxyTool(server, clientSettings);
     await createConnectionManagerTools(server, clientSettings);
-    await createCreateTool(server, clientSettings);
-    await createUpdateTool(server, clientSettings);
+    await createCreateTool(server);
+    await createUpdateTool(server);
     const app = await connectServer(server, useStdioTransport, clientSettings);
     return app;
 }
