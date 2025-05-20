@@ -11,12 +11,12 @@ import { createSearchTool } from './search';
 const args = process.argv.slice(2);
 const useStdioTransport = args.includes('--transport') && args[args.indexOf('--transport') + 1] === 'stdio';
 const project = args.includes('--project') ? args[args.indexOf('--project') + 1] : undefined;
-const integrationId = args.includes('--integrationId') ? args[args.indexOf('--integrationId') + 1] : undefined;
+const integrationName = args.includes('--integrationName') ? args[args.indexOf('--integrationName') + 1] : undefined;
 const groupRef = args.includes('--groupRef') ? args[args.indexOf('--groupRef') + 1] : undefined;
 
 export const clientSettings = {
     project: project || process.env.AMPERSAND_PROJECT_ID || "",
-    integrationId: integrationId || process.env.AMPERSAND_INTEGRATION_ID || "",
+    integrationName: integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "",
     apiKey: process.env.AMPERSAND_API_KEY || "",
     groupRef: groupRef || process.env.AMPERSAND_GROUP_REF || ""
 }

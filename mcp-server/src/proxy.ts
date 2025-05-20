@@ -52,7 +52,7 @@ export async function createProxyTool(
           installationId,
           body,
           settings?.project,
-          settings?.integrationId,
+          settings?.integrationName,
           suffix,
           method,
           headers,
