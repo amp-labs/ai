@@ -16,7 +16,7 @@ interface WriteParams {
   }>;
   apiKey?: string;
   projectId?: string;
-  integrationIdOrName?: string;
+  integrationName?: string;
 }
 
 export async function executeAmpersandWrite({
@@ -27,7 +27,7 @@ export async function executeAmpersandWrite({
   associations,
   apiKey = process.env.AMPERSAND_API_KEY || "",
   projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationIdOrName = process.env.AMPERSAND_INTEGRATION_ID_OR_NAME || "",
+  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
 }: WriteParams): Promise<WriteResponse> {
   try {
     const writeSDK = new Ampersand({
@@ -36,7 +36,7 @@ export async function executeAmpersandWrite({
     
     const writeData = {
       projectIdOrName: projectId,
-      integrationId: integrationIdOrName,
+      integrationId: integrationName,
       objectName,
       requestBody: {
         groupRef,

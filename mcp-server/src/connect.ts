@@ -19,8 +19,8 @@ export async function connectServer(server: Server, useStdioTransport: boolean, 
         if (req.query.project) {
             settings.project = req.query.project;
         }
-        if (req.query.integrationId) {
-            settings.integrationId = req.query.integrationId;
+        if (req.query.integrationName) {
+            settings.integrationName = req.query.integrationName;
         }
         if (req.query.apiKey) {
             settings.apiKey = req.query.apiKey;

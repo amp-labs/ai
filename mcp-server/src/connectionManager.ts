@@ -87,8 +87,8 @@ export async function createConnectionManagerTools(
           projectIdOrName:
             settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
           integrationId:
-            settings?.integrationId ||
-            process.env.AMPERSAND_INTEGRATION_ID_OR_NAME ||
+            settings?.integrationName ||
+            process.env.AMPERSAND_INTEGRATION_NAME ||
             "",
         });
 
@@ -176,8 +176,8 @@ export async function createConnectionManagerTools(
           projectIdOrName:
             settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
           integrationId:
-            settings?.integrationId ||
-            process.env.AMPERSAND_INTEGRATION_ID_OR_NAME ||
+            settings?.integrationName ||
+            process.env.AMPERSAND_INTEGRATION_NAME ||
             "",
           requestBody: {
             connectionId: connectionId,
@@ -264,7 +264,7 @@ export async function ensureConnectionExists(
     projectIdOrName:
       settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
     integrationId:
-      settings?.integrationId || process.env.AMPERSAND_INTEGRATION_ID_OR_NAME || "",
+      settings?.integrationName|| process.env.AMPERSAND_INTEGRATION_NAME || "",
   });
 
   // @ts-ignore
@@ -284,7 +284,7 @@ export async function ensureConnectionExists(
     );
     const createData = await ampersandClient.installations.create({
       projectIdOrName: settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
-      integrationId: settings?.integrationId || process.env.AMPERSAND_INTEGRATION_ID_OR_NAME || "",
+      integrationId: settings?.integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "",
       requestBody: {
         connectionId: connectionId,
         groupRef: groupRef,
