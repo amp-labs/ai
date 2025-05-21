@@ -10,16 +10,17 @@ import { createSearchTool } from './search';
 
 const args = process.argv.slice(2);
 const useStdioTransport = args.includes('--transport') && args[args.indexOf('--transport') + 1] === 'stdio';
-const project = args.includes('--project') ? args[args.indexOf('--project') + 1] : undefined;
-const integrationName = args.includes('--integrationName') ? args[args.indexOf('--integrationName') + 1] : undefined;
-const groupRef = args.includes('--groupRef') ? args[args.indexOf('--groupRef') + 1] : undefined;
+const project = args.includes('--project') ? args[args.indexOf('--project') + 1] : process.env.AMPERSAND_PROJECT_ID || "";
+const integrationName = args.includes('--integrationName') ? args[args.indexOf('--integrationName') + 1] : process.env.AMPERSAND_INTEGRATION_NAME || "";
+const groupRef = args.includes('--groupRef') ? args[args.indexOf('--groupRef') + 1] : process.env.AMPERSAND_GROUP_REF || "";
 
 export const clientSettings = {
-    project: project || process.env.AMPERSAND_PROJECT_ID || "",
-    integrationName: integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "",
+    project: project,
+    integrationName: integrationName,
     apiKey: process.env.AMPERSAND_API_KEY || "",
-    groupRef: groupRef || process.env.AMPERSAND_GROUP_REF || ""
+    groupRef: groupRef
 }
+
 
 export type ClientSettings = typeof clientSettings;
 
@@ -30,8 +31,8 @@ async function main(): Promise<express.Application | undefined> {
     await createAuthTool(server, clientSettings);
     await createProxyTool(server, clientSettings);
     await createConnectionManagerTools(server, clientSettings);
-    await createCreateTool(server);
-    await createUpdateTool(server);
+    await createCreateTool(server, clientSettings);
+    await createUpdateTool(server, clientSettings);
     const app = await connectServer(server, useStdioTransport, clientSettings);
     return app;
 }

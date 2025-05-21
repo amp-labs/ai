@@ -28,6 +28,7 @@ export async function connectServer(server: Server, useStdioTransport: boolean, 
         if (req.query.groupRef) {
             settings.groupRef = req.query.groupRef;
         }
+        console.log("[CONNECT] Settings: ", settings);
         currentTransport = new SSEServerTransport('/messages', res);
         await server.connect(currentTransport);
     });
@@ -48,7 +49,7 @@ export async function connectServer(server: Server, useStdioTransport: boolean, 
     });
 
     app.listen(port, () => {
-        console.error(`MCP Server running on SSE at http://localhost:${port}`);
+        console.log(`MCP Server running on SSE at http://localhost:${port}`);
     });
 
     return app;
