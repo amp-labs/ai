@@ -60,7 +60,7 @@ export const createRecordTool = tool({
       objectName,
       type,
       record,
-      groupRef,
+      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
       associations,
     });
     return {
@@ -91,7 +91,7 @@ export const updateRecordTool = tool({
       objectName,
       type,
       record,
-      groupRef,
+      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
       associations,
     });
     return {
@@ -129,7 +129,7 @@ export const createInstallationTool = tool({
   parameters: createInstallationInputSchema,
   execute: async (params: CreateInstallationInputType): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = params;
-    const res = await createInstallation({ provider, connectionId, groupRef });
+    const res = await createInstallation({ provider, connectionId, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef });
     return res;
   },
 });
@@ -169,7 +169,7 @@ export const oauthTool = tool({
       body: JSON.stringify({
         provider,
         consumerRef,
-        groupRef,
+        groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
         projectId,
       }),
     };
