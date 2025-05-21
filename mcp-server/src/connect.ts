@@ -49,7 +49,7 @@ export async function connectServer(server: Server, useStdioTransport: boolean, 
     });
 
     app.listen(port, () => {
-        console.log(`MCP Server running on SSE at http://localhost:${port}`);
+        console.log(`Ampersand MCP Server running on SSE at http://localhost:${port}`);
     });
 
     return app;
