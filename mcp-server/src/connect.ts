@@ -79,6 +79,11 @@ export async function connectServer(
     if (req.query.groupRef) {
       settings.groupRef = req.query.groupRef;
     }
+    if (req.headers["x-api-key"]) {
+      // if headers are supported by the mcp client, we use that over the query params. The support for headers in limited.
+      // VS code supports it for example like this: https://github.com/microsoft/vscode-docs/blob/74c4fd5aa3180b218fc389184659b621f05460ca/docs/copilot/chat/mcp-servers.md#configuration-example
+      settings.apiKey = req.headers["x-api-key"];
+    }
     console.log("[CONNECT] Settings: ", settings);
     currentTransport = new SSEServerTransport("/messages", res);
     const sessionId = transportManager.addTransport(currentTransport, res);
