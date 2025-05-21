@@ -28,7 +28,7 @@ export async function connectServer(server: Server, useStdioTransport: boolean, 
         if (req.query.groupRef) {
             settings.groupRef = req.query.groupRef;
         }
-        console.log(settings);
+        console.log("[CONNECT] Settings: ", settings);
         currentTransport = new SSEServerTransport('/messages', res);
         await server.connect(currentTransport);
     });
