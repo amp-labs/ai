@@ -79,6 +79,10 @@ export async function connectServer(
     if (req.query.groupRef) {
       settings.groupRef = req.query.groupRef;
     }
+    if (req.headers["x-api-key"]) {
+      // if headers are supported by the mcp client, we use that over the query params. The support for headers in limited.
+      settings.apiKey = req.headers["x-api-key"];
+    }
     console.log("[CONNECT] Settings: ", settings);
     currentTransport = new SSEServerTransport("/messages", res);
     const sessionId = transportManager.addTransport(currentTransport, res);
