@@ -107,15 +107,15 @@ export async function createInstallation({
 /**
  * Ensure an installation exists, creating one if necessary. Returns the installationId.
  */
-export async function ensureInstallationExists(provider: string): Promise<string> {
+export async function ensureInstallationExists(provider: string, apiKey: string, projectId: string, integrationName: string): Promise<string> {
   // First, verify a connection exists and grab its identifiers
-  const connection = await checkConnection({ provider });
+  const connection = await checkConnection({ provider, apiKey, projectId });
   if (!connection.found || !connection.connectionId || !connection.groupRef) {
     throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
   }
 
   // Check existing installation list
-  const installation = await checkInstallation({ provider });
+  const installation = await checkInstallation({ provider, apiKey, projectId, integrationName });
   if (installation.found && installation.installationId) {
     return installation.installationId;
   }
@@ -125,6 +125,9 @@ export async function ensureInstallationExists(provider: string): Promise<string
     provider,
     connectionId: connection.connectionId,
     groupRef: connection.groupRef,
+    apiKey,
+    projectId,
+    integrationName,
   });
 
   if (!createRes.created || !createRes.installationId) {

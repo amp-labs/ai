@@ -247,9 +247,10 @@ export const proxyTool = createTool({
   outputSchema: proxyOutputSchema,
   execute: async ({ context }: { context: ProxyInputType }): Promise<ProxyOutputType> => {
     const { provider, body, suffix, method, headers = {}, installationId } = context;
-    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider));
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";
+    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
+    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
+    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
 
     const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
       method,
