@@ -33,6 +33,7 @@ export default defineConfig({
         "@amp-labs/sdk-node-platform",
         "@amp-labs/sdk-node-write",
         "@modelcontextprotocol/sdk",
+        "@sentry/node",
       ],
     },
     sourcemap: true,

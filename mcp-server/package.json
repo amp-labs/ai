@@ -27,14 +27,16 @@
     "@amp-labs/sdk-node-platform": "^0.2.3",
     "@amp-labs/sdk-node-write": "^0.2.3",
     "@modelcontextprotocol/sdk": "^1.6.1",
+    "@sentry/node": "^9.22.0",
+    "add": "^2.0.6",
     "axios": "^1.8.1",
     "build": "^0.1.4",
     "dashify": "^2.0.0",
+    "detect-port": "^2.1.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "trieve-ts-sdk": "^0.0.62",
-    "zod": "^3.24.2",
-    "detect-port": "^2.1.0"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",

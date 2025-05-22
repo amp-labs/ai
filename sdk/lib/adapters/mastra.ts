@@ -3,6 +3,7 @@
  * Each tool is designed to work with the Mastra's tool system.
  */
 
+import "./ampersand/core/instrument";
 import { createTool } from "@mastra/core";
 import {
   createActionSchema,
