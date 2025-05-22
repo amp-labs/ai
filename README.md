@@ -109,6 +109,67 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 
 ```
 
+## Local development 
+
+Install dependencies 
+
+`pnpm i`
+
+
+Building AI SDK 
+
+`pnpm -F @amp-labs/ai build`
+
+Publishing AI SDK 
+
+`pnpm -F @amp-labs/ai publish` (After building & bumping the version)
+
+Building MCP Server
+
+`pnpm -F @amp-labs/mcp-server build`
+
+
+Run locally built MCP Server in a client like Cursor (mcp.json)
+
+
+SSE mode: 
+
+
+```json
+
+  "@amp-labs/mcp-server": {
+    "url": "http://localhost:3001/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
+    "headers": {
+      "x-api-key": "VE56G7F452KZPHZRSTIJ4XTCZCDTNRDAKPVUCLA" // if the MCP Client supports it we pick the api key from here if not, query param.
+    }
+  }
+
+```
+STDIO mode: 
+
+```json
+
+    "@amp-labs/mcp-server": {
+      "command": "node",
+      "args": [
+        "<PATH_TO_CODEBASE>/mcp-server/dist/index.js",
+        "--transport",
+        "stdio",
+        "--project",
+        "<AMPERSAND_PROJECT_ID>",
+        "--integrationName",
+        "<AMPERSAND_INTEGRATION_NAME>",
+        "--groupRef",
+        "<AMPERSAND_GROUP_REF>"
+      ],
+      "env": {
+        "AMPERSAND_API_KEY": "<AMPERSAND_API_KEY>"
+      }
+    },
+
+```
+
+
 ## License
 
 This project is licensed under the MIT license.
