@@ -3,7 +3,6 @@
  * Each tool is designed to work with the Vercel AI SDK's tool system.
  */
 
-import "./ampersand/core/instrument";
 import { tool } from "ai";
 import { 
   createActionSchema, 

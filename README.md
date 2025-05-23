@@ -140,7 +140,7 @@ SSE mode:
   "@amp-labs/mcp-server": {
     "url": "http://localhost:3001/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
     "headers": {
-      "x-api-key": "VE56G7F452KZPHZRSTIJ4XTCZCDTNRDAKPVUCLA" // if the MCP Client supports it we pick the api key from here if not, query param.
+      "x-api-key": "<AMPERSAND_API_KEY>" // if the MCP Client supports it we pick the api key from here if not, query param.
     }
   }
 
