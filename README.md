@@ -15,17 +15,16 @@
 
 # Official Ampersand AI SDKs
 
-This is a mono-repo that contains the official Ampersand AI SDK as well as the offical MCP servers for Ampersand.
+This repo contains the official Ampersand AI SDK as well as the offical MCP servers for Ampersand.
 
+- [@amp-labs/ai](https://www.npmjs.com/package/@amp-labs/ai) - Official Ampersand AI SDK that exposes tools for your AI agents to manage and interact with integrations with your customer's SaaS tools.
+- [@amp-labs/mcp-server](https://www.npmjs.com/package/@amp-labs/mcp-server) - Official Ampersand MCP server that exposes the tools from the Ampersand AI SDK.
 
-- `@amp-labs/ai` - Official Ampersand AI SDK that exposes Ampersand tools / functions to your AI agents 
-- `@amp-labs/mcp-server` - Official Ampersand MCP server 
-- `@amp-labs/examples` - A set of agent examples with the popular agent frameworks. 
+The `examples` directory contains examples of how to use the AI SDK with popular agent frameworks.
 
+To learn more about Ampersand, visit our [website](https://www.withampersand.com).
 
 ## Ampersand AI SDK
-
-This SDK enables AI agents to seamlessly perform operations on connected SaaS tools through Ampersand's platform.
 
 ### Installation
 
@@ -59,16 +58,33 @@ import { createRecordTool, updateRecordTool } from "@amp-labs/ai/mastra";
 const tools = [createRecordTool, updateRecordTool];
 ```
 
-## Ampersand MCP Server 
+## Ampersand MCP Server
 
 Connect your agents to the 150+ connectors we offer at Ampersand via this multi-tenant MCP server. We expose the primitives we offer on the Ampersand platform as native tools here.
 
-## Connecting to the mcp server from an MCP Client
+## Connect to the remote MCP server
 
-Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.json` when using Claude desktop.
+Add the following in your `mcp.json` in Cursor IDE or `claude_desktop_config.json` when using Claude desktop.
 
 
 #### When running the server in SSE mode
+
+If your MCP client supports headers:
+
+```json
+{
+  "mcpServers": {
+    "@amp-labs/mcp-server": {
+      "url": "https://mcp.withampersand.com/sse?project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
+      "headers": {
+        "x-api-key": "VE56G7F452KZPHZRSTIJ4XTCZCDTNRDAKPVUCLA"
+      }
+    }
+  }
+}
+```
+
+If your MCP client does not support headers, you can pass the API key in the query param:
 
 ```json
 {
@@ -78,7 +94,6 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
     }
   }
 }
-
 ```
 
 #### When running the server in stdio mode
@@ -109,43 +124,55 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 
 ```
 
-## Local development 
+## Connect to the local MCP server
+
+### Install and build
 
 Install dependencies 
 
 `pnpm i`
 
-
 Building AI SDK 
 
 `pnpm -F @amp-labs/ai build`
-
-Publishing AI SDK 
-
-`pnpm -F @amp-labs/ai publish` (After building & bumping the version)
 
 Building MCP Server
 
 `pnpm -F @amp-labs/mcp-server build`
 
 
-Run locally built MCP Server in a client like Cursor (mcp.json)
+### Connect to local server from MCP client
 
+#### SSE mode
 
-SSE mode: 
-
+If your MCP client supports headers:
 
 ```json
-
-  "@amp-labs/mcp-server": {
-    "url": "http://localhost:3001/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
-    "headers": {
-      "x-api-key": "VE56G7F452KZPHZRSTIJ4XTCZCDTNRDAKPVUCLA" // if the MCP Client supports it we pick the api key from here if not, query param.
+{
+  "mcpServers": {
+    "@amp-labs/mcp-server": {
+      "url": "http://localhost:3001/sse?project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
+      "headers": {
+        "x-api-key": "VE56G7F452KZPHZRSTIJ4XTCZCDTNRDAKPVUCLA"
+      }
     }
   }
-
+}
 ```
-STDIO mode: 
+
+If your MCP client does not support headers, you can pass the API key in the query param:
+
+```json
+{
+  "mcpServers": {
+    "@amp-labs/mcp-server": {
+      "url": "http://localhost:3001/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
+    }
+  }
+}
+```
+
+#### STDIO mode
 
 ```json
 
@@ -168,7 +195,6 @@ STDIO mode:
     },
 
 ```
-
 
 ## License
 
