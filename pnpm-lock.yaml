@@ -46,7 +46,7 @@ importers:
   mcp-server:
     dependencies:
       '@amp-labs/ai':
-        specifier: ^0.0.1-alpha.9
+        specifier: ^0.0.1-alpha.10
         version: link:../sdk
       '@amp-labs/sdk-node-platform':
         specifier: ^0.2.3
