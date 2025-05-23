@@ -1,3 +1,5 @@
+import "./instrument";
+import * as Sentry from "@sentry/node";
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
@@ -43,6 +45,7 @@ try {
     mcpApp = main();
 } catch (error: any) {
     console.error('Fatal error in trying to initialize MCP server: ', error);
+    Sentry.captureException(error);
     process.exit(1);
 }
 

@@ -2,8 +2,10 @@
  * This file contains Model Context Protocol (MCP) compatible tools for integrating with Ampersand.
  */
 
+import "./ampersand/core/instrument";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { z } from "zod";
+import * as Sentry from "@sentry/node";
 import { 
   providerSchema, 
   associationsSchema,
@@ -153,6 +155,7 @@ export const createCheckConnectionTool = async (server: Server, settings: Client
           };
         }
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
@@ -191,6 +194,7 @@ export const createCreateInstallationTool = async (server: Server, settings: Cli
           ],
         };
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
@@ -226,6 +230,7 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
         }
         return { content: [ { type: "text", text: `No installation found for ${params.provider}` } ] };
       } catch (err) {
+        Sentry.captureException(err);
         return { isError: true, content: [ { type: "text", text: `Error: ${err instanceof Error ? err.message : err}` } ] };
       }
     }
@@ -263,6 +268,7 @@ export const createOAuthTool = async (server: Server, settings: ClientSettings) 
           ],
         };
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
@@ -315,6 +321,7 @@ export const createProxyTool = async (server: Server, settings: ClientSettings) 
           ],
         };
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
