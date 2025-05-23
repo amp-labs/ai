@@ -23,7 +23,7 @@
   "author": "Ampersand",
   "description": "MCP server for Ampersand docs",
   "dependencies": {
-    "@amp-labs/ai": "^0.0.1-alpha.9",
+    "@amp-labs/ai": "^0.0.1-alpha.10",
     "@amp-labs/sdk-node-platform": "^0.2.3",
     "@amp-labs/sdk-node-write": "^0.2.3",
     "@modelcontextprotocol/sdk": "^1.6.1",
