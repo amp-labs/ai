@@ -36,26 +36,103 @@ yarn add @amp-labs/ai
 pnpm add @amp-labs/ai
 ```
 
-### Usage
+### Quick Start
 
-The SDK provides several modules that can be used depending on your framework preference:
+```typescript
+import { amp, createRecordTool, updateRecordTool } from "@amp-labs/ai/aisdk";
+
+// Initialize configuration once at app startup
+amp.init({
+  apiKey: process.env.AMPERSAND_API_KEY!,
+  projectId: process.env.AMPERSAND_PROJECT_ID!,
+  integrationName: process.env.AMPERSAND_INTEGRATION_NAME!,
+  groupRef: process.env.AMPERSAND_GROUP_REF!,
+});
+
+// Validate configuration
+amp.require();
+
+// Use tools in your AI agent
+const tools = [createRecordTool, updateRecordTool];
+```
+
+### Framework-Specific Usage
 
 #### Using with Vercel AI SDK
 
 ```typescript
-import { createRecordTool, updateRecordTool } from "@amp-labs/ai/aisdk";
+import { createRecordTool, updateRecordTool, amp } from "@amp-labs/ai/aisdk";
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
-// Use in your AI agent configuration
-const tools = [createRecordTool, updateRecordTool];
+// Configure once
+amp.init({ /* config */ });
+
+const { text } = await generateText({
+  model: openai('gpt-4o'),
+  prompt: "Create a contact in Salesforce for John Doe",
+  tools: { createRecordTool, updateRecordTool },
+});
 ```
 
 #### Using with Mastra
 
 ```typescript
 import { createRecordTool, updateRecordTool } from "@amp-labs/ai/mastra";
+import { amp } from "@amp-labs/ai/aisdk";
+
+// Configure once
+amp.init({ /* config */ });
 
 // Use in your Mastra workflow
 const tools = [createRecordTool, updateRecordTool];
+```
+
+### Configuration Options
+
+#### Environment Variables (Automatic)
+```bash
+# Set these environment variables - tools will use them automatically
+AMPERSAND_API_KEY=your_api_key
+AMPERSAND_PROJECT_ID=your_project_id
+AMPERSAND_INTEGRATION_NAME=your_integration_name
+AMPERSAND_GROUP_REF=your_group_ref
+```
+
+#### Programmatic Configuration
+```typescript
+import { amp } from "@amp-labs/ai/config";
+
+// Initialize with validation
+amp.init({
+  apiKey: "your-api-key",
+  projectId: "your-project-id",
+  integrationName: "your-integration",
+  groupRef: "your-group-ref"
+});
+
+// Runtime configuration switching (multi-tenant apps)
+amp.init({ apiKey: "tenant-specific-key" });
+```
+
+#### Type-Safe Configuration
+```typescript
+import type { CreateActionType, AmpersandConfig } from "@amp-labs/ai/config";
+
+const config: AmpersandConfig = {
+  apiKey: "your-key",
+  projectId: "your-project",
+  integrationName: "your-integration", 
+  groupRef: "your-group"
+};
+
+const contactData: CreateActionType = {
+  provider: "salesforce",
+  objectName: "Contact",
+  type: "create",
+  record: { Email: "user@example.com" },
+  groupRef: "account-123"
+};
 ```
 
 ## Ampersand MCP Server
@@ -77,7 +154,7 @@ If your MCP client supports headers:
     "@amp-labs/mcp-server": {
       "url": "https://mcp.withampersand.com/sse?project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
       "headers": {
-        "x-api-key": "VE56G7F452KZPHZRSTIJ4XTCZCDTNRDAKPVUCLA"
+        "x-api-key": "<AMPERSAND_API_KEY>"
       }
     }
   }
@@ -153,7 +230,7 @@ If your MCP client supports headers:
     "@amp-labs/mcp-server": {
       "url": "http://localhost:3001/sse?project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
       "headers": {
-        "x-api-key": "VE56G7F452KZPHZRSTIJ4XTCZCDTNRDAKPVUCLA"
+        "x-api-key": "<AMPERSAND_API_KEY>"
       }
     }
   }
