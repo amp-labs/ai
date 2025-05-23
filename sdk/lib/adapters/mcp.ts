@@ -4,8 +4,8 @@
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { z } from "zod";
-import { 
-  providerSchema, 
+import {
+  providerSchema,
   associationsSchema,
   executeAmpersandWrite,
   checkConnectionInputSchema,
@@ -30,33 +30,22 @@ import {
   OAuthInputType,
   ProxyInputType,
 } from "./common";
+import { amp, AmpersandConfig } from "../config";
 
 type MCPResponse = {
   content: Array<{ type: string; text: string }>;
   isError?: boolean;
 };
 
-type ClientSettings = {
-  project: string;
-  integrationName: string;
-  apiKey: string;
-  groupRef: string;
-};
-
 /**
  * Creates a write action tool for the MCP server.
  * This is a factory function that creates either a create or update tool based on the type parameter.
- * 
- * @param server - The MCP server instance
- * @param type - The type of write action ("create" or "update")
- * @param name - The name of the tool
- * @returns A configured MCP tool for performing write operations
  */
 export const createWriteActionTool = async (
   server: Server,
   type: "create" | "update",
   name: string,
-  settings: ClientSettings
+  config?: Partial<AmpersandConfig>
 ) => {
   // @ts-ignore
   return server.tool(
@@ -78,11 +67,9 @@ export const createWriteActionTool = async (
         objectName,
         type,
         record,
-        groupRef: settings.groupRef || groupRef,
+        groupRef,
         associations,
-        apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "",
-        projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "",
-        integrationName: settings.integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "",
+        config,
       });
 
       if (result.success) {
@@ -120,11 +107,8 @@ export const createWriteActionTool = async (
 
 /**
  * Creates a connection checking tool for the MCP server.
- * 
- * @param server - The MCP server instance
- * @returns A configured MCP tool for checking provider connections
  */
-export const createCheckConnectionTool = async (server: Server, settings: ClientSettings) => {
+export const createCheckConnectionTool = async (server: Server, config?: Partial<AmpersandConfig>) => {
   // @ts-ignore
   return server.tool(
     "check-connection",
@@ -132,7 +116,7 @@ export const createCheckConnectionTool = async (server: Server, settings: Client
     checkConnectionInputSchema.shape,
     async (params: CheckConnectionInputType): Promise<MCPResponse> => {
       try {
-        const res = await checkConnection({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
+        const res = await checkConnection({ ...params, config });
         if (res.found) {
           return {
             content: [
@@ -169,11 +153,8 @@ export const createCheckConnectionTool = async (server: Server, settings: Client
 
 /**
  * Creates an installation creation tool for the MCP server.
- * 
- * @param server - The MCP server instance
- * @returns A configured MCP tool for creating provider installations
  */
-export const createCreateInstallationTool = async (server: Server, settings: ClientSettings) => {
+export const createCreateInstallationTool = async (server: Server, config?: Partial<AmpersandConfig>) => {
   // @ts-ignore
   return server.tool(
     "create-installation",
@@ -181,7 +162,7 @@ export const createCreateInstallationTool = async (server: Server, settings: Cli
     createInstallationInputSchema.shape,
     async (params: CreateInstallationInputType): Promise<MCPResponse> => {
       try {
-        const res = await createInstallation({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
+        const res = await createInstallation({ ...params, config });
         return {
           content: [
             {
@@ -204,11 +185,8 @@ export const createCreateInstallationTool = async (server: Server, settings: Cli
 
 /**
  * Creates an installation checking tool for the MCP server.
- * 
- * @param server - The MCP server instance
- * @returns A configured MCP tool for checking provider installations
  */
-export const createCheckInstallationTool = async (server: Server, settings: ClientSettings) => {
+export const createCheckInstallationTool = async (server: Server, config?: Partial<AmpersandConfig>) => {
   // @ts-ignore
   return server.tool(
     "check-installation",
@@ -216,7 +194,7 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
     checkInstallationInputSchema.shape,
     async (params: CheckInstallationInputType): Promise<MCPResponse> => {
       try {
-        const res = await checkInstallation({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
+        const res = await checkInstallation({ ...params, config });
         if (res.found) {
           return {
             content: [
@@ -224,9 +202,9 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
             ],
           };
         }
-        return { content: [ { type: "text", text: `No installation found for ${params.provider}` } ] };
+        return { content: [{ type: "text", text: `No installation found for ${params.provider}` }] };
       } catch (err) {
-        return { isError: true, content: [ { type: "text", text: `Error: ${err instanceof Error ? err.message : err}` } ] };
+        return { isError: true, content: [{ type: "text", text: `Error: ${err instanceof Error ? err.message : err}` }] };
       }
     }
   );
@@ -234,11 +212,8 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
 
 /**
  * Creates an OAuth tool for the MCP server.
- * 
- * @param server - The MCP server instance
- * @returns A configured MCP tool for handling OAuth flows
  */
-export const createOAuthTool = async (server: Server, settings: ClientSettings) => {
+export const createOAuthTool = async (server: Server, config?: Partial<AmpersandConfig>) => {
   // @ts-ignore
   return server.tool(
     "oauth",
@@ -247,14 +222,20 @@ export const createOAuthTool = async (server: Server, settings: ClientSettings) 
     async (params: OAuthInputType): Promise<MCPResponse> => {
       const { query, provider, groupRef, consumerRef } = params;
       const finalConsumerRef = consumerRef || (crypto as any).randomUUID?.() || Math.random().toString(36).substring(2, 15);
-      const finalGroupRef = settings?.groupRef || groupRef || "";
-      const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID || "";
+      const ampConfig = config ? amp.init(config) : amp.get();
+      const finalGroupRef = groupRef || ampConfig.groupRef;
+
       let url = "";
       try {
         const response = await fetch("https://api.withampersand.com/v1/oauth-connect", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ provider, consumerRef: finalConsumerRef, groupRef: finalGroupRef, projectId }),
+          body: JSON.stringify({
+            provider,
+            consumerRef: finalConsumerRef,
+            groupRef: finalGroupRef,
+            projectId: ampConfig.projectId
+          }),
         });
         url = await response.text();
         return {
@@ -276,11 +257,8 @@ export const createOAuthTool = async (server: Server, settings: ClientSettings) 
 
 /**
  * Creates a proxy tool for the MCP server.
- * 
- * @param server - The MCP server instance
- * @returns A configured MCP tool for making proxy API calls
  */
-export const createProxyTool = async (server: Server, settings: ClientSettings) => {
+export const createProxyTool = async (server: Server, config?: Partial<AmpersandConfig>) => {
   // @ts-ignore
   return server.tool(
     "call-api",
@@ -289,18 +267,16 @@ export const createProxyTool = async (server: Server, settings: ClientSettings) 
     async (params: ProxyInputType): Promise<MCPResponse> => {
       const { provider, body, suffix, method, headers = {}, installationId } = params;
       try {
-        const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID || "";
-        const apiKey = settings?.apiKey || process.env.AMPERSAND_API_KEY || "";
-        const integrationName = settings?.integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "";
-        const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
+        const ampConfig = config ? amp.init(config) : amp.get();
+        const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, config));
 
         const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
           method,
           headers: {
             ...headers,
             "Content-Type": "application/json",
-            "x-amp-project-id": projectId,
-            "x-api-key": apiKey,
+            "x-amp-project-id": ampConfig.projectId,
+            "x-api-key": ampConfig.apiKey,
             "x-amp-proxy-version": "1",
             "x-amp-installation-id": finalInstallationId,
           },

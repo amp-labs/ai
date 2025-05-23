@@ -1,6 +1,7 @@
 import { Ampersand } from "@amp-labs/sdk-node-write";
 import { WriteRecordsResponse, WriteRecordsSyncWriteResponseSuccess } from "@amp-labs/sdk-node-write/models/operations";
 import { WriteResponse } from "../types";
+import { AmpersandConfig, amp } from "../../../config";
 
 interface WriteParams {
   objectName: string;
@@ -14,9 +15,7 @@ interface WriteParams {
       associationTypeId: number;
     }>;
   }>;
-  apiKey?: string;
-  projectId?: string;
-  integrationName?: string;
+  config?: Partial<AmpersandConfig>;
 }
 
 export async function executeAmpersandWrite({
@@ -25,21 +24,21 @@ export async function executeAmpersandWrite({
   record,
   groupRef,
   associations,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  config: configOverride,
 }: WriteParams): Promise<WriteResponse> {
   try {
+    const config = configOverride ? amp.init(configOverride) : amp.get();
+
     const writeSDK = new Ampersand({
-      apiKeyHeader: apiKey,
+      apiKeyHeader: config.apiKey,
     });
-    
+
     const writeData = {
-      projectIdOrName: projectId,
-      integrationId: integrationName,
+      projectIdOrName: config.projectId,
+      integrationId: config.integrationName,
       objectName,
       requestBody: {
-        groupRef,
+        groupRef: groupRef || config.groupRef,
         type,
         record,
         ...(associations && { associations }),
@@ -47,7 +46,7 @@ export async function executeAmpersandWrite({
     };
 
     const data: WriteRecordsResponse = await writeSDK.write.records(writeData);
-    
+
     return {
       success: true,
       status: "success",

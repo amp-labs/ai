@@ -1,11 +1,10 @@
 import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
 import { checkConnection } from "./connection";
+import { AmpersandConfig, amp } from "../../../config";
 
 interface CheckInstallationParams {
   provider: string;
-  apiKey?: string;
-  projectId?: string;
-  integrationName?: string;
+  config?: Partial<AmpersandConfig>;
 }
 
 export interface CheckInstallationResult {
@@ -18,9 +17,7 @@ interface CreateInstallationParams {
   provider: string;
   connectionId: string;
   groupRef: string;
-  apiKey?: string;
-  projectId?: string;
-  integrationName?: string;
+  config?: Partial<AmpersandConfig>;
 }
 
 export interface CreateInstallationResult {
@@ -34,18 +31,18 @@ export interface CreateInstallationResult {
  */
 export async function checkInstallation({
   provider,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  config: configOverride,
 }: CheckInstallationParams): Promise<CheckInstallationResult> {
   try {
+    const config = configOverride ? amp.init(configOverride) : amp.get();
+
     const client = new SDKNodePlatform({
-      apiKeyHeader: apiKey,
+      apiKeyHeader: config.apiKey,
     });
 
     const installations = await client.installations.list({
-      projectIdOrName: projectId,
-      integrationId: integrationName,
+      projectIdOrName: config.projectId,
+      integrationId: config.integrationName,
     });
 
     // @ts-ignore – Filter by provider (Ampersand lower-cases internally)
@@ -70,18 +67,18 @@ export async function createInstallation({
   provider,
   connectionId,
   groupRef,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  config: configOverride,
 }: CreateInstallationParams): Promise<CreateInstallationResult> {
   try {
+    const config = configOverride ? amp.init(configOverride) : amp.get();
+
     const client = new SDKNodePlatform({
-      apiKeyHeader: apiKey,
+      apiKeyHeader: config.apiKey,
     });
 
     const data = await client.installations.create({
-      projectIdOrName: projectId,
-      integrationId: integrationName,
+      projectIdOrName: config.projectId,
+      integrationId: config.integrationName,
       requestBody: {
         connectionId,
         groupRef,
@@ -107,15 +104,20 @@ export async function createInstallation({
 /**
  * Ensure an installation exists, creating one if necessary. Returns the installationId.
  */
-export async function ensureInstallationExists(provider: string, apiKey: string, projectId: string, integrationName: string): Promise<string> {
+export async function ensureInstallationExists(
+  provider: string,
+  config?: Partial<AmpersandConfig>
+): Promise<string> {
+  const finalConfig = config ? amp.init(config) : amp.get();
+
   // First, verify a connection exists and grab its identifiers
-  const connection = await checkConnection({ provider, apiKey, projectId });
+  const connection = await checkConnection({ provider, config: finalConfig });
   if (!connection.found || !connection.connectionId || !connection.groupRef) {
     throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
   }
 
   // Check existing installation list
-  const installation = await checkInstallation({ provider, apiKey, projectId, integrationName });
+  const installation = await checkInstallation({ provider, config: finalConfig });
   if (installation.found && installation.installationId) {
     return installation.installationId;
   }
@@ -125,9 +127,7 @@ export async function ensureInstallationExists(provider: string, apiKey: string,
     provider,
     connectionId: connection.connectionId,
     groupRef: connection.groupRef,
-    apiKey,
-    projectId,
-    integrationName,
+    config: finalConfig,
   });
 
   if (!createRes.created || !createRes.installationId) {

@@ -1,9 +1,9 @@
 import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
+import { AmpersandConfig, amp } from "../../../config";
 
 interface CheckConnectionParams {
   provider: string;
-  apiKey?: string;
-  projectId?: string;
+  config?: Partial<AmpersandConfig>;
 }
 
 export interface CheckConnectionResult {
@@ -19,16 +19,17 @@ export interface CheckConnectionResult {
  */
 export async function checkConnection({
   provider,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
+  config: configOverride,
 }: CheckConnectionParams): Promise<CheckConnectionResult> {
   try {
+    const config = configOverride ? amp.init(configOverride) : amp.get();
+
     const client = new SDKNodePlatform({
-      apiKeyHeader: apiKey,
+      apiKeyHeader: config.apiKey,
     });
 
     const connections = await client.connections.list({
-      projectIdOrName: projectId,
+      projectIdOrName: config.projectId,
       provider,
     });
 

@@ -44,6 +44,7 @@ import {
   ProxyInputType,
   ProxyOutputType,
 } from "./common";
+import { amp } from "../config";
 
 /**
  * This file contains shared schemas and tools for integrating with Ampersand
@@ -75,7 +76,7 @@ export const createRecordTool = createTool({
       objectName,
       type,
       record,
-      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+      groupRef,
       associations,
     });
     return {
@@ -110,7 +111,7 @@ export const updateRecordTool = createTool({
       objectName,
       type,
       record,
-      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+      groupRef,
       associations,
     });
     return {
@@ -158,7 +159,7 @@ export const createInstallationTool = createTool({
   outputSchema: createInstallationOutputSchema,
   execute: async ({ context }: { context: CreateInstallationInputType }): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = context;
-    const res = await createInstallation({ provider, connectionId, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef });
+    const res = await createInstallation({ provider, connectionId, groupRef });
     return res;
   },
 });
@@ -201,7 +202,7 @@ export const oauthTool = createTool({
   outputSchema: oauthOutputSchema,
   execute: async ({ context }: { context: OAuthInputType }): Promise<OAuthOutputType> => {
     const { provider, query, groupRef, consumerRef } = context;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
+    const config = amp.get();
 
     const options: RequestInit = {
       method: "POST",
@@ -209,8 +210,8 @@ export const oauthTool = createTool({
       body: JSON.stringify({
         provider,
         consumerRef,
-        groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
-        projectId,
+        groupRef: groupRef || config.groupRef,
+        projectId: config.projectId,
       }),
     };
 
@@ -247,18 +248,16 @@ export const proxyTool = createTool({
   outputSchema: proxyOutputSchema,
   execute: async ({ context }: { context: ProxyInputType }): Promise<ProxyOutputType> => {
     const { provider, body, suffix, method, headers = {}, installationId } = context;
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
-    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
+    const config = amp.get();
+    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider));
 
     const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
       method,
       headers: {
         ...headers,
         "Content-Type": "application/json",
-        "x-amp-project-id": projectId,
-        "x-api-key": apiKey,
+        "x-amp-project-id": config.projectId,
+        "x-api-key": config.apiKey,
         "x-amp-proxy-version": "1",
         "x-amp-installation-id": finalInstallationId,
       },
@@ -271,5 +270,5 @@ export const proxyTool = createTool({
       response: responseData,
     };
   },
-}); 
+});
 
