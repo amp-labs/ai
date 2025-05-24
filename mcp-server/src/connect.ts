@@ -5,6 +5,7 @@ import express, { Request, Response } from "express";
 import { detect } from "detect-port";
 
 const DEFAULT_PORT = 3001;
+const SSE_SERVER_VERSION = "v1";
 
 /**
  * Similar to https://github.com/modelcontextprotocol/typescript-sdk/pull/197/files
@@ -61,7 +62,7 @@ export async function connectServer(
 
   let currentTransport: SSEServerTransport | null = null;
 
-  app.get("/sse", async (req: Request, res: Response) => {
+  app.get(`/${SSE_SERVER_VERSION}/sse`, async (req: Request, res: Response) => {
     // Set headers for SSE
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -127,11 +128,11 @@ export async function connectServer(
   app.listen(port, () => {
     if (port !== DEFAULT_PORT) {
       console.error(
-        `Port ${DEFAULT_PORT} is already in use. Ampersand MCP Server running on SSE at http://localhost:${port}`
+        `Port ${DEFAULT_PORT} is already in use. Ampersand MCP Server running on SSE at http://localhost:${port}/${SSE_SERVER_VERSION}`
       );
     } else {
       console.error(
-        `Ampersand MCP Server running on SSE at http://localhost:${port}`
+        `Ampersand MCP Server running on SSE at http://localhost:${port}/${SSE_SERVER_VERSION}`
       );
     }
   });
