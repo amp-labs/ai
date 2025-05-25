@@ -44,6 +44,7 @@ import {
   ProxyInputType,
   ProxyOutputType,
 } from "./common";
+import { RuntimeContext } from "@mastra/core/runtime-context";
 
 /**
  * This file contains shared schemas and tools for integrating with Ampersand
@@ -55,7 +56,7 @@ import {
  * Creates a new record in the Ampersand system using Mastra.
  * @remarks
  * Uses the common executeAmpersandWrite function to perform the operation.
- * 
+ *
  * @param provider - The provider to create the record in
  * @param objectName - The name of the object to create
  * @param type - The type of operation (create)
@@ -69,14 +70,27 @@ export const createRecordTool = createTool({
   description: createRecordToolDescription,
   inputSchema: createActionSchema,
   outputSchema: writeOutputSchema,
-  execute: async ({ context }: { context: CreateActionType }): Promise<WriteOutputType> => {
-    const { provider, objectName, type, record, groupRef, associations } = context;
+  execute: async ({
+    context,
+    runtimeContext,
+  }: {
+    context: CreateActionType;
+    runtimeContext: RuntimeContext;
+  }): Promise<WriteOutputType> => {
+    const { provider, objectName, type, record, groupRef, associations } =
+      context;
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
-      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+      groupRef:
+        runtimeContext.get("AMPERSAND_GROUP_REF") ||
+        process.env.AMPERSAND_GROUP_REF ||
+        groupRef,
       associations,
+      apiKey: runtimeContext.get("AMPERSAND_API_KEY"),
+      projectId: runtimeContext.get("AMPERSAND_PROJECT_ID"),
+      integrationName: runtimeContext.get("AMPERSAND_INTEGRATION_NAME"),
     });
     return {
       status: result.status,
@@ -90,7 +104,7 @@ export const createRecordTool = createTool({
  * Updates an existing record in the Ampersand system using Mastra.
  * @remarks
  * Uses the common executeAmpersandWrite function to perform the operation.
- * 
+ *
  * @param provider - The provider to update the record in
  * @param objectName - The name of the object to update
  * @param type - The type of operation (update)
@@ -104,14 +118,27 @@ export const updateRecordTool = createTool({
   description: updateRecordToolDescription,
   inputSchema: updateActionSchema,
   outputSchema: writeOutputSchema,
-  execute: async ({ context }: { context: UpdateActionType }): Promise<WriteOutputType> => {
-    const { provider, objectName, type, record, groupRef, associations } = context;
+  execute: async ({
+    context,
+    runtimeContext,
+  }: {
+    context: UpdateActionType;
+    runtimeContext: RuntimeContext;
+  }): Promise<WriteOutputType> => {
+    const { provider, objectName, type, record, groupRef, associations } =
+      context;
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
-      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+      groupRef:
+        runtimeContext.get("AMPERSAND_GROUP_REF") ||
+        process.env.AMPERSAND_GROUP_REF ||
+        groupRef,
       associations,
+      apiKey: runtimeContext.get("AMPERSAND_API_KEY"),
+      projectId: runtimeContext.get("AMPERSAND_PROJECT_ID"),
+      integrationName: runtimeContext.get("AMPERSAND_INTEGRATION_NAME"),
     });
     return {
       status: result.status,
@@ -125,7 +152,7 @@ export const updateRecordTool = createTool({
  * Checks if there is an active connection for a provider using Mastra.
  * @remarks
  * Uses the common checkConnection function to verify the connection status.
- * 
+ *
  * @param provider - The provider to check connection for
  * @returns Connection status and details if found
  */
@@ -134,9 +161,19 @@ export const checkConnectionTool = createTool({
   description: checkConnectionToolDescription,
   inputSchema: checkConnectionInputSchema,
   outputSchema: checkConnectionOutputSchema,
-  execute: async ({ context }: { context: CheckConnectionInputType }): Promise<CheckConnectionOutputType> => {
+  execute: async ({
+    context,
+    runtimeContext,
+  }: {
+    context: CheckConnectionInputType;
+    runtimeContext: RuntimeContext;
+  }): Promise<CheckConnectionOutputType> => {
     const { provider } = context;
-    const result = await checkConnection({ provider });
+    const result = await checkConnection({
+      provider,
+      apiKey: runtimeContext.get("AMPERSAND_API_KEY"),
+      projectId: runtimeContext.get("AMPERSAND_PROJECT_ID"),
+    });
     return result;
   },
 });
@@ -145,7 +182,7 @@ export const checkConnectionTool = createTool({
  * Creates a new installation for a provider using Mastra.
  * @remarks
  * Uses the common createInstallation function to set up the installation.
- * 
+ *
  * @param provider - The provider to create installation for
  * @param connectionId - The ID of the connection
  * @param groupRef - The group reference
@@ -156,9 +193,25 @@ export const createInstallationTool = createTool({
   description: createInstallationToolDescription,
   inputSchema: createInstallationInputSchema,
   outputSchema: createInstallationOutputSchema,
-  execute: async ({ context }: { context: CreateInstallationInputType }): Promise<CreateInstallationOutputType> => {
+  execute: async ({
+    context,
+    runtimeContext,
+  }: {
+    context: CreateInstallationInputType;
+    runtimeContext: RuntimeContext;
+  }): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = context;
-    const res = await createInstallation({ provider, connectionId, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef });
+    const res = await createInstallation({
+      provider,
+      connectionId,
+      groupRef:
+        runtimeContext.get("AMPERSAND_GROUP_REF") ||
+        process.env.AMPERSAND_GROUP_REF ||
+        groupRef,
+      apiKey: runtimeContext.get("AMPERSAND_API_KEY"),
+      projectId: runtimeContext.get("AMPERSAND_PROJECT_ID"),
+      integrationName: runtimeContext.get("AMPERSAND_INTEGRATION_NAME"),
+    });
     return res;
   },
 });
@@ -167,7 +220,7 @@ export const createInstallationTool = createTool({
  * Checks if there is an active installation for a provider using Mastra.
  * @remarks
  * Uses the common checkInstallation function to verify the installation status.
- * 
+ *
  * @param provider - The provider to check installation for
  * @returns Installation status and details if found
  */
@@ -176,9 +229,20 @@ export const checkInstallationTool = createTool({
   description: checkInstallationToolDescription,
   inputSchema: checkInstallationInputSchema,
   outputSchema: checkInstallationOutputSchema,
-  execute: async ({ context }: { context: CheckInstallationInputType }): Promise<CheckInstallationOutputType> => {
+  execute: async ({
+    context,
+    runtimeContext,
+  }: {
+    context: CheckInstallationInputType;
+    runtimeContext: RuntimeContext;
+  }): Promise<CheckInstallationOutputType> => {
     const { provider } = context;
-    const res = await checkInstallation({ provider });
+    const res = await checkInstallation({
+      provider,
+      apiKey: runtimeContext.get("AMPERSAND_API_KEY"),
+      projectId: runtimeContext.get("AMPERSAND_PROJECT_ID"),
+      integrationName: runtimeContext.get("AMPERSAND_INTEGRATION_NAME"),
+    });
     return res;
   },
 });
@@ -187,7 +251,7 @@ export const checkInstallationTool = createTool({
  * Initiates OAuth flow for a provider using Mastra.
  * @remarks
  * Makes a direct API call to Ampersand's OAuth endpoint.
- * 
+ *
  * @param provider - The provider to authenticate with
  * @param query - The search query
  * @param groupRef - Optional group reference
@@ -199,7 +263,13 @@ export const oauthTool = createTool({
   description: oauthToolDescription,
   inputSchema: oauthInputSchema,
   outputSchema: oauthOutputSchema,
-  execute: async ({ context }: { context: OAuthInputType }): Promise<OAuthOutputType> => {
+  execute: async ({
+    context,
+    runtimeContext,
+  }: {
+    context: OAuthInputType;
+    runtimeContext: RuntimeContext;
+  }): Promise<OAuthOutputType> => {
     const { provider, query, groupRef, consumerRef } = context;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
 
@@ -209,14 +279,20 @@ export const oauthTool = createTool({
       body: JSON.stringify({
         provider,
         consumerRef,
-        groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+        groupRef:
+          runtimeContext.get("AMPERSAND_GROUP_REF") ||
+          process.env.AMPERSAND_GROUP_REF ||
+          groupRef,
         projectId,
       }),
     };
 
     let url = "";
     try {
-      const response = await fetch("https://api.withampersand.com/v1/oauth-connect", options);
+      const response = await fetch(
+        "https://api.withampersand.com/v1/oauth-connect",
+        options
+      );
       url = await response.text();
     } catch (err) {
       console.error("[Ampersand] OAuth error", err);
@@ -231,7 +307,7 @@ export const oauthTool = createTool({
  * Makes proxy API calls to Ampersand services using Mastra.
  * @remarks
  * Ensures installation exists before making the API call.
- * 
+ *
  * @param provider - The provider to make the API call to
  * @param body - The request body
  * @param suffix - The API endpoint suffix
@@ -245,12 +321,32 @@ export const proxyTool = createTool({
   description: proxyToolDescription,
   inputSchema: proxyInputSchema,
   outputSchema: proxyOutputSchema,
-  execute: async ({ context }: { context: ProxyInputType }): Promise<ProxyOutputType> => {
-    const { provider, body, suffix, method, headers = {}, installationId } = context;
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
-    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
+  execute: async ({
+    context,
+    runtimeContext,
+  }: {
+    context: ProxyInputType;
+    runtimeContext: RuntimeContext;
+  }): Promise<ProxyOutputType> => {
+    const {
+      provider,
+      body,
+      suffix,
+      method,
+      headers = {},
+      installationId,
+    } = context;
+    const apiKey = String(runtimeContext.get("AMPERSAND_API_KEY")) || String(process.env.AMPERSAND_API_KEY) || "";
+    const projectId = String(runtimeContext.get("AMPERSAND_PROJECT_ID")) || String(process.env.AMPERSAND_PROJECT_ID) || "";
+    const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
+    const finalInstallationId =
+      installationId ??
+      (await ensureInstallationExists(
+        provider,
+        apiKey,
+        projectId,
+        integrationName
+      ));
 
     const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
       method,
@@ -271,5 +367,4 @@ export const proxyTool = createTool({
       response: responseData,
     };
   },
-}); 
-
+});
