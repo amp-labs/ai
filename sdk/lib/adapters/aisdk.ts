@@ -16,7 +16,6 @@ import {
   createInstallationInputSchema,
   checkInstallationInputSchema,
   oauthInputSchema,
-  proxyInputSchema,
   checkConnection,
   createInstallation,
   checkInstallation,
@@ -25,7 +24,6 @@ import {
   createInstallationToolDescription,
   checkInstallationToolDescription,
   oauthToolDescription,
-  proxyToolDescription,
   CheckConnectionInputType,
   CheckConnectionOutputType,
   CreateInstallationInputType,
@@ -34,9 +32,12 @@ import {
   CheckInstallationOutputType,
   OAuthInputType,
   OAuthOutputType,
-  ProxyInputType,
-  ProxyOutputType,
-  WriteOutputType
+  WriteOutputType,
+  callApiToolDescription,
+  callApiInputSchema,
+  callApiOutputSchema,
+  CallApiInputType,
+  CallApiOutputType
 } from "./common";
 
 /**
@@ -190,10 +191,10 @@ export const oauthTool = tool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const proxyTool = tool({
-  description: proxyToolDescription,
-  parameters: proxyInputSchema,
-  execute: async (params: ProxyInputType): Promise<ProxyOutputType> => {
+export const callApiTool = tool({
+  description: callApiToolDescription,
+  parameters: callApiInputSchema,
+  execute: async (params: CallApiInputType): Promise<CallApiOutputType> => {
     const { provider, body, suffix, method, headers = {}, installationId } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";

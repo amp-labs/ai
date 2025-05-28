@@ -7,7 +7,7 @@ export const checkConnectionToolDescription = "Check if there is an active conne
 export const createInstallationToolDescription = "Create a new installation for a provider on Ampersand";
 export const checkInstallationToolDescription = "Check if an installation exists for a provider on Ampersand";
 export const oauthToolDescription = "Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL";
-export const proxyToolDescription = "Call provider APIs via the Ampersand proxy";
+export const callApiToolDescription = "Call provider APIs via the Ampersand callApi tool";
 
 // Schema for associations
 export const associationsSchema = z
@@ -115,16 +115,16 @@ export const oauthOutputSchema = z.object({
 });
 
 // Proxy call tool schemas
-export const proxyInputSchema = z.object({
+export const callApiInputSchema = z.object({
   provider: providerSchema,
   body: z.record(z.any()).optional().describe("Body of the request"),
   suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
   method: z.string().describe("HTTP method to use"),
   headers: z.record(z.string()).optional().describe("Headers to send with the request"),
-  installationId: z.string().optional().describe("The installation ID to use for the proxy call."),
+  installationId: z.string().optional().describe("The installation ID to use for the API call."),
 });
 
-export const proxyOutputSchema = z.object({
+export const callApiOutputSchema = z.object({
   status: z.number(),
   response: z.any(),
 });
@@ -144,5 +144,5 @@ export type CheckInstallationInputType = z.infer<typeof checkInstallationInputSc
 export type CheckInstallationOutputType = z.infer<typeof checkInstallationOutputSchema>;
 export type OAuthInputType = z.infer<typeof oauthInputSchema>;
 export type OAuthOutputType = z.infer<typeof oauthOutputSchema>;
-export type ProxyInputType = z.infer<typeof proxyInputSchema>;
-export type ProxyOutputType = z.infer<typeof proxyOutputSchema>; 
+export type CallApiInputType = z.infer<typeof callApiInputSchema>;
+export type CallApiOutputType = z.infer<typeof callApiOutputSchema>; 

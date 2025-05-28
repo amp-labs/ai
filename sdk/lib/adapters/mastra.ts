@@ -20,8 +20,6 @@ import {
   checkInstallationOutputSchema,
   oauthInputSchema,
   oauthOutputSchema,
-  proxyInputSchema,
-  proxyOutputSchema,
   createInstallation,
   checkInstallation,
   ensureInstallationExists,
@@ -29,7 +27,6 @@ import {
   createInstallationToolDescription,
   checkInstallationToolDescription,
   oauthToolDescription,
-  proxyToolDescription,
   CreateActionType,
   UpdateActionType,
   WriteOutputType,
@@ -41,8 +38,11 @@ import {
   CheckInstallationOutputType,
   OAuthInputType,
   OAuthOutputType,
-  ProxyInputType,
-  ProxyOutputType,
+  callApiToolDescription,
+  callApiInputSchema,
+  callApiOutputSchema,
+  CallApiInputType,
+  CallApiOutputType,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 
@@ -316,37 +316,23 @@ export const oauthTool = createTool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const proxyTool = createTool({
+export const callApiTool = createTool({
   id: "call-api",
-  description: proxyToolDescription,
-  inputSchema: proxyInputSchema,
-  outputSchema: proxyOutputSchema,
+  description: callApiToolDescription,
+  inputSchema: callApiInputSchema,
+  outputSchema: callApiOutputSchema,
   execute: async ({
     context,
     runtimeContext,
   }: {
-    context: ProxyInputType;
+    context: CallApiInputType;
     runtimeContext: RuntimeContext;
-  }): Promise<ProxyOutputType> => {
-    const {
-      provider,
-      body,
-      suffix,
-      method,
-      headers = {},
-      installationId,
-    } = context;
-    const apiKey = String(runtimeContext.get("AMPERSAND_API_KEY")) || String(process.env.AMPERSAND_API_KEY) || "";
-    const projectId = String(runtimeContext.get("AMPERSAND_PROJECT_ID")) || String(process.env.AMPERSAND_PROJECT_ID) || "";
-    const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
-    const finalInstallationId =
-      installationId ??
-      (await ensureInstallationExists(
-        provider,
-        apiKey,
-        projectId,
-        integrationName
-      ));
+  }): Promise<CallApiOutputType> => {
+    const { provider, body, suffix, method, headers, installationId } = context;
+    const projectId = runtimeContext.get("AMPERSAND_PROJECT_ID") || process.env.AMPERSAND_PROJECT_ID;
+    const apiKey = runtimeContext.get("AMPERSAND_API_KEY");
+    const integrationName = runtimeContext.get("AMPERSAND_INTEGRATION_NAME");
+    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
 
     const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
       method,

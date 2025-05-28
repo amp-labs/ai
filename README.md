@@ -128,11 +128,11 @@ If your MCP client does not support headers, you can pass the API key in the que
 
 ### Install and build
 
-Install dependencies 
+Install dependencies
 
 `pnpm i`
 
-Building AI SDK 
+Building AI SDK
 
 `pnpm -F @amp-labs/ai build`
 
