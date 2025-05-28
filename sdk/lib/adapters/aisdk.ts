@@ -182,7 +182,7 @@ export const oauthTool = tool({
 });
 
 /**
- * Makes proxy API calls to Ampersand services using Vercel AI SDK.
+ * Making authenticated API calls to the providers using Vercel AI SDK.
  * @param provider - The provider to make the API call to
  * @param body - The request body
  * @param suffix - The API endpoint suffix

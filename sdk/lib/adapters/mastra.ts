@@ -304,7 +304,7 @@ export const oauthTool = createTool({
 });
 
 /**
- * Makes proxy API calls to Ampersand services using Mastra.
+ * Making authenticated API calls to providers using Mastra.
  * @remarks
  * Ensures installation exists before making the API call.
  *
