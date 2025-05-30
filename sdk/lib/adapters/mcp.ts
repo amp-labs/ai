@@ -14,7 +14,6 @@ import {
   createInstallationInputSchema,
   checkInstallationInputSchema,
   oauthInputSchema,
-  proxyInputSchema,
   checkConnection,
   createInstallation,
   checkInstallation,
@@ -23,14 +22,15 @@ import {
   createInstallationToolDescription,
   checkInstallationToolDescription,
   oauthToolDescription,
-  proxyToolDescription,
   CreateActionType,
   UpdateActionType,
   CheckConnectionInputType,
   CreateInstallationInputType,
   CheckInstallationInputType,
   OAuthInputType,
-  ProxyInputType,
+  sendRequestToolDescription,
+  sendRequestInputSchema,
+  SendRequestInputType,
 } from "./common";
 
 type MCPResponse = {
@@ -281,18 +281,18 @@ export const createOAuthTool = async (server: Server, settings: ClientSettings) 
 };
 
 /**
- * Creates a proxy tool for the MCP server.
+ * Creates a send request tool for the MCP server.
  * 
  * @param server - The MCP server instance
- * @returns A configured MCP tool for making proxy API calls
+ * @returns A configured MCP tool for making API calls
  */
-export const createProxyTool = async (server: Server, settings: ClientSettings) => {
+export const createSendRequestTool = async (server: Server, settings: ClientSettings) => {
   // @ts-ignore
   return server.tool(
-    "call-api",
-    proxyToolDescription,
-    proxyInputSchema.shape,
-    async (params: ProxyInputType): Promise<MCPResponse> => {
+    "send-request",
+    sendRequestToolDescription,
+    sendRequestInputSchema.shape,
+    async (params: SendRequestInputType): Promise<MCPResponse> => {
       const { provider, body, suffix, method, headers = {}, installationId } = params;
       try {
         const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID || "";

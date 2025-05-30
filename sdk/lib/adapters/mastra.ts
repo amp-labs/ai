@@ -20,8 +20,6 @@ import {
   checkInstallationOutputSchema,
   oauthInputSchema,
   oauthOutputSchema,
-  proxyInputSchema,
-  proxyOutputSchema,
   createInstallation,
   checkInstallation,
   ensureInstallationExists,
@@ -29,7 +27,6 @@ import {
   createInstallationToolDescription,
   checkInstallationToolDescription,
   oauthToolDescription,
-  proxyToolDescription,
   CreateActionType,
   UpdateActionType,
   WriteOutputType,
@@ -41,8 +38,11 @@ import {
   CheckInstallationOutputType,
   OAuthInputType,
   OAuthOutputType,
-  ProxyInputType,
-  ProxyOutputType,
+  sendRequestToolDescription,
+  sendRequestInputSchema,
+  sendRequestOutputSchema,
+  SendRequestInputType,
+  SendRequestOutputType,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 
@@ -304,7 +304,7 @@ export const oauthTool = createTool({
 });
 
 /**
- * Makes proxy API calls to Ampersand services using Mastra.
+ * Making authenticated API calls to providers using Mastra.
  * @remarks
  * Ensures installation exists before making the API call.
  *
@@ -316,18 +316,18 @@ export const oauthTool = createTool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const proxyTool = createTool({
-  id: "call-api",
-  description: proxyToolDescription,
-  inputSchema: proxyInputSchema,
-  outputSchema: proxyOutputSchema,
+export const sendRequestTool = createTool({
+  id: "send-request",
+  description: sendRequestToolDescription,
+  inputSchema: sendRequestInputSchema,
+  outputSchema: sendRequestOutputSchema,
   execute: async ({
     context,
     runtimeContext,
   }: {
-    context: ProxyInputType;
+    context: SendRequestInputType;
     runtimeContext: RuntimeContext;
-  }): Promise<ProxyOutputType> => {
+  }): Promise<SendRequestOutputType> => {
     const {
       provider,
       body,
