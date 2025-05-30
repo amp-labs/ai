@@ -328,11 +328,25 @@ export const callApiTool = createTool({
     context: CallApiInputType;
     runtimeContext: RuntimeContext;
   }): Promise<CallApiOutputType> => {
-    const { provider, body, suffix, method, headers, installationId } = context;
-    const projectId = runtimeContext.get("AMPERSAND_PROJECT_ID") || process.env.AMPERSAND_PROJECT_ID;
-    const apiKey = runtimeContext.get("AMPERSAND_API_KEY");
-    const integrationName = runtimeContext.get("AMPERSAND_INTEGRATION_NAME");
-    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
+    const {
+      provider,
+      body,
+      suffix,
+      method,
+      headers = {},
+      installationId,
+    } = context;
+    const apiKey = String(runtimeContext.get("AMPERSAND_API_KEY")) || String(process.env.AMPERSAND_API_KEY) || "";
+    const projectId = String(runtimeContext.get("AMPERSAND_PROJECT_ID")) || String(process.env.AMPERSAND_PROJECT_ID) || "";
+    const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
+    const finalInstallationId =
+      installationId ??
+      (await ensureInstallationExists(
+        provider,
+        apiKey,
+        projectId,
+        integrationName
+      ));
 
     const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
       method,
