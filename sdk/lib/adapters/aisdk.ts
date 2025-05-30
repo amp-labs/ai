@@ -33,11 +33,11 @@ import {
   OAuthInputType,
   OAuthOutputType,
   WriteOutputType,
-  callApiToolDescription,
-  callApiInputSchema,
-  callApiOutputSchema,
-  CallApiInputType,
-  CallApiOutputType
+  sendRequestToolDescription,
+  sendRequestInputSchema,
+  sendRequestOutputSchema,
+  SendRequestInputType,
+  SendRequestOutputType,
 } from "./common";
 
 /**
@@ -191,10 +191,10 @@ export const oauthTool = tool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const callApiTool = tool({
-  description: callApiToolDescription,
-  parameters: callApiInputSchema,
-  execute: async (params: CallApiInputType): Promise<CallApiOutputType> => {
+export const sendRequestTool = tool({
+  description: sendRequestToolDescription,
+  parameters: sendRequestInputSchema,
+  execute: async (params: SendRequestInputType): Promise<SendRequestOutputType> => {
     const { provider, body, suffix, method, headers = {}, installationId } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";

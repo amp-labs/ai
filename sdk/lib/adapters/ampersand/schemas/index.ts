@@ -7,7 +7,7 @@ export const checkConnectionToolDescription = "Check if there is an active conne
 export const createInstallationToolDescription = "Create a new installation for a provider on Ampersand";
 export const checkInstallationToolDescription = "Check if an installation exists for a provider on Ampersand";
 export const oauthToolDescription = "Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL";
-export const callApiToolDescription = "Call provider APIs via the Ampersand callApi tool";
+export const sendRequestToolDescription = "Call provider APIs via the Ampersand sendRequest tool";
 
 // Schema for associations
 export const associationsSchema = z
@@ -115,7 +115,7 @@ export const oauthOutputSchema = z.object({
 });
 
 // Proxy call tool schemas
-export const callApiInputSchema = z.object({
+export const sendRequestInputSchema = z.object({
   provider: providerSchema,
   body: z.record(z.any()).optional().describe("Body of the request"),
   suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
@@ -124,11 +124,10 @@ export const callApiInputSchema = z.object({
   installationId: z.string().optional().describe("The installation ID to use for the API call."),
 });
 
-export const callApiOutputSchema = z.object({
+export const sendRequestOutputSchema = z.object({
   status: z.number(),
   response: z.any(),
 });
-
 
 // Infered type definitions
 export type AssociationsType = z.infer<typeof associationsSchema>;
@@ -144,5 +143,5 @@ export type CheckInstallationInputType = z.infer<typeof checkInstallationInputSc
 export type CheckInstallationOutputType = z.infer<typeof checkInstallationOutputSchema>;
 export type OAuthInputType = z.infer<typeof oauthInputSchema>;
 export type OAuthOutputType = z.infer<typeof oauthOutputSchema>;
-export type CallApiInputType = z.infer<typeof callApiInputSchema>;
-export type CallApiOutputType = z.infer<typeof callApiOutputSchema>; 
+export type SendRequestInputType = z.infer<typeof sendRequestInputSchema>;
+export type SendRequestOutputType = z.infer<typeof sendRequestOutputSchema>; 

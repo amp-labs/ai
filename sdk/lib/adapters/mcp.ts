@@ -28,9 +28,9 @@ import {
   CreateInstallationInputType,
   CheckInstallationInputType,
   OAuthInputType,
-  callApiToolDescription,
-  callApiInputSchema,
-  CallApiInputType,
+  sendRequestToolDescription,
+  sendRequestInputSchema,
+  SendRequestInputType,
 } from "./common";
 
 type MCPResponse = {
@@ -286,13 +286,13 @@ export const createOAuthTool = async (server: Server, settings: ClientSettings) 
  * @param server - The MCP server instance
  * @returns A configured MCP tool for making API calls
  */
-export const createCallApiTool = async (server: Server, settings: ClientSettings) => {
+export const createSendRequestTool = async (server: Server, settings: ClientSettings) => {
   // @ts-ignore
   return server.tool(
-    "call-api",
-    callApiToolDescription,
-    callApiInputSchema.shape,
-    async (params: CallApiInputType): Promise<MCPResponse> => {
+    "send-request",
+    sendRequestToolDescription,
+    sendRequestInputSchema.shape,
+    async (params: SendRequestInputType): Promise<MCPResponse> => {
       const { provider, body, suffix, method, headers = {}, installationId } = params;
       try {
         const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID || "";

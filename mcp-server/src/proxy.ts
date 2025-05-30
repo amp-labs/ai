@@ -4,14 +4,14 @@ import { ensureConnectionExists } from "./connectionManager";
 import { providerSchema } from "./schemas";
 import { ClientSettings } from ".";
 
-export async function createCallApiTool(
+export async function createSendRequestTool(
   server: Server,
   settings?: ClientSettings
 ): Promise<void> {
   // @ts-ignore
   server.tool(
-    "call-api",
-    `Call provider APIs via the Ampersand`,
+    "send-request",
+    `Call provider APIs via the Ampersand sendRequest tool`,
     {
       provider: providerSchema,
       body: z
@@ -48,7 +48,7 @@ export async function createCallApiTool(
       try {
         installationId = installationId || (await ensureConnectionExists(provider, settings));
         console.log(
-          "[CALL-API] Call:",
+          "[SEND-REQUEST] Call:",
           installationId,
           body,
           settings?.project,
@@ -74,12 +74,12 @@ export async function createCallApiTool(
           }
         );
         const data = await response.text();
-        console.log("CallApi request to", provider, "returned", data);
+        console.log("SendRequest to", provider, "returned", data);
         return {
           content: [
             {
               type: "text",
-              text: `CallApi request to ${provider} returned ${JSON.stringify(
+              text: `SendRequest to ${provider} returned ${JSON.stringify(
                 data
               )}`,
             },
@@ -94,7 +94,7 @@ export async function createCallApiTool(
           ],
         };
       } catch (error) {
-        console.error("Error in callApi tool", error);
+        console.error("Error in sendRequest tool", error);
         return {
           isError: true,
           content: [

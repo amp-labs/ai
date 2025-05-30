@@ -38,11 +38,11 @@ import {
   CheckInstallationOutputType,
   OAuthInputType,
   OAuthOutputType,
-  callApiToolDescription,
-  callApiInputSchema,
-  callApiOutputSchema,
-  CallApiInputType,
-  CallApiOutputType,
+  sendRequestToolDescription,
+  sendRequestInputSchema,
+  sendRequestOutputSchema,
+  SendRequestInputType,
+  SendRequestOutputType,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 
@@ -316,18 +316,18 @@ export const oauthTool = createTool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const callApiTool = createTool({
-  id: "call-api",
-  description: callApiToolDescription,
-  inputSchema: callApiInputSchema,
-  outputSchema: callApiOutputSchema,
+export const sendRequestTool = createTool({
+  id: "send-request",
+  description: sendRequestToolDescription,
+  inputSchema: sendRequestInputSchema,
+  outputSchema: sendRequestOutputSchema,
   execute: async ({
     context,
     runtimeContext,
   }: {
-    context: CallApiInputType;
+    context: SendRequestInputType;
     runtimeContext: RuntimeContext;
-  }): Promise<CallApiOutputType> => {
+  }): Promise<SendRequestOutputType> => {
     const {
       provider,
       body,
