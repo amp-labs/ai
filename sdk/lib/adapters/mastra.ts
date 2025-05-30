@@ -363,9 +363,9 @@ export const sendReadRequestTool = createTool({
   outputSchema: sendRequestOutputSchema,
   execute: async ({ context, runtimeContext }) => {
     const { provider, suffix, headers = {}, installationId } = context;
-    const apiKey = String(runtimeContext.get("AMPERSAND_API_KEY")) || String(process.env.AMPERSAND_API_KEY) || "";
-    const projectId = String(runtimeContext.get("AMPERSAND_PROJECT_ID")) || String(process.env.AMPERSAND_PROJECT_ID) || "";
-    const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
+    const apiKey = (runtimeContext.get("AMPERSAND_API_KEY") ?? process.env.AMPERSAND_API_KEY)?.toString() || "";
+    const projectId = (runtimeContext.get("AMPERSAND_PROJECT_ID") ?? process.env.AMPERSAND_PROJECT_ID)?.toString() || "";
+    const integrationName = (runtimeContext.get("AMPERSAND_INTEGRATION_NAME") ?? process.env.AMPERSAND_INTEGRATION_NAME)?.toString() || "";
     return callAmpersandProxy({
       provider,
       suffix,
