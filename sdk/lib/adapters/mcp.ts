@@ -281,7 +281,7 @@ export const createOAuthTool = async (server: Server, settings: ClientSettings) 
 };
 
 /**
- * Creates a call API tool for the MCP server.
+ * Creates a send request tool for the MCP server.
  * 
  * @param server - The MCP server instance
  * @returns A configured MCP tool for making API calls
