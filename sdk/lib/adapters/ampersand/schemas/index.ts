@@ -8,6 +8,7 @@ export const createInstallationToolDescription = "Create a new installation for 
 export const checkInstallationToolDescription = "Check if an installation exists for a provider on Ampersand";
 export const oauthToolDescription = "Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL";
 export const sendRequestToolDescription = "Call provider APIs via the Ampersand sendRequest tool";
+export const sendReadRequestToolDescription = "Call provider APIs via the Ampersand sendReadRequest tool (GET only)";
 
 // Schema for associations
 export const associationsSchema = z
@@ -129,6 +130,13 @@ export const sendRequestOutputSchema = z.object({
   response: z.any(),
 });
 
+export const sendReadRequestInputSchema = z.object({
+  provider: providerSchema,
+  suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
+  headers: z.record(z.string()).optional().describe("Headers to send with the request"),
+  installationId: z.string().optional().describe("The installation ID to use for the API call."),
+});
+
 // Infered type definitions
 export type AssociationsType = z.infer<typeof associationsSchema>;
 export type ProviderType = z.infer<typeof providerSchema>;
@@ -144,4 +152,5 @@ export type CheckInstallationOutputType = z.infer<typeof checkInstallationOutput
 export type OAuthInputType = z.infer<typeof oauthInputSchema>;
 export type OAuthOutputType = z.infer<typeof oauthOutputSchema>;
 export type SendRequestInputType = z.infer<typeof sendRequestInputSchema>;
-export type SendRequestOutputType = z.infer<typeof sendRequestOutputSchema>; 
+export type SendRequestOutputType = z.infer<typeof sendRequestOutputSchema>;
+export type SendReadRequestInputType = z.infer<typeof sendReadRequestInputSchema>; 

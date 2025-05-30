@@ -108,3 +108,72 @@ export async function createSendRequestTool(
     }
   );
 }
+
+export async function createSendReadRequestTool(
+  server: Server,
+  settings?: ClientSettings
+): Promise<void> {
+  // @ts-ignore
+  server.tool(
+    "send-read-request",
+    `Call provider APIs via the Ampersand sendReadRequest tool`,
+    {
+      provider: providerSchema,
+      suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
+      headers: z
+        .record(z.string(), z.string())
+        .describe("Headers to send with the request"),
+      installationId: z
+        .string()
+        .optional()
+        .describe(
+          "The installation ID to use for the API call. If not provided, get installation ID by getting the connection or creating a new connection."
+        ),
+    },
+    async ({
+      suffix,
+      headers,
+      installationId,
+      provider,
+    }: {
+      suffix: string;
+      headers: Record<string, string>;
+      installationId: string;
+      provider: string;
+    }) => {
+      try {
+        installationId = installationId || (await ensureConnectionExists(provider, settings));
+        const response = await fetch(
+          `https://proxy.withampersand.com/${suffix}`,
+          {
+            method: "GET",
+            headers: {
+              ...headers,
+              "Content-Type": "application/json",
+              "x-amp-project-id": settings?.project || "",
+              "x-api-key": settings?.apiKey || "",
+              "x-amp-proxy-version": "1",
+              "x-amp-installation-id": installationId,
+            },
+          }
+        );
+        const data = await response.text();
+        return {
+          content: [
+            { type: "text", text: `SendReadRequest to ${provider} returned ${JSON.stringify(data)}` },
+            { type: "text", text: `Status: ${response.status}` },
+            { type: "text", text: `Response: ${JSON.stringify(data)}` },
+          ],
+        };
+      } catch (error) {
+        console.error("Error in sendReadRequest tool", error);
+        return {
+          isError: true,
+          content: [
+            { type: "text", text: `Error: ${error}` },
+          ],
+        };
+      }
+    }
+  );
+}

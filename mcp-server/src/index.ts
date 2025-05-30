@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/node";
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
-import { createSendRequestTool } from './proxy';
+import { createSendRequestTool, createSendReadRequestTool } from './proxy';
 import { createAuthTool } from './oAuth';
 import { createCreateTool, createUpdateTool } from './write';
 import express from 'express';
@@ -32,6 +32,7 @@ async function main(): Promise<express.Application | undefined> {
     await createSearchTool(server);
     await createAuthTool(server, clientSettings);
     await createSendRequestTool(server, clientSettings);
+    await createSendReadRequestTool(server, clientSettings);
     await createConnectionManagerTools(server, clientSettings);
     await createCreateTool(server, clientSettings);
     await createUpdateTool(server, clientSettings);
