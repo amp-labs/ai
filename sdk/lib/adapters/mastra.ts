@@ -47,6 +47,7 @@ import {
   sendReadRequestInputSchema,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
+import { callAmpersandProxy } from "./ampersand/core/request";
 
 /**
  * This file contains shared schemas and tools for integrating with Ampersand
@@ -341,33 +342,17 @@ export const sendRequestTool = createTool({
     const apiKey = String(runtimeContext.get("AMPERSAND_API_KEY")) || String(process.env.AMPERSAND_API_KEY) || "";
     const projectId = String(runtimeContext.get("AMPERSAND_PROJECT_ID")) || String(process.env.AMPERSAND_PROJECT_ID) || "";
     const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
-    const finalInstallationId =
-      installationId ??
-      (await ensureInstallationExists(
-        provider,
-        apiKey,
-        projectId,
-        integrationName
-      ));
-
-    const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
+    return callAmpersandProxy({
+      provider,
+      suffix,
       method,
-      headers: {
-        ...headers,
-        "Content-Type": "application/json",
-        "x-amp-project-id": projectId,
-        "x-api-key": apiKey,
-        "x-amp-proxy-version": "1",
-        "x-amp-installation-id": finalInstallationId,
-      },
-      body: body ? JSON.stringify(body) : undefined,
+      headers,
+      installationId,
+      apiKey,
+      projectId,
+      integrationName,
+      body,
     });
-
-    const responseData = await response.json();
-    return {
-      status: response.status,
-      response: responseData,
-    };
   },
 });
 
@@ -381,31 +366,15 @@ export const sendReadRequestTool = createTool({
     const apiKey = String(runtimeContext.get("AMPERSAND_API_KEY")) || String(process.env.AMPERSAND_API_KEY) || "";
     const projectId = String(runtimeContext.get("AMPERSAND_PROJECT_ID")) || String(process.env.AMPERSAND_PROJECT_ID) || "";
     const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
-    const finalInstallationId =
-      installationId ??
-      (await ensureInstallationExists(
-        provider,
-        apiKey,
-        projectId,
-        integrationName
-      ));
-
-    const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
+    return callAmpersandProxy({
+      provider,
+      suffix,
       method: "GET",
-      headers: {
-        ...headers,
-        "Content-Type": "application/json",
-        "x-amp-project-id": projectId,
-        "x-api-key": apiKey,
-        "x-amp-proxy-version": "1",
-        "x-amp-installation-id": finalInstallationId,
-      },
+      headers,
+      installationId,
+      apiKey,
+      projectId,
+      integrationName,
     });
-
-    const responseData = await response.json();
-    return {
-      status: response.status,
-      response: responseData,
-    };
   },
 });

@@ -119,7 +119,7 @@ export const oauthOutputSchema = z.object({
 export const sendRequestInputSchema = z.object({
   provider: providerSchema,
   body: z.record(z.any()).optional().describe("Body of the request"),
-  suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
+  suffix: z.string().describe("Suffix of the request URL, without the leading slash."),
   method: z.string().describe("HTTP method to use"),
   headers: z.record(z.string()).optional().describe("Headers to send with the request"),
   installationId: z.string().optional().describe("The installation ID to use for the API call."),
@@ -132,7 +132,7 @@ export const sendRequestOutputSchema = z.object({
 
 export const sendReadRequestInputSchema = z.object({
   provider: providerSchema,
-  suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
+  suffix: z.string().describe("Suffix of the request URL, without the leading slash."),
   headers: z.record(z.string()).optional().describe("Headers to send with the request"),
   installationId: z.string().optional().describe("The installation ID to use for the API call."),
 });
@@ -153,4 +153,4 @@ export type OAuthInputType = z.infer<typeof oauthInputSchema>;
 export type OAuthOutputType = z.infer<typeof oauthOutputSchema>;
 export type SendRequestInputType = z.infer<typeof sendRequestInputSchema>;
 export type SendRequestOutputType = z.infer<typeof sendRequestOutputSchema>;
-export type SendReadRequestInputType = z.infer<typeof sendReadRequestInputSchema>; 
+export type SendReadRequestInputType = z.infer<typeof sendReadRequestInputSchema>;

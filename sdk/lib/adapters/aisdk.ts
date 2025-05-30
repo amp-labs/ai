@@ -40,8 +40,10 @@ import {
   SendRequestOutputType,
   sendReadRequestToolDescription,
   sendReadRequestInputSchema,
+  SendReadRequestInputType,
 } from "./common";
 import { z } from "zod";
+import { callAmpersandProxy } from "./ampersand/core/request";
 
 /**
  * Creates a new record in the Ampersand system using Vercel AI SDK.
@@ -202,56 +204,38 @@ export const sendRequestTool = tool({
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";
     const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
-    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
-
-    const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
+    return callAmpersandProxy({
+      provider,
+      suffix,
       method,
-      headers: {
-        ...headers,
-        "Content-Type": "application/json",
-        "x-amp-project-id": projectId,
-        "x-api-key": apiKey,
-        "x-amp-proxy-version": "1",
-        "x-amp-installation-id": finalInstallationId,
-      },
-      body: body ? JSON.stringify(body) : undefined,
+      headers,
+      installationId,
+      apiKey,
+      projectId,
+      integrationName,
+      body,
     });
-
-    const responseData = await response.json();
-    return {
-      status: response.status,
-      response: responseData,
-    };
   },
 });
 
 export const sendReadRequestTool = tool({
   description: sendReadRequestToolDescription,
   parameters: sendReadRequestInputSchema,
-  execute: async (params) => {
+  execute: async (params: SendReadRequestInputType): Promise<SendRequestOutputType> => {
     const { provider, suffix, headers = {}, installationId } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";
     const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
-    const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
-
-    const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
+    return callAmpersandProxy({
+      provider,
+      suffix,
       method: "GET",
-      headers: {
-        ...headers,
-        "Content-Type": "application/json",
-        "x-amp-project-id": projectId,
-        "x-api-key": apiKey,
-        "x-amp-proxy-version": "1",
-        "x-amp-installation-id": finalInstallationId,
-      },
+      headers,
+      installationId,
+      apiKey,
+      projectId,
+      integrationName,
     });
-
-    const responseData = await response.json();
-    return {
-      status: response.status,
-      response: responseData,
-    };
   },
 });
 
