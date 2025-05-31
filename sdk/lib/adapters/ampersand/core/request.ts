@@ -10,26 +10,24 @@ export async function callAmpersandProxy({
   projectId,
   integrationName,
   body,
-  ensureInstall = true,
 }: {
   provider: string;
   suffix: string;
   method?: string;
   headers?: Record<string, string>;
   installationId?: string;
-  apiKey?: string;
-  projectId?: string;
-  integrationName?: string;
+  apiKey: string;
+  projectId: string;
+  integrationName: string;
   body?: Record<string, any>;
-  ensureInstall?: boolean;
 }) {
   let finalInstallationId = installationId;
-  if (ensureInstall && !finalInstallationId) {
+  if (!finalInstallationId) {
     finalInstallationId = await ensureInstallationExists(
       provider,
-      apiKey || "",
-      projectId || "",
-      integrationName || ""
+      apiKey,
+      projectId,
+      integrationName,
     );
   }
   const fetchOptions: any = {
@@ -37,8 +35,8 @@ export async function callAmpersandProxy({
     headers: {
       ...headers,
       "Content-Type": "application/json",
-      "x-amp-project-id": projectId || "",
-      "x-api-key": apiKey || "",
+      "x-amp-project-id": projectId,
+      "x-api-key": apiKey,
       "x-amp-proxy-version": "1",
       "x-amp-installation-id": finalInstallationId,
     },
