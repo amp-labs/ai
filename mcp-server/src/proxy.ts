@@ -7,7 +7,7 @@ import { ClientSettings } from ".";
 async function callAmpersandProxy({
   provider,
   suffix,
-  method = "GET",
+  method,
   headers = {},
   installationId,
   settings,
@@ -15,7 +15,7 @@ async function callAmpersandProxy({
 }: {
   provider: string;
   suffix: string;
-  method?: string;
+  method: string;
   headers?: Record<string, string>;
   installationId?: string;
   settings?: ClientSettings;
