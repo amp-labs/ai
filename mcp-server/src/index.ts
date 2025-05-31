@@ -1,7 +1,9 @@
+import "./instrument";
+import * as Sentry from "@sentry/node";
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
-import { createProxyTool } from './proxy';
+import { createSendRequestTool } from './proxy';
 import { createAuthTool } from './oAuth';
 import { createCreateTool, createUpdateTool } from './write';
 import express from 'express';
@@ -29,7 +31,7 @@ async function main(): Promise<express.Application | undefined> {
     const server = initialize() as Server;
     await createSearchTool(server);
     await createAuthTool(server, clientSettings);
-    await createProxyTool(server, clientSettings);
+    await createSendRequestTool(server, clientSettings);
     await createConnectionManagerTools(server, clientSettings);
     await createCreateTool(server, clientSettings);
     await createUpdateTool(server, clientSettings);
@@ -43,6 +45,7 @@ try {
     mcpApp = main();
 } catch (error: any) {
     console.error('Fatal error in trying to initialize MCP server: ', error);
+    Sentry.captureException(error);
     process.exit(1);
 }
 

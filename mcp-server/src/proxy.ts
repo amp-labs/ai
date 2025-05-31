@@ -4,14 +4,14 @@ import { ensureConnectionExists } from "./connectionManager";
 import { providerSchema } from "./schemas";
 import { ClientSettings } from ".";
 
-export async function createProxyTool(
+export async function createSendRequestTool(
   server: Server,
   settings?: ClientSettings
 ): Promise<void> {
   // @ts-ignore
   server.tool(
-    "call-api",
-    `Call provider APIs via the Ampersand proxy`,
+    "send-request",
+    `Call provider APIs via the Ampersand sendRequest tool`,
     {
       provider: providerSchema,
       body: z
@@ -27,7 +27,7 @@ export async function createProxyTool(
         .string()
         .optional()
         .describe(
-          "The installation ID to use for the proxy call. If not provided, get installation ID by getting the connection or creating a new connection."
+          "The installation ID to use for the API call. If not provided, get installation ID by getting the connection or creating a new connection."
         ),
     },
     async ({
@@ -48,7 +48,7 @@ export async function createProxyTool(
       try {
         installationId = installationId || (await ensureConnectionExists(provider, settings));
         console.log(
-          "[PROXY] Call:",
+          "[SEND-REQUEST] Call:",
           installationId,
           body,
           settings?.project,
@@ -74,12 +74,12 @@ export async function createProxyTool(
           }
         );
         const data = await response.text();
-        console.log("Proxy call to", provider, "returned", data);
+        console.log("SendRequest to", provider, "returned", data);
         return {
           content: [
             {
               type: "text",
-              text: `Proxy call to ${provider} returned ${JSON.stringify(
+              text: `SendRequest to ${provider} returned ${JSON.stringify(
                 data
               )}`,
             },
@@ -94,7 +94,7 @@ export async function createProxyTool(
           ],
         };
       } catch (error) {
-        console.error("Error in proxy tool", error);
+        console.error("Error in sendRequest tool", error);
         return {
           isError: true,
           content: [

@@ -45,6 +45,7 @@ export default defineConfig({
         "mintlify-openapi-parser",
         "@amp-labs/ai",
         "@amp-labs/ai/mcp",
+        "@sentry/node",
       ],
     },
     sourcemap: true,

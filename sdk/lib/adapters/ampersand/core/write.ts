@@ -2,7 +2,7 @@ import { Ampersand } from "@amp-labs/sdk-node-write";
 import { WriteRecordsResponse, WriteRecordsSyncWriteResponseSuccess } from "@amp-labs/sdk-node-write/models/operations";
 import { WriteResponse } from "../types";
 import { AmpersandConfig, amp } from "../../../config";
-
+import * as Sentry from "@sentry/node";
 interface WriteParams {
   objectName: string;
   type: "create" | "update";
@@ -54,6 +54,7 @@ export async function executeAmpersandWrite({
       response: data,
     };
   } catch (error) {
+    Sentry.captureException(error);
     console.error("Error in write operation:", error);
     return {
       success: false,

@@ -16,7 +16,6 @@ import {
   createInstallationInputSchema,
   checkInstallationInputSchema,
   oauthInputSchema,
-  proxyInputSchema,
   checkConnection,
   createInstallation,
   checkInstallation,
@@ -25,7 +24,6 @@ import {
   createInstallationToolDescription,
   checkInstallationToolDescription,
   oauthToolDescription,
-  proxyToolDescription,
   CheckConnectionInputType,
   CheckConnectionOutputType,
   CreateInstallationInputType,
@@ -34,9 +32,12 @@ import {
   CheckInstallationOutputType,
   OAuthInputType,
   OAuthOutputType,
-  ProxyInputType,
-  ProxyOutputType,
-  WriteOutputType
+  WriteOutputType,
+  sendRequestToolDescription,
+  sendRequestInputSchema,
+  sendRequestOutputSchema,
+  SendRequestInputType,
+  SendRequestOutputType,
 } from "./common";
 import { amp } from "../config";
 
@@ -183,7 +184,7 @@ export const oauthTool = tool({
 });
 
 /**
- * Makes proxy API calls to Ampersand services using Vercel AI SDK.
+ * Making authenticated API calls to the providers using Vercel AI SDK.
  * @param provider - The provider to make the API call to
  * @param body - The request body
  * @param suffix - The API endpoint suffix
@@ -192,10 +193,10 @@ export const oauthTool = tool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const proxyTool = tool({
-  description: proxyToolDescription,
-  parameters: proxyInputSchema,
-  execute: async (params: ProxyInputType): Promise<ProxyOutputType> => {
+export const sendRequestTool = tool({
+  description: sendRequestToolDescription,
+  parameters: sendRequestInputSchema,
+  execute: async (params: SendRequestInputType): Promise<SendRequestOutputType> => {
     const { provider, body, suffix, method, headers = {}, installationId } = params;
     const config = amp.get();
     const finalInstallationId = installationId ?? (await ensureInstallationExists(provider));

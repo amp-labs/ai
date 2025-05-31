@@ -51,17 +51,7 @@ const tools = [createRecordTool, updateRecordTool];
 
 ## Available Tools
 
-The SDK provides the following tools for interacting with SaaS platforms:
-
-| Tool | Description | Purpose |
-|------|-------------|---------|
-| `createRecordTool` | Creates a new record in the connected SaaS platform | Create new entries like contacts, deals, tickets etc. |
-| `updateRecordTool` | Updates an existing record in the connected SaaS platform | Modify existing entries with new data |
-| `checkConnectionTool` | Verifies if there is an active connection to the SaaS provider | Validate connection status before operations |
-| `createInstallationTool` | Creates a new installation for a provider | Set up new tool installations |
-| `checkInstallationTool` | Checks if there is an active installation for a provider | Verify installation status |
-| `oauthTool` | Initiates OAuth flow for connecting to a provider | Handle authentication setup |
-| `proxyTool` | Makes authenticated API calls to the provider through Ampersand | Execute custom API operations |
+Please refer to the [documentation](https://docs.withampersand.com/ai-sdk#available-tools) for the full list of tools and their usage.
 
 
 #### Have a tool in mind that we could add? Let us know! 

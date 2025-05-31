@@ -1,7 +1,7 @@
 import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
 import { checkConnection } from "./connection";
 import { AmpersandConfig, amp } from "../../../config";
-
+import * as Sentry from "@sentry/node";
 interface CheckInstallationParams {
   provider: string;
   config?: Partial<AmpersandConfig>;
@@ -55,6 +55,7 @@ export async function checkInstallation({
 
     return { found: false };
   } catch (error) {
+    Sentry.captureException(error);
     console.error("[Ampersand] Error while checking installation:", error);
     throw error;
   }
@@ -96,6 +97,7 @@ export async function createInstallation({
     const installationId = data.installation?.id ?? data.id;
     return { created: !!installationId, installationId, data };
   } catch (error) {
+    Sentry.captureException(error);
     console.error("[Ampersand] Error while creating installation:", error);
     throw error;
   }

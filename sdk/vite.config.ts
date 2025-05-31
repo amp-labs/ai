@@ -3,6 +3,11 @@ import { VitePluginNode } from "vite-plugin-node";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
+  define: {
+    'process.env': {
+      AMPERSAND_SENTRY_DSN: process.env.AMPERSAND_SENTRY_DSN, // build time env var
+    },
+  },
   server: {
     port: 3001,
   },
@@ -34,6 +39,7 @@ export default defineConfig({
         "@amp-labs/sdk-node-platform",
         "@amp-labs/sdk-node-write",
         "@modelcontextprotocol/sdk",
+        "@sentry/node",
       ],
     },
     sourcemap: true,

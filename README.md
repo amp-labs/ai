@@ -152,7 +152,7 @@ If your MCP client supports headers:
 {
   "mcpServers": {
     "@amp-labs/mcp-server": {
-      "url": "https://mcp.withampersand.com/sse?project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
+      "url": "https://mcp.withampersand.com/v1/sse?project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
       "headers": {
         "x-api-key": "<AMPERSAND_API_KEY>"
       }
@@ -167,7 +167,7 @@ If your MCP client does not support headers, you can pass the API key in the que
 {
   "mcpServers": {
     "@amp-labs/mcp-server": {
-      "url": "https://mcp.withampersand.com/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
+      "url": "https://mcp.withampersand.com/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
     }
   }
 }
@@ -205,11 +205,11 @@ If your MCP client does not support headers, you can pass the API key in the que
 
 ### Install and build
 
-Install dependencies 
+Install dependencies
 
 `pnpm i`
 
-Building AI SDK 
+Building AI SDK
 
 `pnpm -F @amp-labs/ai build`
 
@@ -225,13 +225,10 @@ Building MCP Server
 If your MCP client supports headers:
 
 ```json
-{
-  "mcpServers": {
-    "@amp-labs/mcp-server": {
-      "url": "http://localhost:3001/sse?project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
-      "headers": {
-        "x-api-key": "<AMPERSAND_API_KEY>"
-      }
+  "@amp-labs/mcp-server": {
+    "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
+    "headers": {
+      "x-api-key": "<AMPERSAND_API_KEY>" // if the MCP Client supports it we pick the api key from here if not, query param.
     }
   }
 }
@@ -243,7 +240,7 @@ If your MCP client does not support headers, you can pass the API key in the que
 {
   "mcpServers": {
     "@amp-labs/mcp-server": {
-      "url": "http://localhost:3001/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
+      "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
     }
   }
 }

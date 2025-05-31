@@ -1,6 +1,6 @@
 {
   "name": "@amp-labs/ai",
-  "version": "0.0.1-alpha.9",
+  "version": "0.0.1-alpha.10",
   "type": "commonjs",
   "main": "dist/index.cjs",
   "exports": {
@@ -43,8 +43,9 @@
   "description": "Ampersand AI SDK",
   "dependencies": {
     "@amp-labs/sdk-node-platform": "^0.2.3",
-    "@amp-labs/sdk-node-write": "^0.2.3",
+    "@amp-labs/sdk-node-write": "^0.2.4",
     "@modelcontextprotocol/sdk": "^1.6.1",
+    "@sentry/node": "^9.22.0",
     "axios": "^1.8.1",
     "build": "^0.1.4",
     "dashify": "^2.0.0",

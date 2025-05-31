@@ -29,7 +29,7 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 {
   "mcpServers": {
     "@amp-labs/mcp-server": {
-      "url": "https://mcp.withampersand.com/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
+      "url": "https://mcp.withampersand.com/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
     }
   }
 }

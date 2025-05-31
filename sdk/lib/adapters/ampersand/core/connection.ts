@@ -1,6 +1,6 @@
 import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
 import { AmpersandConfig, amp } from "../../../config";
-
+import * as Sentry from "@sentry/node";
 interface CheckConnectionParams {
   provider: string;
   config?: Partial<AmpersandConfig>;
@@ -47,6 +47,7 @@ export async function checkConnection({
 
     return { found: false };
   } catch (error) {
+    Sentry.captureException(error);
     console.error("[Ampersand] Error while checking connection:", error);
     throw error;
   }

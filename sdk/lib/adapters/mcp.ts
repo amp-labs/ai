@@ -2,8 +2,10 @@
  * This file contains Model Context Protocol (MCP) compatible tools for integrating with Ampersand.
  */
 
+import "./ampersand/core/instrument";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { z } from "zod";
+import * as Sentry from "@sentry/node";
 import {
   providerSchema,
   associationsSchema,
@@ -12,7 +14,6 @@ import {
   createInstallationInputSchema,
   checkInstallationInputSchema,
   oauthInputSchema,
-  proxyInputSchema,
   checkConnection,
   createInstallation,
   checkInstallation,
@@ -21,14 +22,15 @@ import {
   createInstallationToolDescription,
   checkInstallationToolDescription,
   oauthToolDescription,
-  proxyToolDescription,
   CreateActionType,
   UpdateActionType,
   CheckConnectionInputType,
   CreateInstallationInputType,
   CheckInstallationInputType,
   OAuthInputType,
-  ProxyInputType,
+  sendRequestToolDescription,
+  sendRequestInputSchema,
+  SendRequestInputType,
 } from "./common";
 import { amp, AmpersandConfig } from "../config";
 
@@ -137,6 +139,7 @@ export const createCheckConnectionTool = async (server: Server, config?: Partial
           };
         }
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
@@ -172,6 +175,7 @@ export const createCreateInstallationTool = async (server: Server, config?: Part
           ],
         };
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
@@ -204,7 +208,8 @@ export const createCheckInstallationTool = async (server: Server, config?: Parti
         }
         return { content: [{ type: "text", text: `No installation found for ${params.provider}` }] };
       } catch (err) {
-        return { isError: true, content: [{ type: "text", text: `Error: ${err instanceof Error ? err.message : err}` }] };
+        Sentry.captureException(err);
+        return { isError: true, content: [ { type: "text", text: `Error: ${err instanceof Error ? err.message : err}` } ] };
       }
     }
   );
@@ -244,6 +249,7 @@ export const createOAuthTool = async (server: Server, config?: Partial<Ampersand
           ],
         };
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
@@ -256,15 +262,18 @@ export const createOAuthTool = async (server: Server, config?: Partial<Ampersand
 };
 
 /**
- * Creates a proxy tool for the MCP server.
+ * Creates a send request tool for the MCP server.
+ * 
+ * @param server - The MCP server instance
+ * @returns A configured MCP tool for making API calls
  */
-export const createProxyTool = async (server: Server, config?: Partial<AmpersandConfig>) => {
+export const createSendRequestTool = async (server: Server, settings: ClientSettings) => {
   // @ts-ignore
   return server.tool(
-    "call-api",
-    proxyToolDescription,
-    proxyInputSchema.shape,
-    async (params: ProxyInputType): Promise<MCPResponse> => {
+    "send-request",
+    sendRequestToolDescription,
+    sendRequestInputSchema.shape,
+    async (params: SendRequestInputType): Promise<MCPResponse> => {
       const { provider, body, suffix, method, headers = {}, installationId } = params;
       try {
         const ampConfig = config ? amp.init(config) : amp.get();
@@ -291,6 +300,7 @@ export const createProxyTool = async (server: Server, config?: Partial<Ampersand
           ],
         };
       } catch (err) {
+        Sentry.captureException(err);
         return {
           isError: true,
           content: [
