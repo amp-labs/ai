@@ -18,6 +18,7 @@ export default defineConfig({
         mastra: "./lib/adapters/mastra.ts",
         mcp: "./lib/adapters/mcp.ts",
         aisdk: "./lib/adapters/aisdk.ts",
+        config: "./lib/config.ts",
       },
       formats: ["cjs", "es"],
       fileName: (format, entryName) =>

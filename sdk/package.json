@@ -18,6 +18,11 @@
       "types": "./dist/aisdk.d.ts",
       "import": "./dist/aisdk/index.cjs",
       "require": "./dist/aisdk/index.cjs"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config/index.cjs",
+      "require": "./dist/config/index.cjs"
     }
   },
   "scripts": {

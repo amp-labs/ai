@@ -44,6 +44,7 @@ import {
   SendRequestInputType,
   SendRequestOutputType,
 } from "./common";
+import { amp } from "../config";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 
 /**
@@ -271,7 +272,7 @@ export const oauthTool = createTool({
     runtimeContext: RuntimeContext;
   }): Promise<OAuthOutputType> => {
     const { provider, query, groupRef, consumerRef } = context;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
+    const config = amp.get();
 
     const options: RequestInit = {
       method: "POST",
@@ -353,8 +354,8 @@ export const sendRequestTool = createTool({
       headers: {
         ...headers,
         "Content-Type": "application/json",
-        "x-amp-project-id": projectId,
-        "x-api-key": apiKey,
+        "x-amp-project-id": config.projectId,
+        "x-api-key": config.apiKey,
         "x-amp-proxy-version": "1",
         "x-amp-installation-id": finalInstallationId,
       },
