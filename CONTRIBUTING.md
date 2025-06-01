@@ -47,6 +47,29 @@ Thank you for your interest in contributing! This document will help you get sta
 
 ---
 
+## Local development workflow
+
+### AI SDK
+
+To build the AI SDK locally, run the following command:
+
+```
+pnpm -F @amp-labs/ai build
+```
+
+### MCP Server
+
+To build the MCP server locally, run the following command:
+
+```
+pnpm -F @amp-labs/mcp-server build
+```
+
+Please refer to the [mcp-server README](./mcp-server/README.md) for more information on:
+
+- Starting the MCP server locally.
+- Connecting to the local MCP server from an MCP client.
+
 ## How to Contribute
 
 0. If it's a large change, please open an issue first to discuss it.

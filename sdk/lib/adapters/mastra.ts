@@ -254,7 +254,6 @@ export const checkInstallationTool = createTool({
  * Makes a direct API call to Ampersand's OAuth endpoint.
  *
  * @param provider - The provider to authenticate with
- * @param query - The search query
  * @param groupRef - Optional group reference
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication
@@ -271,7 +270,7 @@ export const startOAuthTool = createTool({
     context: StartOAuthInputType;
     runtimeContext: RuntimeContext;
   }): Promise<StartOAuthOutputType> => {
-    const { provider, query, groupRef, consumerRef } = context;
+    const { provider, groupRef, consumerRef } = context;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
 
     const options: RequestInit = {
