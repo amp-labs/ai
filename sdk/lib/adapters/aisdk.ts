@@ -37,8 +37,8 @@ import {
   sendReadRequestToolDescription,
   sendReadRequestInputSchema,
   SendReadRequestInputType,
-  startOauthToolDescription,
-  startOauthInputSchema,
+  startOAuthToolDescription,
+  startOAuthInputSchema,
   StartOauthInputType,
   StartOauthOutputType,
 } from "./common";
@@ -163,9 +163,9 @@ export const checkInstallationTool = tool({
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication
  */
-export const startOauthTool = tool({
-  description: startOauthToolDescription,
-  parameters: startOauthInputSchema,
+export const startOAuthTool = tool({
+  description: startOAuthToolDescription,
+  parameters: startOAuthInputSchema,
   execute: async (params: StartOauthInputType): Promise<StartOauthOutputType> => {
     const { provider, groupRef, consumerRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";

@@ -28,10 +28,10 @@ import {
   sendRequestToolDescription,
   sendRequestInputSchema,
   SendRequestInputType,
-  startOauthToolDescription,
-  startOauthInputSchema,
-  StartOauthInputType,
-  StartOauthOutputType,
+  startOAuthToolDescription,
+  startOAuthInputSchema,
+  StartOAuthInputType,
+  StartOAuthOutputType,
 } from "./common";
 
 type MCPResponse = {
@@ -248,9 +248,9 @@ export const createStartOAuthTool = async (server: Server, settings: ClientSetti
   // @ts-ignore
   return server.tool(
     "start-oauth",
-    startOauthToolDescription,
-    startOauthInputSchema.shape,
-    async (params: StartOauthInputType): Promise<MCPResponse> => {
+    startOAuthToolDescription,
+    startOAuthInputSchema.shape,
+    async (params: StartOAuthInputType): Promise<MCPResponse> => {
       const { provider, groupRef, consumerRef } = params;
       const finalConsumerRef = consumerRef || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = settings?.groupRef || groupRef || "";
