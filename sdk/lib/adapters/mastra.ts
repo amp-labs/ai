@@ -18,15 +18,12 @@ import {
   createInstallationOutputSchema,
   checkInstallationInputSchema,
   checkInstallationOutputSchema,
-  oauthInputSchema,
-  oauthOutputSchema,
   createInstallation,
   checkInstallation,
   ensureInstallationExists,
   checkConnectionToolDescription,
   createInstallationToolDescription,
   checkInstallationToolDescription,
-  oauthToolDescription,
   CreateActionType,
   UpdateActionType,
   WriteOutputType,
@@ -36,8 +33,6 @@ import {
   CreateInstallationOutputType,
   CheckInstallationInputType,
   CheckInstallationOutputType,
-  OAuthInputType,
-  OAuthOutputType,
   sendRequestToolDescription,
   sendRequestInputSchema,
   sendRequestOutputSchema,
@@ -45,6 +40,11 @@ import {
   SendRequestOutputType,
   sendReadRequestToolDescription,
   sendReadRequestInputSchema,
+  startOauthToolDescription,
+  startOauthInputSchema,
+  startOauthOutputSchema,
+  StartOauthInputType,
+  StartOauthOutputType,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 import { callAmpersandProxy } from "./ampersand/core/request";
@@ -261,18 +261,18 @@ export const checkInstallationTool = createTool({
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication
  */
-export const oauthTool = createTool({
-  id: "oauth",
-  description: oauthToolDescription,
-  inputSchema: oauthInputSchema,
-  outputSchema: oauthOutputSchema,
+export const startOauthTool = createTool({
+  id: "start-oauth",
+  description: startOauthToolDescription,
+  inputSchema: startOauthInputSchema,
+  outputSchema: startOauthOutputSchema,
   execute: async ({
     context,
     runtimeContext,
   }: {
-    context: OAuthInputType;
+    context: StartOauthInputType;
     runtimeContext: RuntimeContext;
-  }): Promise<OAuthOutputType> => {
+  }): Promise<StartOauthOutputType> => {
     const { provider, query, groupRef, consumerRef } = context;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
 

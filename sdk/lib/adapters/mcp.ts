@@ -6,14 +6,13 @@ import "./ampersand/core/instrument";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { z } from "zod";
 import * as Sentry from "@sentry/node";
-import { 
+import {
   providerSchema, 
   associationsSchema,
   executeAmpersandWrite,
   checkConnectionInputSchema,
   createInstallationInputSchema,
   checkInstallationInputSchema,
-  oauthInputSchema,
   checkConnection,
   createInstallation,
   checkInstallation,
@@ -21,16 +20,18 @@ import {
   checkConnectionToolDescription,
   createInstallationToolDescription,
   checkInstallationToolDescription,
-  oauthToolDescription,
   CreateActionType,
   UpdateActionType,
   CheckConnectionInputType,
   CreateInstallationInputType,
   CheckInstallationInputType,
-  OAuthInputType,
   sendRequestToolDescription,
   sendRequestInputSchema,
   SendRequestInputType,
+  startOauthToolDescription,
+  startOauthInputSchema,
+  StartOauthInputType,
+  StartOauthOutputType,
 } from "./common";
 
 type MCPResponse = {
@@ -243,13 +244,13 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
  * @param server - The MCP server instance
  * @returns A configured MCP tool for handling OAuth flows
  */
-export const createOAuthTool = async (server: Server, settings: ClientSettings) => {
+export const createStartOauthTool = async (server: Server, settings: ClientSettings) => {
   // @ts-ignore
   return server.tool(
-    "oauth",
-    oauthToolDescription,
-    oauthInputSchema.shape,
-    async (params: OAuthInputType): Promise<MCPResponse> => {
+    "start-oauth",
+    startOauthToolDescription,
+    startOauthInputSchema.shape,
+    async (params: StartOauthInputType): Promise<MCPResponse> => {
       const { query, provider, groupRef, consumerRef } = params;
       const finalConsumerRef = consumerRef || (crypto as any).randomUUID?.() || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = settings?.groupRef || groupRef || "";
