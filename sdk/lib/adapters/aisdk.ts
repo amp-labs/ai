@@ -190,7 +190,7 @@ export const oauthTool = tool({
  * Making authenticated API calls to the providers using Vercel AI SDK.
  * @param provider - The provider to make the API call to
  * @param body - The request body
- * @param suffix - The API endpoint suffix
+ * @param endpoint - The API endpoint
  * @param method - The HTTP method
  * @param headers - Optional additional headers
  * @param installationId - Optional installation ID
@@ -200,13 +200,13 @@ export const sendRequestTool = tool({
   description: sendRequestToolDescription,
   parameters: sendRequestInputSchema,
   execute: async (params: SendRequestInputType): Promise<SendRequestOutputType> => {
-    const { provider, body, suffix, method, headers = {}, installationId } = params;
+    const { provider, body, endpoint, method, headers = {}, installationId } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";
     const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
     return callAmpersandProxy({
       provider,
-      suffix,
+      endpoint,
       method,
       headers,
       installationId,
@@ -222,13 +222,13 @@ export const sendReadRequestTool = tool({
   description: sendReadRequestToolDescription,
   parameters: sendReadRequestInputSchema,
   execute: async (params: SendReadRequestInputType): Promise<SendRequestOutputType> => {
-    const { provider, suffix, headers = {}, installationId } = params;
+    const { provider, endpoint, headers = {}, installationId } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const apiKey = process.env.AMPERSAND_API_KEY || "";
     const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
     return callAmpersandProxy({
       provider,
-      suffix,
+      endpoint,
       method: "GET",
       headers,
       installationId,

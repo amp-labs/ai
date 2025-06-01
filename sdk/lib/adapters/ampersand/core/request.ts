@@ -2,7 +2,7 @@ import { ensureInstallationExists } from "./installation";
 
 export async function callAmpersandProxy({
   provider,
-  suffix,
+  endpoint,
   method = "GET",
   headers = {},
   installationId,
@@ -12,7 +12,7 @@ export async function callAmpersandProxy({
   body,
 }: {
   provider: string;
-  suffix: string;
+  endpoint: string;
   method?: string;
   headers?: Record<string, string>;
   installationId?: string;
@@ -45,7 +45,7 @@ export async function callAmpersandProxy({
     fetchOptions.body = JSON.stringify(body);
   }
   const response = await fetch(
-    `https://proxy.withampersand.com/${suffix}`,
+    `https://proxy.withampersand.com/${endpoint}`,
     fetchOptions
   );
   const responseData = await response.json();

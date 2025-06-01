@@ -28,10 +28,18 @@ export const associationsSchema = z
   .optional()
   .describe("Optional associations for the record");
 
-// Base schema for provider
-export const providerSchema = z.string().describe(
-  `The provider to connect to. Typically a SaaS tool like Monday, Hubspot, Salesforce, etc.`
-);
+export const providerSchema = z
+  .string()
+  .describe(`The SaaS API provider to connect to. Always use camelCase (e.g. "monday", "hubspot", "salesforce").`);
+
+export const endpointSchema = z
+  .string()
+  .describe(`The endpoint to call on the provider, without the base URL, and including the version. (e.g. If the full URL is "my-workspace.my.salesforce.com/services/data/v60.0/sobjects/Account", the endpoint is "v60.0/sobjects/Account")`);
+
+export const installationIdSchema = z
+  .string()
+  .optional()
+  .describe(`The installation ID to use for the API call. If not provided, get installation ID by getting the connection or creating a new connection.`);
 
 // Base schema for write operations
 export const baseWriteSchema = {
@@ -119,10 +127,10 @@ export const oauthOutputSchema = z.object({
 export const sendRequestInputSchema = z.object({
   provider: providerSchema,
   body: z.record(z.any()).optional().describe("Body of the request"),
-  suffix: z.string().describe("Suffix of the request URL, without the leading slash."),
+  endpoint: endpointSchema,
   method: z.string().describe("HTTP method to use"),
   headers: z.record(z.string()).optional().describe("Headers to send with the request"),
-  installationId: z.string().optional().describe("The installation ID to use for the API call."),
+  installationId: installationIdSchema,
 });
 
 export const sendRequestOutputSchema = z.object({
@@ -132,9 +140,9 @@ export const sendRequestOutputSchema = z.object({
 
 export const sendReadRequestInputSchema = z.object({
   provider: providerSchema,
-  suffix: z.string().describe("Suffix of the request URL, without the leading slash."),
+  endpoint: endpointSchema,
   headers: z.record(z.string()).optional().describe("Headers to send with the request"),
-  installationId: z.string().optional().describe("The installation ID to use for the API call."),
+  installationId: installationIdSchema,
 });
 
 // Infered type definitions

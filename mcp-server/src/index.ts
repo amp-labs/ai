@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/node";
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
-import { createSendRequestTool, createSendReadRequestTool } from './proxy';
+import { createSendRequestTool, createSendReadRequestTool } from './request';
 import { createAuthTool } from './oAuth';
 import { createCreateTool, createUpdateTool } from './write';
 import express from 'express';

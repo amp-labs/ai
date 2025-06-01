@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { ensureConnectionExists } from "./connectionManager";
-import { providerSchema } from "./schemas";
+import { ensureInstallation } from "./connectionManager";
+import { endpointSchema, installationIdSchema, providerSchema } from "./schemas";
 import { ClientSettings } from ".";
 
 async function callAmpersandProxy({
   provider,
-  suffix,
+  endpoint,
   method,
   headers = {},
   installationId,
@@ -14,7 +14,7 @@ async function callAmpersandProxy({
   body,
 }: {
   provider: string;
-  suffix: string;
+  endpoint: string;
   method: string;
   headers?: Record<string, string>;
   installationId?: string;
@@ -22,7 +22,7 @@ async function callAmpersandProxy({
   body?: Record<string, any>;
 }) {
   try {
-    installationId = installationId || (await ensureConnectionExists(provider, settings));
+    installationId = installationId || (await ensureInstallation(provider, settings));
     const fetchOptions: any = {
       method,
       headers: {
@@ -38,7 +38,7 @@ async function callAmpersandProxy({
       fetchOptions.body = JSON.stringify(body);
     }
     const response = await fetch(
-      `https://proxy.withampersand.com/${suffix}`,
+      `https://proxy.withampersand.com/${endpoint}`,
       fetchOptions
     );
     const data = await response.text();
@@ -86,36 +86,31 @@ export async function createSendRequestTool(
         .record(z.string(), z.string())
         .optional()
         .describe("Body of the request"),
-      suffix: z.string().describe("Suffix of the request URL, without the leading slash."),
+      endpoint: endpointSchema,
       method: z.string().describe("HTTP method to use"),
       headers: z
         .record(z.string(), z.string())
         .describe("Headers to send with the request"),
-      installationId: z
-        .string()
-        .optional()
-        .describe(
-          "The installation ID to use for the API call. If not provided, get installation ID by getting the connection or creating a new connection."
-        ),
+      installationId: installationIdSchema,
     },
     async ({
       body,
-      suffix,
+      endpoint,
       method,
       headers,
       installationId,
       provider,
     }: {
       body: Record<string, string>;
-      suffix: string;
+      endpoint: string;
       method: string;
       headers: Record<string, string>;
-      installationId: string;
+      installationId?: string;
       provider: string;
     }) => {
       return callAmpersandProxy({
         provider,
-        suffix,
+        endpoint,
         method,
         headers,
         installationId,
@@ -136,31 +131,26 @@ export async function createSendReadRequestTool(
     `Call provider APIs via the Ampersand sendReadRequest tool`,
     {
       provider: providerSchema,
-      suffix: z.string().describe("Suffix of the request URL, without the leading slash."),
+      endpoint: endpointSchema,
       headers: z
         .record(z.string(), z.string())
         .describe("Headers to send with the request"),
-      installationId: z
-        .string()
-        .optional()
-        .describe(
-          "The installation ID to use for the API call. If not provided, get installation ID by getting the connection or creating a new connection."
-        ),
+      installationId: installationIdSchema,
     },
     async ({
-      suffix,
+      endpoint,
       headers,
       installationId,
       provider,
     }: {
-      suffix: string;
+      endpoint: string;
       headers: Record<string, string>;
       installationId: string;
       provider: string;
     }) => {
       return callAmpersandProxy({
         provider,
-        suffix,
+        endpoint,
         method: "GET",
         headers,
         installationId,

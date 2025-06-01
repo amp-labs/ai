@@ -313,7 +313,7 @@ export const oauthTool = createTool({
  *
  * @param provider - The provider to make the API call to
  * @param body - The request body
- * @param suffix - The API endpoint suffix
+ * @param endpoint - The API endpoint
  * @param method - The HTTP method
  * @param headers - Optional additional headers
  * @param installationId - Optional installation ID
@@ -334,7 +334,7 @@ export const sendRequestTool = createTool({
     const {
       provider,
       body,
-      suffix,
+      endpoint,
       method,
       headers = {},
       installationId,
@@ -344,7 +344,7 @@ export const sendRequestTool = createTool({
     const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
     return callAmpersandProxy({
       provider,
-      suffix,
+      endpoint,
       method,
       headers,
       installationId,
@@ -362,13 +362,13 @@ export const sendReadRequestTool = createTool({
   inputSchema: sendReadRequestInputSchema,
   outputSchema: sendRequestOutputSchema,
   execute: async ({ context, runtimeContext }) => {
-    const { provider, suffix, headers = {}, installationId } = context;
+    const { provider, endpoint, headers = {}, installationId } = context;
     const apiKey = (runtimeContext.get("AMPERSAND_API_KEY") ?? process.env.AMPERSAND_API_KEY)?.toString() || "";
     const projectId = (runtimeContext.get("AMPERSAND_PROJECT_ID") ?? process.env.AMPERSAND_PROJECT_ID)?.toString() || "";
     const integrationName = (runtimeContext.get("AMPERSAND_INTEGRATION_NAME") ?? process.env.AMPERSAND_INTEGRATION_NAME)?.toString() || "";
     return callAmpersandProxy({
       provider,
-      suffix,
+      endpoint,
       method: "GET",
       headers,
       installationId,
