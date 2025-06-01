@@ -11,4 +11,4 @@ export const endpointSchema = z
 export const installationIdSchema = z
   .string()
   .optional()
-  .describe(`The ID of the installation. If you don't know it, usethe check-installation tool.`);
+  .describe(`The ID of the installation. If you don't know it, use the check-installation tool.`);

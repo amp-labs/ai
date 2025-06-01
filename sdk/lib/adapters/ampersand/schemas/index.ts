@@ -39,7 +39,7 @@ export const endpointSchema = z
 export const installationIdSchema = z
   .string()
   .optional()
-  .describe(`The installation ID to use for the API call. If not provided, get installation ID by getting the connection or creating a new connection.`);
+  .describe(`The ID of the installation. If you don't know it, use the check-installation tool.`);
 
 // Base schema for write operations
 export const baseWriteSchema = {
