@@ -7,7 +7,7 @@ import { createSendRequestTool, createSendReadRequestTool } from './request';
 import { createStartOAuthTool } from './oauth';
 import { createCreateTool, createUpdateTool } from './write';
 import express from 'express';
-import { createConnectionManagerTools } from './connectionManager';
+import { createConnectionManagerTools } from './connection';
 
 const args = process.argv.slice(2);
 const useStdioTransport = args.includes('--transport') && args[args.indexOf('--transport') + 1] === 'stdio';

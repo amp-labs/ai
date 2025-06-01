@@ -77,6 +77,9 @@ export const createWriteActionTool = async (
     },
     async (params: CreateActionType | UpdateActionType): Promise<MCPResponse> => {
       const { objectName, type, record, groupRef, associations } = params;
+      
+      console.log(`[WRITE] about to perform ${type} operation`, params);
+      
       const result = await executeAmpersandWrite({
         objectName,
         type,
@@ -89,7 +92,7 @@ export const createWriteActionTool = async (
       });
 
       if (result.success) {
-        console.log(`${type} operation on provider succeeded:`, result.response);
+        console.log(`[WRITE] ${type} operation on provider succeeded:`, result.response);
         return {
           content: [
             {
