@@ -3,7 +3,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { providerSchema } from "./schemas";
 import { ClientSettings } from ".";
 
-export async function createAuthTool(
+export async function createStartOauthTool(
   server: Server,
   settings?: ClientSettings
 ): Promise<void> {
