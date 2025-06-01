@@ -18,13 +18,17 @@ export async function createStartOAuthTool(
       let oAuthUrl = "";
       const consumerRef = crypto.randomUUID();
       const groupRef = settings?.groupRef || process.env.AMPERSAND_GROUP_REF;
-      console.log("[OAUTH] call: ", provider, groupRef, settings);
       const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID;
-      const options = {
+      const apiKey = settings?.apiKey || "";
+      const options: RequestInit = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: `{"provider":"${provider}","consumerRef":"${consumerRef}","groupRef":"${groupRef}","projectId":"${projectId}"}`,
+        headers: {
+          "Content-Type": "application/json",
+          "X-Api-Key": apiKey,
+        },
+        body: JSON.stringify({ provider, consumerRef, groupRef, projectId }),
       };
+      console.log("[START-OAUTH] API request to oauthConnect: ", options.body);
 
       try {
         const response = await fetch(
@@ -32,7 +36,7 @@ export async function createStartOAuthTool(
           options
         );
         const data = await response.text();
-        console.log("[DEBUG] oauth response", data);
+        console.log("[START-OAUTH] API response from oauthConnect: ", data);
         oAuthUrl = data;
       } catch (err) {
         console.error(err);

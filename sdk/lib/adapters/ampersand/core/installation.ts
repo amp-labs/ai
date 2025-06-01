@@ -87,7 +87,7 @@ export async function createInstallation({
         connectionId,
         groupRef,
         config: {
-          createdBy: "sdk:create-installation",
+          createdBy: "ai-sdk:create-installation",
           content: {
             provider,
             proxy: { enabled: true },

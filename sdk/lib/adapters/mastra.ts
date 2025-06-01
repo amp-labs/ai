@@ -45,6 +45,7 @@ import {
   startOAuthOutputSchema,
   StartOAuthInputType,
   StartOAuthOutputType,
+  getOAuthURL,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 import { callAmpersandProxy } from "./ampersand/core/request";
@@ -263,42 +264,17 @@ export const startOAuthTool = createTool({
   description: startOAuthToolDescription,
   inputSchema: startOAuthInputSchema,
   outputSchema: startOAuthOutputSchema,
-  execute: async ({
-    context,
-    runtimeContext,
-  }: {
-    context: StartOAuthInputType;
-    runtimeContext: RuntimeContext;
-  }): Promise<StartOAuthOutputType> => {
+  execute: async ({ context, runtimeContext }) => {
     const { provider, groupRef, consumerRef } = context;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-
-    const options: RequestInit = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        provider,
-        consumerRef,
-        groupRef:
-          runtimeContext.get("AMPERSAND_GROUP_REF") ||
-          process.env.AMPERSAND_GROUP_REF ||
-          groupRef,
-        projectId,
-      }),
-    };
-
-    let url = "";
-    try {
-      const response = await fetch(
-        "https://api.withampersand.com/v1/oauth-connect",
-        options
-      );
-      url = await response.text();
-    } catch (err) {
-      console.error("[Ampersand] OAuth error", err);
-      throw err;
-    }
-
+    const apiKey = process.env.AMPERSAND_API_KEY || "";
+    const url = await getOAuthURL({
+      provider,
+      groupRef: runtimeContext.get("AMPERSAND_GROUP_REF") || process.env.AMPERSAND_GROUP_REF || groupRef,
+      consumerRef,
+      projectId,
+      apiKey,
+    });
     return { url };
   },
 });
@@ -353,6 +329,14 @@ export const sendRequestTool = createTool({
   },
 });
 
+/**
+ * Making authenticated GET API calls to the providers using Mastra SDK.
+ * @param provider - The provider to make the API call to
+ * @param endpoint - The API endpoint
+ * @param headers - Optional additional headers
+ * @param installationId - Optional installation ID
+ * @returns Object containing status and response from the API call
+ */
 export const sendReadRequestTool = createTool({
   id: "send-read-request",
   description: sendReadRequestToolDescription,

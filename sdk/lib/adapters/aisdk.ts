@@ -41,6 +41,7 @@ import {
   startOAuthInputSchema,
   StartOAuthInputType,
   StartOAuthOutputType,
+  getOAuthURL,
 } from "./common";
 import { z } from "zod";
 import { callAmpersandProxy } from "./ampersand/core/request";
@@ -166,19 +167,8 @@ export const startOAuthTool = tool({
   execute: async (params: StartOAuthInputType): Promise<StartOAuthOutputType> => {
     const { provider, groupRef, consumerRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const options: RequestInit = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        provider,
-        consumerRef,
-        groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
-        projectId,
-      }),
-    };
-
-    const response = await fetch("https://api.withampersand.com/v1/oauth-connect", options);
-    const url = await response.text();
+    const apiKey = process.env.AMPERSAND_API_KEY || "";
+    const url = await getOAuthURL({ provider, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef, consumerRef, projectId, apiKey });
     return { url };
   },
 });
@@ -215,6 +205,14 @@ export const sendRequestTool = tool({
   },
 });
 
+/**
+ * Making authenticated GET API calls to the providers using Vercel AI SDK.
+ * @param provider - The provider to make the API call to
+ * @param endpoint - The API endpoint
+ * @param headers - Optional additional headers
+ * @param installationId - Optional installation ID
+ * @returns Object containing status and response from the API call
+ */
 export const sendReadRequestTool = tool({
   description: sendReadRequestToolDescription,
   parameters: sendReadRequestInputSchema,

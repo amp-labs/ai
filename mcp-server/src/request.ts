@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { ensureInstallation } from "./connectionManager";
+import { ensureInstallation } from "./connection";
 import { endpointSchema, installationIdSchema, providerSchema } from "./schemas";
 import { ClientSettings } from ".";
 
@@ -125,10 +125,16 @@ async function callAmpersandProxy({
     if (body && method !== "GET" && Object.keys(body).length > 0) {
       fetchOptions.body = JSON.stringify(body);
     }
+
+    console.log("[SEND-REQUEST] API request to proxy: ", endpoint, fetchOptions.body);
+
     const response = await fetch(
       `https://proxy.withampersand.com/${endpoint}`,
       fetchOptions
     );
+
+    console.log("[SEND-REQUEST] API response status from proxy: ", endpoint, response.status);
+
     const data = await response.text();
     return {
       content: [
