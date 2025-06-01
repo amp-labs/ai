@@ -156,7 +156,6 @@ export const checkInstallationTool = tool({
 /**
  * Initiates OAuth flow for a provider using Vercel AI SDK.
  * @param provider - The provider to authenticate with
- * @param query - The search query
  * @param groupRef - Optional group reference
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication

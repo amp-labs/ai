@@ -14,7 +14,7 @@ export async function createStartOAuthTool(
     {
       provider: providerSchema,
     },
-    async ({ provider }: { query: string, provider: string }) => {
+    async ({ provider }: { provider: string }) => {
       let oAuthUrl = "";
       const consumerRef = crypto.randomUUID();
       const groupRef = settings?.groupRef || process.env.AMPERSAND_GROUP_REF;
