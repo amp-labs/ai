@@ -18,12 +18,12 @@
 
 Connect your agents to the 150+ connectors we offer at Ampersand via this multi-tenant MCP server. We expose the primitives we offer on the Ampersand platform as native tools here.
 
-## Connecting to the mcp server from an MCP Client
+## Connecting to the MCP server from an MCP Client
 
 Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.json` when using Claude desktop.
 
 
-#### When running the server in SSE mode
+### When running the server in SSE mode
 
 ```json
 {
@@ -36,7 +36,7 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 
 ```
 
-#### When running the server in stdio mode
+### When running the server in stdio mode
 
 ```json
 {
@@ -64,7 +64,7 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 
 ```
 
-# Building locally
+## Building locally
 
 ### Install dependencies
 
@@ -78,8 +78,61 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 
 `pnpm start`
 
-## Debugging & troubleshooting
+### Debugging & troubleshooting
 
 Use the MCP inspector tool to know more about the mcp server and debug tools, prompts, resources
 
 `pnpm inspect`
+
+
+### Connect to local server from MCP client
+
+#### SSE mode
+
+If your MCP client supports headers:
+
+```json
+  "@amp-labs/mcp-server": {
+    "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
+    "headers": {
+      "x-api-key": "<AMPERSAND_API_KEY>"
+    }
+  }
+}
+```
+
+If your MCP client does not support headers, you can pass the API key in the query param:
+
+```json
+{
+  "mcpServers": {
+    "@amp-labs/mcp-server": {
+      "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
+    }
+  }
+}
+```
+
+#### STDIO mode
+
+```json
+
+    "@amp-labs/mcp-server": {
+      "command": "node",
+      "args": [
+        "<PATH_TO_CODEBASE>/mcp-server/dist/index.js",
+        "--transport",
+        "stdio",
+        "--project",
+        "<AMPERSAND_PROJECT_ID>",
+        "--integrationName",
+        "<AMPERSAND_INTEGRATION_NAME>",
+        "--groupRef",
+        "<AMPERSAND_GROUP_REF>"
+      ],
+      "env": {
+        "AMPERSAND_API_KEY": "<AMPERSAND_API_KEY>"
+      }
+    },
+
+```

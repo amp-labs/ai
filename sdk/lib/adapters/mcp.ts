@@ -251,7 +251,7 @@ export const createStartOauthTool = async (server: Server, settings: ClientSetti
     startOauthToolDescription,
     startOauthInputSchema.shape,
     async (params: StartOauthInputType): Promise<MCPResponse> => {
-      const { query, provider, groupRef, consumerRef } = params;
+      const { provider, groupRef, consumerRef } = params;
       const finalConsumerRef = consumerRef || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = settings?.groupRef || groupRef || "";
       const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID || "";

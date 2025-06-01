@@ -113,7 +113,6 @@ export const checkInstallationOutputSchema = z.object({
 
 // OAuth tool schemas
 export const startOauthInputSchema = z.object({
-  query: z.string(),
   provider: providerSchema,
   groupRef: z.string().optional().describe("The group reference for Ampersand"),
   consumerRef: z.string().optional().describe("The consumer reference for Ampersand"),

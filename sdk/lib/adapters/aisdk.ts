@@ -167,7 +167,7 @@ export const startOauthTool = tool({
   description: startOauthToolDescription,
   parameters: startOauthInputSchema,
   execute: async (params: StartOauthInputType): Promise<StartOauthOutputType> => {
-    const { provider, query, groupRef, consumerRef } = params;
+    const { provider, groupRef, consumerRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const options: RequestInit = {
       method: "POST",

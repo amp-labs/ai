@@ -1,7 +1,7 @@
 import "./instrument";
 import * as Sentry from "@sentry/node";
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { connectServer } from './connect';
+import { connectServer } from './session';
 import { initialize } from './initialize';
 import { createSendRequestTool, createSendReadRequestTool } from './request';
 import { createStartOauthTool } from './oauth';
