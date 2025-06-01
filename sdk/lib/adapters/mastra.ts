@@ -40,11 +40,11 @@ import {
   SendRequestOutputType,
   sendReadRequestToolDescription,
   sendReadRequestInputSchema,
-  startOauthToolDescription,
-  startOauthInputSchema,
-  startOauthOutputSchema,
-  StartOauthInputType,
-  StartOauthOutputType,
+  startOAuthToolDescription,
+  startOAuthInputSchema,
+  startOAuthOutputSchema,
+  StartOAuthInputType,
+  StartOAuthOutputType,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
 import { callAmpersandProxy } from "./ampersand/core/request";
@@ -60,7 +60,6 @@ import { callAmpersandProxy } from "./ampersand/core/request";
  * @remarks
  * Uses the common executeAmpersandWrite function to perform the operation.
  *
- * @param provider - The provider to create the record in
  * @param objectName - The name of the object to create
  * @param type - The type of operation (create)
  * @param record - The record data to write
@@ -80,7 +79,7 @@ export const createRecordTool = createTool({
     context: CreateActionType;
     runtimeContext: RuntimeContext;
   }): Promise<WriteOutputType> => {
-    const { provider, objectName, type, record, groupRef, associations } =
+    const { objectName, type, record, groupRef, associations } =
       context;
     const result = await executeAmpersandWrite({
       objectName,
@@ -108,7 +107,6 @@ export const createRecordTool = createTool({
  * @remarks
  * Uses the common executeAmpersandWrite function to perform the operation.
  *
- * @param provider - The provider to update the record in
  * @param objectName - The name of the object to update
  * @param type - The type of operation (update)
  * @param record - The updated record data
@@ -128,7 +126,7 @@ export const updateRecordTool = createTool({
     context: UpdateActionType;
     runtimeContext: RuntimeContext;
   }): Promise<WriteOutputType> => {
-    const { provider, objectName, type, record, groupRef, associations } =
+    const { objectName, type, record, groupRef, associations } =
       context;
     const result = await executeAmpersandWrite({
       objectName,
@@ -256,24 +254,23 @@ export const checkInstallationTool = createTool({
  * Makes a direct API call to Ampersand's OAuth endpoint.
  *
  * @param provider - The provider to authenticate with
- * @param query - The search query
  * @param groupRef - Optional group reference
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication
  */
-export const startOauthTool = createTool({
+export const startOAuthTool = createTool({
   id: "start-oauth",
-  description: startOauthToolDescription,
-  inputSchema: startOauthInputSchema,
-  outputSchema: startOauthOutputSchema,
+  description: startOAuthToolDescription,
+  inputSchema: startOAuthInputSchema,
+  outputSchema: startOAuthOutputSchema,
   execute: async ({
     context,
     runtimeContext,
   }: {
-    context: StartOauthInputType;
+    context: StartOAuthInputType;
     runtimeContext: RuntimeContext;
-  }): Promise<StartOauthOutputType> => {
-    const { provider, query, groupRef, consumerRef } = context;
+  }): Promise<StartOAuthOutputType> => {
+    const { provider, groupRef, consumerRef } = context;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
 
     const options: RequestInit = {

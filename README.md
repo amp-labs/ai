@@ -15,14 +15,14 @@
 
 # Official Ampersand AI SDKs
 
-This repo contains the official Ampersand AI SDK as well as the offical MCP servers for Ampersand.
+This repo contains the official Ampersand AI SDK and the offical MCP server for Ampersand.
 
-- [@amp-labs/ai](https://www.npmjs.com/package/@amp-labs/ai) - Official Ampersand AI SDK that exposes tools for your AI agents to manage and interact with integrations with your customer's SaaS tools.
-- [@amp-labs/mcp-server](https://www.npmjs.com/package/@amp-labs/mcp-server) - Official Ampersand MCP server that exposes the tools from the Ampersand AI SDK.
+- [AI SDK](https://docs.withampersand.com/ai-sdk) - Official Ampersand AI SDK that exposes tools for your AI agents to manage and interact with integrations with your customer's SaaS tools.
+- [MCP server](https://docs.withampersand.com/mcp) - Official Ampersand MCP server that exposes the tools from the Ampersand AI SDK.
 
 The `examples` directory contains examples of how to use the AI SDK with popular agent frameworks.
 
-To learn more about Ampersand, visit our [website](https://www.withampersand.com).
+Ampersand is a platform for AI builders to add B2B SaaS integrations to their agentic apps. To learn more, visit our [website](https://www.withampersand.com).
 
 ## Ampersand AI SDK
 
@@ -126,75 +126,14 @@ If your MCP client does not support headers, you can pass the API key in the que
 
 ## Connect to the local MCP server
 
-### Install and build
-
-Install dependencies
-
-`pnpm i`
-
-Building AI SDK
-
-`pnpm -F @amp-labs/ai build`
-
-Building MCP Server
-
-`pnpm -F @amp-labs/mcp-server build`
-
-
-### Connect to local server from MCP client
-
-#### SSE mode
-
-If your MCP client supports headers:
-
-```json
-  "@amp-labs/mcp-server": {
-    "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
-    "headers": {
-      "x-api-key": "<AMPERSAND_API_KEY>" // if the MCP Client supports it we pick the api key from here if not, query param.
-    }
-  }
-}
-```
-
-If your MCP client does not support headers, you can pass the API key in the query param:
-
-```json
-{
-  "mcpServers": {
-    "@amp-labs/mcp-server": {
-      "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>"
-    }
-  }
-}
-```
-
-#### STDIO mode
-
-```json
-
-    "@amp-labs/mcp-server": {
-      "command": "node",
-      "args": [
-        "<PATH_TO_CODEBASE>/mcp-server/dist/index.js",
-        "--transport",
-        "stdio",
-        "--project",
-        "<AMPERSAND_PROJECT_ID>",
-        "--integrationName",
-        "<AMPERSAND_INTEGRATION_NAME>",
-        "--groupRef",
-        "<AMPERSAND_GROUP_REF>"
-      ],
-      "env": {
-        "AMPERSAND_API_KEY": "<AMPERSAND_API_KEY>"
-      }
-    },
-
-```
+Please refer to the [mcp-server README]([./mcp-server/README.md](https://github.com/amp-labs/ai/tree/main/mcp-server#readme)) for more information.
 
 ## License
 
 This project is licensed under the MIT license.
 
 See [LICENSE](./LICENSE) for more information.
+
+## Contributing
+
+We welcome contributions! Please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file for more information.

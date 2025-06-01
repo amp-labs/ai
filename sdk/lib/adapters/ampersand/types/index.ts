@@ -1,6 +1,5 @@
 // Type definitions for the parameters
 export type CreateParams = {
-  provider: string;
   objectName: string;
   type: "create";
   record: Record<string, any>;
@@ -15,7 +14,6 @@ export type CreateParams = {
 };
 
 export type UpdateParams = {
-  provider: string;
   objectName: string;
   type: "update";
   record: Record<string, any>;

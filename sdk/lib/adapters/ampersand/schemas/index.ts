@@ -6,7 +6,7 @@ export const updateRecordToolDescription = "Update a record in a SaaS platform (
 export const checkConnectionToolDescription = "Check if there is an active connection for a provider on Ampersand";
 export const createInstallationToolDescription = "Create a new installation for a provider on Ampersand";
 export const checkInstallationToolDescription = "Check if an installation exists for a provider on Ampersand";
-export const startOauthToolDescription = "Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL";
+export const startOAuthToolDescription = "Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL";
 export const sendRequestToolDescription = "Call provider APIs via the Ampersand sendRequest tool";
 export const sendReadRequestToolDescription = "Call provider APIs via the Ampersand sendReadRequest tool (GET only)";
 
@@ -43,7 +43,6 @@ export const installationIdSchema = z
 
 // Base schema for write operations
 export const baseWriteSchema = {
-  provider: providerSchema,
   objectName: z.string().describe("The name of the object to write to"),
   record: z.record(z.any()).describe("The record data to write"),
   associations: associationsSchema,
@@ -112,14 +111,13 @@ export const checkInstallationOutputSchema = z.object({
 });
 
 // OAuth tool schemas
-export const startOauthInputSchema = z.object({
-  query: z.string(),
+export const startOAuthInputSchema = z.object({
   provider: providerSchema,
   groupRef: z.string().optional().describe("The group reference for Ampersand"),
   consumerRef: z.string().optional().describe("The consumer reference for Ampersand"),
 });
 
-export const startOauthOutputSchema = z.object({
+export const startOAuthOutputSchema = z.object({
   url: z.string(),
 });
 
@@ -157,8 +155,8 @@ export type CreateInstallationInputType = z.infer<typeof createInstallationInput
 export type CreateInstallationOutputType = z.infer<typeof createInstallationOutputSchema>;
 export type CheckInstallationInputType = z.infer<typeof checkInstallationInputSchema>;
 export type CheckInstallationOutputType = z.infer<typeof checkInstallationOutputSchema>;
-export type StartOauthInputType = z.infer<typeof startOauthInputSchema>;
-export type StartOauthOutputType = z.infer<typeof startOauthOutputSchema>;
+export type StartOAuthInputType = z.infer<typeof startOAuthInputSchema>;
+export type StartOAuthOutputType = z.infer<typeof startOAuthOutputSchema>;
 export type SendRequestInputType = z.infer<typeof sendRequestInputSchema>;
 export type SendRequestOutputType = z.infer<typeof sendRequestOutputSchema>;
 export type SendReadRequestInputType = z.infer<typeof sendReadRequestInputSchema>;

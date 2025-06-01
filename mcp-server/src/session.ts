@@ -85,43 +85,43 @@ export async function connectServer(
       // VS code supports it for example like this: https://github.com/microsoft/vscode-docs/blob/74c4fd5aa3180b218fc389184659b621f05460ca/docs/copilot/chat/mcp-servers.md#configuration-example
       settings.apiKey = req.headers["x-api-key"];
     }
-    console.log("[CONNECT] Settings: ", settings);
+    console.log("[SESSION] Settings: ", settings);
     currentTransport = new SSEServerTransport("/messages", res);
     const sessionId = transportManager.addTransport(currentTransport, res);
     await server.connect(currentTransport);
   });
 
   app.post("/messages", async (req: Request, res: Response) => {
-    const connectionId = req.query.sessionId as string;
+    const sessionId = req.query.sessionId as string;
 
-    console.log("[CONNECT] Connection ID", connectionId);
-    if (!connectionId) {
-      res.status(400).json({ error: "Missing connection ID param" });
+    console.log("[SESSION] Session ID", sessionId);
+    if (!sessionId) {
+      res.status(400).json({ error: "Missing session ID param" });
       return;
     }
 
-    const transport = transportManager.getTransport(connectionId);
+    const transport = transportManager.getTransport(sessionId);
 
     if (transport) {
       try {
         await transport.handlePostMessage(req, res, req.body);
       } catch (error) {
         console.error(
-          "Error handling POST message for connectionId:",
-          connectionId,
+          "Error handling POST message for sessionId:",
+          sessionId,
           error
         );
 
         // If there's a critical error, clean up the transport
         if (
           error instanceof Error &&
-          error.message.includes("connection closed")
+          error.message.includes("session closed")
         ) {
-          transportManager.removeTransport(connectionId);
+          transportManager.removeTransport(sessionId);
         }
       }
     } else {
-      res.status(404).json({ error: "Connection not found" });
+      res.status(404).json({ error: "session not found" });
     }
   });
 

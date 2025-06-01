@@ -28,10 +28,10 @@ import {
   sendRequestToolDescription,
   sendRequestInputSchema,
   SendRequestInputType,
-  startOauthToolDescription,
-  startOauthInputSchema,
-  StartOauthInputType,
-  StartOauthOutputType,
+  startOAuthToolDescription,
+  startOAuthInputSchema,
+  StartOAuthInputType,
+  StartOAuthOutputType,
 } from "./common";
 
 type MCPResponse = {
@@ -244,15 +244,15 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
  * @param server - The MCP server instance
  * @returns A configured MCP tool for handling OAuth flows
  */
-export const createStartOauthTool = async (server: Server, settings: ClientSettings) => {
+export const createStartOAuthTool = async (server: Server, settings: ClientSettings) => {
   // @ts-ignore
   return server.tool(
     "start-oauth",
-    startOauthToolDescription,
-    startOauthInputSchema.shape,
-    async (params: StartOauthInputType): Promise<MCPResponse> => {
-      const { query, provider, groupRef, consumerRef } = params;
-      const finalConsumerRef = consumerRef || (crypto as any).randomUUID?.() || Math.random().toString(36).substring(2, 15);
+    startOAuthToolDescription,
+    startOAuthInputSchema.shape,
+    async (params: StartOAuthInputType): Promise<MCPResponse> => {
+      const { provider, groupRef, consumerRef } = params;
+      const finalConsumerRef = consumerRef || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = settings?.groupRef || groupRef || "";
       const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID || "";
       let url = "";
