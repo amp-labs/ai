@@ -6,14 +6,13 @@ import "./ampersand/core/instrument";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { z } from "zod";
 import * as Sentry from "@sentry/node";
-import { 
+import {
   providerSchema, 
   associationsSchema,
   executeAmpersandWrite,
   checkConnectionInputSchema,
   createInstallationInputSchema,
   checkInstallationInputSchema,
-  oauthInputSchema,
   checkConnection,
   createInstallation,
   checkInstallation,
@@ -21,13 +20,11 @@ import {
   checkConnectionToolDescription,
   createInstallationToolDescription,
   checkInstallationToolDescription,
-  oauthToolDescription,
   CreateActionType,
   UpdateActionType,
   CheckConnectionInputType,
   CreateInstallationInputType,
   CheckInstallationInputType,
-  OAuthInputType,
   sendRequestToolDescription,
   sendRequestInputSchema,
   SendRequestInputType,
