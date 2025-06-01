@@ -293,14 +293,14 @@ export const createSendRequestTool = async (server: Server, settings: ClientSett
     sendRequestToolDescription,
     sendRequestInputSchema.shape,
     async (params: SendRequestInputType): Promise<MCPResponse> => {
-      const { provider, body, suffix, method, headers = {}, installationId } = params;
+      const { provider, body, endpoint, method, headers = {}, installationId } = params;
       try {
         const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID || "";
         const apiKey = settings?.apiKey || process.env.AMPERSAND_API_KEY || "";
         const integrationName = settings?.integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "";
         const finalInstallationId = installationId ?? (await ensureInstallationExists(provider, apiKey, projectId, integrationName));
 
-        const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
+        const response = await fetch(`https://proxy.withampersand.com/${endpoint}`, {
           method,
           headers: {
             ...headers,

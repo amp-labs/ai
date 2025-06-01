@@ -8,6 +8,7 @@ export const createInstallationToolDescription = "Create a new installation for 
 export const checkInstallationToolDescription = "Check if an installation exists for a provider on Ampersand";
 export const oauthToolDescription = "Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL";
 export const sendRequestToolDescription = "Call provider APIs via the Ampersand sendRequest tool";
+export const sendReadRequestToolDescription = "Call provider APIs via the Ampersand sendReadRequest tool (GET only)";
 
 // Schema for associations
 export const associationsSchema = z
@@ -27,10 +28,18 @@ export const associationsSchema = z
   .optional()
   .describe("Optional associations for the record");
 
-// Base schema for provider
-export const providerSchema = z.string().describe(
-  `The provider to connect to. Typically a SaaS tool like Monday, Hubspot, Salesforce, etc.`
-);
+export const providerSchema = z
+  .string()
+  .describe(`The SaaS API provider to connect to. Always use camelCase (e.g. "monday", "hubspot", "salesforce").`);
+
+export const endpointSchema = z
+  .string()
+  .describe(`The endpoint to call on the provider, without the base URL, and including the version. (e.g. If the full URL is "my-workspace.my.salesforce.com/services/data/v60.0/sobjects/Account", the endpoint is "v60.0/sobjects/Account")`);
+
+export const installationIdSchema = z
+  .string()
+  .optional()
+  .describe(`The ID of the installation. If you don't know it, use the check-installation tool.`);
 
 // Base schema for write operations
 export const baseWriteSchema = {
@@ -118,15 +127,22 @@ export const oauthOutputSchema = z.object({
 export const sendRequestInputSchema = z.object({
   provider: providerSchema,
   body: z.record(z.any()).optional().describe("Body of the request"),
-  suffix: z.string().describe("Suffix of the request URL. without the leading slash."),
+  endpoint: endpointSchema,
   method: z.string().describe("HTTP method to use"),
   headers: z.record(z.string()).optional().describe("Headers to send with the request"),
-  installationId: z.string().optional().describe("The installation ID to use for the API call."),
+  installationId: installationIdSchema,
 });
 
 export const sendRequestOutputSchema = z.object({
   status: z.number(),
   response: z.any(),
+});
+
+export const sendReadRequestInputSchema = z.object({
+  provider: providerSchema,
+  endpoint: endpointSchema,
+  headers: z.record(z.string()).optional().describe("Headers to send with the request"),
+  installationId: installationIdSchema,
 });
 
 // Infered type definitions
@@ -144,4 +160,5 @@ export type CheckInstallationOutputType = z.infer<typeof checkInstallationOutput
 export type OAuthInputType = z.infer<typeof oauthInputSchema>;
 export type OAuthOutputType = z.infer<typeof oauthOutputSchema>;
 export type SendRequestInputType = z.infer<typeof sendRequestInputSchema>;
-export type SendRequestOutputType = z.infer<typeof sendRequestOutputSchema>; 
+export type SendRequestOutputType = z.infer<typeof sendRequestOutputSchema>;
+export type SendReadRequestInputType = z.infer<typeof sendReadRequestInputSchema>;

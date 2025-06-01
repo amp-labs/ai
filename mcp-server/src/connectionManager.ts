@@ -227,7 +227,15 @@ export async function createConnectionManagerTools(
   );
 }
 
-export async function ensureConnectionExists(
+/**
+ * Ensures that a connection exists for a given provider, and
+ * creates an Installation if one doesn't already exist.
+ *
+ * @param provider - The SaaS API provider
+ * @param settings - The client settings
+ * @returns The installation ID
+ */
+export async function ensureInstallation(
   provider: string,
   settings?: ClientSettings
 ): Promise<string> {
@@ -289,7 +297,7 @@ export async function ensureConnectionExists(
         connectionId: connectionId,
         groupRef: groupRef,
         config: {
-          createdBy: "api:ensureConnectionExists",
+          createdBy: "mcp:ensureInstallation",
           content: {
             provider: provider,
             proxy: { enabled: true },

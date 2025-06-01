@@ -43,8 +43,11 @@ import {
   sendRequestOutputSchema,
   SendRequestInputType,
   SendRequestOutputType,
+  sendReadRequestToolDescription,
+  sendReadRequestInputSchema,
 } from "./common";
 import { RuntimeContext } from "@mastra/core/runtime-context";
+import { callAmpersandProxy } from "./ampersand/core/request";
 
 /**
  * This file contains shared schemas and tools for integrating with Ampersand
@@ -310,7 +313,7 @@ export const oauthTool = createTool({
  *
  * @param provider - The provider to make the API call to
  * @param body - The request body
- * @param suffix - The API endpoint suffix
+ * @param endpoint - The API endpoint
  * @param method - The HTTP method
  * @param headers - Optional additional headers
  * @param installationId - Optional installation ID
@@ -331,7 +334,7 @@ export const sendRequestTool = createTool({
     const {
       provider,
       body,
-      suffix,
+      endpoint,
       method,
       headers = {},
       installationId,
@@ -339,32 +342,39 @@ export const sendRequestTool = createTool({
     const apiKey = String(runtimeContext.get("AMPERSAND_API_KEY")) || String(process.env.AMPERSAND_API_KEY) || "";
     const projectId = String(runtimeContext.get("AMPERSAND_PROJECT_ID")) || String(process.env.AMPERSAND_PROJECT_ID) || "";
     const integrationName = String(runtimeContext.get("AMPERSAND_INTEGRATION_NAME")) || String(process.env.AMPERSAND_INTEGRATION_NAME) || "";
-    const finalInstallationId =
-      installationId ??
-      (await ensureInstallationExists(
-        provider,
-        apiKey,
-        projectId,
-        integrationName
-      ));
-
-    const response = await fetch(`https://proxy.withampersand.com/${suffix}`, {
+    return callAmpersandProxy({
+      provider,
+      endpoint,
       method,
-      headers: {
-        ...headers,
-        "Content-Type": "application/json",
-        "x-amp-project-id": projectId,
-        "x-api-key": apiKey,
-        "x-amp-proxy-version": "1",
-        "x-amp-installation-id": finalInstallationId,
-      },
-      body: body ? JSON.stringify(body) : undefined,
+      headers,
+      installationId,
+      apiKey,
+      projectId,
+      integrationName,
+      body,
     });
+  },
+});
 
-    const responseData = await response.json();
-    return {
-      status: response.status,
-      response: responseData,
-    };
+export const sendReadRequestTool = createTool({
+  id: "send-read-request",
+  description: sendReadRequestToolDescription,
+  inputSchema: sendReadRequestInputSchema,
+  outputSchema: sendRequestOutputSchema,
+  execute: async ({ context, runtimeContext }) => {
+    const { provider, endpoint, headers = {}, installationId } = context;
+    const apiKey = (runtimeContext.get("AMPERSAND_API_KEY") ?? process.env.AMPERSAND_API_KEY)?.toString() || "";
+    const projectId = (runtimeContext.get("AMPERSAND_PROJECT_ID") ?? process.env.AMPERSAND_PROJECT_ID)?.toString() || "";
+    const integrationName = (runtimeContext.get("AMPERSAND_INTEGRATION_NAME") ?? process.env.AMPERSAND_INTEGRATION_NAME)?.toString() || "";
+    return callAmpersandProxy({
+      provider,
+      endpoint,
+      method: "GET",
+      headers,
+      installationId,
+      apiKey,
+      projectId,
+      integrationName,
+    });
   },
 });
