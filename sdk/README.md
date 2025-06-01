@@ -62,6 +62,6 @@ If you encounter issues, ensure that:
 
 1. All required environment variables are set correctly
 2. You have an active Ampersand account with the necessary permissions & scopes
-3. The SaaS tool (say HubSpot) connection (with OAuth or apiKey) with your Agent is properly established & is still active. 
+3. The SaaS tool (say HubSpot) connection (with OAuth or apiKey) with your Agent is properly established & is still active.
 
 For further assistance, join our [Discord community](https://discord.gg/BWP4BpKHvf). 

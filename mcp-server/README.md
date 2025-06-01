@@ -84,7 +84,6 @@ Use the MCP inspector tool to know more about the mcp server and debug tools, pr
 
 `pnpm inspect`
 
-
 ### Connect to local server from MCP client
 
 #### SSE mode
@@ -92,10 +91,13 @@ Use the MCP inspector tool to know more about the mcp server and debug tools, pr
 If your MCP client supports headers:
 
 ```json
-  "@amp-labs/mcp-server": {
-    "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
-    "headers": {
-      "x-api-key": "<AMPERSAND_API_KEY>"
+{
+  "mcpServers": {
+    "@amp-labs/mcp-server": {
+      "url": "http://localhost:3001/v1/sse?apiKey=<AMPERSAND_API_KEY>&project=<AMPERSAND_PROJECT_ID>&integrationName=<AMPERSAND_INTEGRATION_NAME>&groupRef=<AMPERSAND_GROUP_REF>",
+      "headers": {
+        "x-api-key": "<AMPERSAND_API_KEY>"
+      }
     }
   }
 }

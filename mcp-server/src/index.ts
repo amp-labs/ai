@@ -4,11 +4,10 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './session';
 import { initialize } from './initialize';
 import { createSendRequestTool, createSendReadRequestTool } from './request';
-import { createStartOauthTool } from './oauth';
+import { createStartOAuthTool } from './oauth';
 import { createCreateTool, createUpdateTool } from './write';
 import express from 'express';
 import { createConnectionManagerTools } from './connectionManager';
-import { createSearchTool } from './search';
 
 const args = process.argv.slice(2);
 const useStdioTransport = args.includes('--transport') && args[args.indexOf('--transport') + 1] === 'stdio';
@@ -29,8 +28,9 @@ export type ClientSettings = typeof clientSettings;
 async function main(): Promise<express.Application | undefined> {
     // @ts-ignore
     const server = initialize() as Server;
-    await createSearchTool(server);
-    await createStartOauthTool(server, clientSettings);
+    // Hide search tool for now, since we will introduce a searchRecordsTool later
+    // await createSearchTool(server);
+    await createStartOAuthTool(server, clientSettings);
     await createSendRequestTool(server, clientSettings);
     await createSendReadRequestTool(server, clientSettings);
     await createConnectionManagerTools(server, clientSettings);

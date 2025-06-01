@@ -244,7 +244,7 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
  * @param server - The MCP server instance
  * @returns A configured MCP tool for handling OAuth flows
  */
-export const createStartOauthTool = async (server: Server, settings: ClientSettings) => {
+export const createStartOAuthTool = async (server: Server, settings: ClientSettings) => {
   // @ts-ignore
   return server.tool(
     "start-oauth",
