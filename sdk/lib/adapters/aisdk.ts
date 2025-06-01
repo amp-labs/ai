@@ -39,8 +39,8 @@ import {
   SendReadRequestInputType,
   startOAuthToolDescription,
   startOAuthInputSchema,
-  StartOauthInputType,
-  StartOauthOutputType,
+  StartOAuthInputType,
+  StartOAuthOutputType,
 } from "./common";
 import { z } from "zod";
 import { callAmpersandProxy } from "./ampersand/core/request";
@@ -50,7 +50,6 @@ import { callAmpersandProxy } from "./ampersand/core/request";
  * @remarks
  * Requires the 'ai' package to be installed via npm.
  * 
- * @param provider - The provider to create the record in
  * @param objectName - The name of the object to create
  * @param type - The type of operation (create)
  * @param record - The record data to write
@@ -61,7 +60,7 @@ import { callAmpersandProxy } from "./ampersand/core/request";
 export const createRecordTool = tool({
   description: createRecordToolDescription,
   parameters: createActionSchema,
-  execute: async ({ provider, objectName, type, record, groupRef, associations }: CreateParams) => {
+  execute: async ({ objectName, type, record, groupRef, associations }: CreateParams) => {
     const result = await executeAmpersandWrite({
       objectName,
       type,
@@ -81,7 +80,6 @@ export const createRecordTool = tool({
  * Updates an existing record in the Ampersand system using Vercel AI SDK.
  * @remarks
  * 
- * @param provider - The provider to update the record in
  * @param objectName - The name of the object to update
  * @param type - The type of operation (update)
  * @param record - The updated record data
@@ -92,7 +90,7 @@ export const createRecordTool = tool({
 export const updateRecordTool = tool({
   description: updateRecordToolDescription,
   parameters: updateActionSchema,
-  execute: async ({ provider, objectName, type, record, groupRef, associations }: UpdateParams) => {
+  execute: async ({ objectName, type, record, groupRef, associations }: UpdateParams) => {
     const result = await executeAmpersandWrite({
       objectName,
       type,
@@ -166,7 +164,7 @@ export const checkInstallationTool = tool({
 export const startOAuthTool = tool({
   description: startOAuthToolDescription,
   parameters: startOAuthInputSchema,
-  execute: async (params: StartOauthInputType): Promise<StartOauthOutputType> => {
+  execute: async (params: StartOAuthInputType): Promise<StartOAuthOutputType> => {
     const { provider, groupRef, consumerRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const options: RequestInit = {
@@ -238,4 +236,3 @@ export const sendReadRequestTool = tool({
     });
   },
 });
-

@@ -133,3 +133,7 @@ Please refer to the [mcp-server README]([./mcp-server/README.md](https://github.
 This project is licensed under the MIT license.
 
 See [LICENSE](./LICENSE) for more information.
+
+## Contributing
+
+We welcome contributions! Please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file for more information.

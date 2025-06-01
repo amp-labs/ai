@@ -60,7 +60,6 @@ import { callAmpersandProxy } from "./ampersand/core/request";
  * @remarks
  * Uses the common executeAmpersandWrite function to perform the operation.
  *
- * @param provider - The provider to create the record in
  * @param objectName - The name of the object to create
  * @param type - The type of operation (create)
  * @param record - The record data to write
@@ -80,7 +79,7 @@ export const createRecordTool = createTool({
     context: CreateActionType;
     runtimeContext: RuntimeContext;
   }): Promise<WriteOutputType> => {
-    const { provider, objectName, type, record, groupRef, associations } =
+    const { objectName, type, record, groupRef, associations } =
       context;
     const result = await executeAmpersandWrite({
       objectName,
@@ -108,7 +107,6 @@ export const createRecordTool = createTool({
  * @remarks
  * Uses the common executeAmpersandWrite function to perform the operation.
  *
- * @param provider - The provider to update the record in
  * @param objectName - The name of the object to update
  * @param type - The type of operation (update)
  * @param record - The updated record data
@@ -128,7 +126,7 @@ export const updateRecordTool = createTool({
     context: UpdateActionType;
     runtimeContext: RuntimeContext;
   }): Promise<WriteOutputType> => {
-    const { provider, objectName, type, record, groupRef, associations } =
+    const { objectName, type, record, groupRef, associations } =
       context;
     const result = await executeAmpersandWrite({
       objectName,

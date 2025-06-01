@@ -43,7 +43,6 @@ export const installationIdSchema = z
 
 // Base schema for write operations
 export const baseWriteSchema = {
-  provider: providerSchema,
   objectName: z.string().describe("The name of the object to write to"),
   record: z.record(z.any()).describe("The record data to write"),
   associations: associationsSchema,
