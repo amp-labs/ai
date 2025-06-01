@@ -4,7 +4,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
 import { createSendRequestTool, createSendReadRequestTool } from './request';
-import { createAuthTool } from './oAuth';
+import { createAuthTool } from './oauth';
 import { createCreateTool, createUpdateTool } from './write';
 import express from 'express';
 import { createConnectionManagerTools } from './connectionManager';
