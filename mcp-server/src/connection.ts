@@ -299,7 +299,7 @@ export async function ensureInstallation(
       connectionId: connectionId,
       groupRef: groupRef,
       config: {
-        createdBy: "mcp:ensureInstallation",
+        createdBy: "mcp:ensure-installation",
         content: {
           provider: provider,
           proxy: { enabled: true },
