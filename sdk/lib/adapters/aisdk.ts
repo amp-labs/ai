@@ -41,6 +41,10 @@ import {
   sendReadRequestToolDescription,
   sendReadRequestInputSchema,
   SendReadRequestInputType,
+  startOauthToolDescription,
+  startOauthInputSchema,
+  StartOauthInputType,
+  StartOauthOutputType,
 } from "./common";
 import { z } from "zod";
 import { callAmpersandProxy } from "./ampersand/core/request";
@@ -163,10 +167,10 @@ export const checkInstallationTool = tool({
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication
  */
-export const oauthTool = tool({
-  description: oauthToolDescription,
-  parameters: oauthInputSchema,
-  execute: async (params: OAuthInputType): Promise<OAuthOutputType> => {
+export const startOauthTool = tool({
+  description: startOauthToolDescription,
+  parameters: startOauthInputSchema,
+  execute: async (params: StartOauthInputType): Promise<StartOauthOutputType> => {
     const { provider, query, groupRef, consumerRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || "";
     const options: RequestInit = {

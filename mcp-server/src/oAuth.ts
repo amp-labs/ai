@@ -9,7 +9,7 @@ export async function createAuthTool(
 ): Promise<void> {
   // @ts-ignore
   server.tool(
-    "oauth",
+    "start-oauth",
     `Connect to a SaaS tool provider using the Ampersand OAuth flow. The tool will return a clickablelink to the OAuth flow for the user to click.`,
     {
       query: z.string(),

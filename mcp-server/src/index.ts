@@ -4,7 +4,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
 import { createSendRequestTool, createSendReadRequestTool } from './request';
-import { createAuthTool } from './oAuth';
+import { createStartOauthTool } from './oAuth';
 import { createCreateTool, createUpdateTool } from './write';
 import express from 'express';
 import { createConnectionManagerTools } from './connectionManager';
@@ -30,7 +30,7 @@ async function main(): Promise<express.Application | undefined> {
     // @ts-ignore
     const server = initialize() as Server;
     await createSearchTool(server);
-    await createAuthTool(server, clientSettings);
+    await createStartOauthTool(server, clientSettings);
     await createSendRequestTool(server, clientSettings);
     await createSendReadRequestTool(server, clientSettings);
     await createConnectionManagerTools(server, clientSettings);
