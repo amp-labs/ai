@@ -17,7 +17,7 @@ export interface CheckConnectionResult {
  * Helper that calls the Ampersand Platform API and determines whether a
  * connection already exists for the supplied provider.
  */
-export async function checkConnection({
+export async function checkConnectionHelper({
   provider,
   apiKey = process.env.AMPERSAND_API_KEY || "",
   projectId = process.env.AMPERSAND_PROJECT_ID || "",

@@ -1,5 +1,5 @@
 import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
-import { checkConnection } from "./connection";
+import { checkConnectionHelper } from "./connection";
 import * as Sentry from "@sentry/node";
 interface CheckInstallationParams {
   provider: string;
@@ -32,7 +32,7 @@ export interface CreateInstallationResult {
 /**
  * List/installations for provider and determine if one already exists.
  */
-export async function checkInstallation({
+export async function checkInstallationHelper({
   provider,
   apiKey = process.env.AMPERSAND_API_KEY || "",
   projectId = process.env.AMPERSAND_PROJECT_ID || "",
@@ -67,7 +67,7 @@ export async function checkInstallation({
 /**
  * Create a new installation tied to an existing connection.
  */
-export async function createInstallation({
+export async function createInstallationHelper({
   provider,
   connectionId,
   groupRef,
@@ -111,19 +111,19 @@ export async function createInstallation({
  */
 export async function ensureInstallationExists(provider: string, apiKey: string, projectId: string, integrationName: string): Promise<string> {
   // First, verify a connection exists and grab its identifiers
-  const connection = await checkConnection({ provider, apiKey, projectId });
+  const connection = await checkConnectionHelper({ provider, apiKey, projectId });
   if (!connection.found || !connection.connectionId || !connection.groupRef) {
     throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
   }
 
   // Check existing installation list
-  const installation = await checkInstallation({ provider, apiKey, projectId, integrationName });
+  const installation = await checkInstallationHelper({ provider, apiKey, projectId, integrationName });
   if (installation.found && installation.installationId) {
     return installation.installationId;
   }
 
   // Otherwise create installation
-  const createRes = await createInstallation({
+  const createRes = await createInstallationHelper({
     provider,
     connectionId: connection.connectionId,
     groupRef: connection.groupRef,

@@ -15,10 +15,9 @@ import {
   checkConnectionInputSchema,
   createInstallationInputSchema,
   checkInstallationInputSchema,
-  checkConnection,
-  createInstallation,
-  checkInstallation,
-  ensureInstallationExists,
+  checkConnectionHelper,
+  createInstallationHelper,
+  checkInstallationHelper,
   checkConnectionToolDescription,
   createInstallationToolDescription,
   checkInstallationToolDescription,
@@ -28,10 +27,8 @@ import {
   CreateInstallationOutputType,
   CheckInstallationInputType,
   CheckInstallationOutputType,
-  WriteOutputType,
   sendRequestToolDescription,
   sendRequestInputSchema,
-  sendRequestOutputSchema,
   SendRequestInputType,
   SendRequestOutputType,
   sendReadRequestToolDescription,
@@ -58,7 +55,7 @@ import { callAmpersandProxy } from "./ampersand/core/request";
  * @param associations - Optional associations for the record
  * @returns Object containing status, recordId, and response from Ampersand
  */
-export const createRecordTool = tool({
+export const createRecord = tool({
   description: createRecordToolDescription,
   parameters: createActionSchema,
   execute: async ({ objectName, type, record, groupRef, associations }: CreateParams) => {
@@ -88,7 +85,7 @@ export const createRecordTool = tool({
  * @param associations - Optional associations for the record
  * @returns Object containing status, recordId, and response from Ampersand
  */
-export const updateRecordTool = tool({
+export const updateRecord = tool({
   description: updateRecordToolDescription,
   parameters: updateActionSchema,
   execute: async ({ objectName, type, record, groupRef, associations }: UpdateParams) => {
@@ -112,12 +109,12 @@ export const updateRecordTool = tool({
  * @param provider - The provider to check connection for
  * @returns Connection status and details if found
  */
-export const checkConnectionTool = tool({
+export const checkConnection = tool({
   description: checkConnectionToolDescription,
   parameters: checkConnectionInputSchema,
   execute: async (params: CheckConnectionInputType): Promise<CheckConnectionOutputType> => {
     const { provider } = params;
-    const res = await checkConnection({ provider });
+    const res = await checkConnectionHelper({ provider });
     return res;
   },
 });
@@ -129,12 +126,12 @@ export const checkConnectionTool = tool({
  * @param groupRef - The group reference
  * @returns Installation creation status and details
  */
-export const createInstallationTool = tool({
+export const createInstallation = tool({
   description: createInstallationToolDescription,
   parameters: createInstallationInputSchema,
   execute: async (params: CreateInstallationInputType): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = params;
-    const res = await createInstallation({ provider, connectionId, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef });
+    const res = await createInstallationHelper({ provider, connectionId, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef });
     return res;
   },
 });
@@ -144,12 +141,12 @@ export const createInstallationTool = tool({
  * @param provider - The provider to check installation for
  * @returns Installation status and details if found
  */
-export const checkInstallationTool = tool({
+export const checkInstallation = tool({
   description: checkInstallationToolDescription,
   parameters: checkInstallationInputSchema,
   execute: async (params: CheckInstallationInputType): Promise<CheckInstallationOutputType> => {
     const { provider } = params;
-    const res = await checkInstallation({ provider });
+    const res = await checkInstallationHelper({ provider });
     return res;
   },
 });
@@ -161,7 +158,7 @@ export const checkInstallationTool = tool({
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication
  */
-export const startOAuthTool = tool({
+export const startOAuth = tool({
   description: startOAuthToolDescription,
   parameters: startOAuthInputSchema,
   execute: async (params: StartOAuthInputType): Promise<StartOAuthOutputType> => {
@@ -183,7 +180,7 @@ export const startOAuthTool = tool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const sendRequestTool = tool({
+export const sendRequest = tool({
   description: sendRequestToolDescription,
   parameters: sendRequestInputSchema,
   execute: async (params: SendRequestInputType): Promise<SendRequestOutputType> => {
@@ -213,7 +210,7 @@ export const sendRequestTool = tool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const sendReadRequestTool = tool({
+export const sendReadRequest = tool({
   description: sendReadRequestToolDescription,
   parameters: sendReadRequestInputSchema,
   execute: async (params: SendReadRequestInputType): Promise<SendRequestOutputType> => {

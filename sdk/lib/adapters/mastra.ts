@@ -13,14 +13,13 @@ import {
   updateRecordToolDescription,
   checkConnectionInputSchema,
   checkConnectionOutputSchema,
-  checkConnection,
+  checkConnectionHelper,
   createInstallationInputSchema,
   createInstallationOutputSchema,
   checkInstallationInputSchema,
   checkInstallationOutputSchema,
-  createInstallation,
-  checkInstallation,
-  ensureInstallationExists,
+  createInstallationHelper,
+  checkInstallationHelper,
   checkConnectionToolDescription,
   createInstallationToolDescription,
   checkInstallationToolDescription,
@@ -68,7 +67,7 @@ import { callAmpersandProxy } from "./ampersand/core/request";
  * @param associations - Optional associations for the record
  * @returns Object containing status, recordId, and response from Ampersand
  */
-export const createRecordTool = createTool({
+export const createRecord = createTool({
   id: "create-record",
   description: createRecordToolDescription,
   inputSchema: createActionSchema,
@@ -115,7 +114,7 @@ export const createRecordTool = createTool({
  * @param associations - Optional associations for the record
  * @returns Object containing status, recordId, and response from Ampersand
  */
-export const updateRecordTool = createTool({
+export const updateRecord = createTool({
   id: "update-record",
   description: updateRecordToolDescription,
   inputSchema: updateActionSchema,
@@ -158,7 +157,7 @@ export const updateRecordTool = createTool({
  * @param provider - The provider to check connection for
  * @returns Connection status and details if found
  */
-export const checkConnectionTool = createTool({
+export const checkConnection = createTool({
   id: "check-connection",
   description: checkConnectionToolDescription,
   inputSchema: checkConnectionInputSchema,
@@ -171,7 +170,7 @@ export const checkConnectionTool = createTool({
     runtimeContext: RuntimeContext;
   }): Promise<CheckConnectionOutputType> => {
     const { provider } = context;
-    const result = await checkConnection({
+    const result = await checkConnectionHelper({
       provider,
       apiKey: runtimeContext.get("AMPERSAND_API_KEY"),
       projectId: runtimeContext.get("AMPERSAND_PROJECT_ID"),
@@ -190,7 +189,7 @@ export const checkConnectionTool = createTool({
  * @param groupRef - The group reference
  * @returns Installation creation status and details
  */
-export const createInstallationTool = createTool({
+export const createInstallation = createTool({
   id: "create-installation",
   description: createInstallationToolDescription,
   inputSchema: createInstallationInputSchema,
@@ -203,7 +202,7 @@ export const createInstallationTool = createTool({
     runtimeContext: RuntimeContext;
   }): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = context;
-    const res = await createInstallation({
+    const res = await createInstallationHelper({
       provider,
       connectionId,
       groupRef:
@@ -226,7 +225,7 @@ export const createInstallationTool = createTool({
  * @param provider - The provider to check installation for
  * @returns Installation status and details if found
  */
-export const checkInstallationTool = createTool({
+export const checkInstallation = createTool({
   id: "check-installation",
   description: checkInstallationToolDescription,
   inputSchema: checkInstallationInputSchema,
@@ -239,7 +238,7 @@ export const checkInstallationTool = createTool({
     runtimeContext: RuntimeContext;
   }): Promise<CheckInstallationOutputType> => {
     const { provider } = context;
-    const res = await checkInstallation({
+    const res = await checkInstallationHelper({
       provider,
       apiKey: runtimeContext.get("AMPERSAND_API_KEY"),
       projectId: runtimeContext.get("AMPERSAND_PROJECT_ID"),
@@ -259,7 +258,7 @@ export const checkInstallationTool = createTool({
  * @param consumerRef - Optional consumer reference
  * @returns Object containing the OAuth URL for authentication
  */
-export const startOAuthTool = createTool({
+export const startOAuth = createTool({
   id: "start-oauth",
   description: startOAuthToolDescription,
   inputSchema: startOAuthInputSchema,
@@ -292,7 +291,7 @@ export const startOAuthTool = createTool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const sendRequestTool = createTool({
+export const sendRequest = createTool({
   id: "send-request",
   description: sendRequestToolDescription,
   inputSchema: sendRequestInputSchema,
@@ -337,7 +336,7 @@ export const sendRequestTool = createTool({
  * @param installationId - Optional installation ID
  * @returns Object containing status and response from the API call
  */
-export const sendReadRequestTool = createTool({
+export const sendReadRequest = createTool({
   id: "send-read-request",
   description: sendReadRequestToolDescription,
   inputSchema: sendReadRequestInputSchema,

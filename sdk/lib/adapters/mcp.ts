@@ -13,10 +13,9 @@ import {
   checkConnectionInputSchema,
   createInstallationInputSchema,
   checkInstallationInputSchema,
-  checkConnection,
-  createInstallation,
-  checkInstallation,
-  ensureInstallationExists,
+  checkConnectionHelper,
+  createInstallationHelper,
+  checkInstallationHelper,
   checkConnectionToolDescription,
   createInstallationToolDescription,
   checkInstallationToolDescription,
@@ -32,6 +31,7 @@ import {
   startOAuthInputSchema,
   StartOAuthInputType,
   StartOAuthOutputType,
+  ensureInstallationExists,
 } from "./common";
 
 type MCPResponse = {
@@ -138,7 +138,7 @@ export const createCheckConnectionTool = async (server: Server, settings: Client
     checkConnectionInputSchema.shape,
     async (params: CheckConnectionInputType): Promise<MCPResponse> => {
       try {
-        const res = await checkConnection({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
+        const res = await checkConnectionHelper({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
         if (res.found) {
           return {
             content: [
@@ -188,7 +188,7 @@ export const createCreateInstallationTool = async (server: Server, settings: Cli
     createInstallationInputSchema.shape,
     async (params: CreateInstallationInputType): Promise<MCPResponse> => {
       try {
-        const res = await createInstallation({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
+        const res = await createInstallationHelper({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
         return {
           content: [
             {
@@ -224,7 +224,7 @@ export const createCheckInstallationTool = async (server: Server, settings: Clie
     checkInstallationInputSchema.shape,
     async (params: CheckInstallationInputType): Promise<MCPResponse> => {
       try {
-        const res = await checkInstallation({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
+        const res = await checkInstallationHelper({ ...params, apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "", projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "" });
         if (res.found) {
           return {
             content: [
