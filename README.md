@@ -43,19 +43,19 @@ The SDK provides several modules that can be used depending on your framework pr
 #### Using with Vercel AI SDK
 
 ```typescript
-import { createRecordTool, updateRecordTool } from "@amp-labs/ai/aisdk";
+import { createRecord, updateRecord } from "@amp-labs/ai/aisdk";
 
 // Use in your AI agent configuration
-const tools = [createRecordTool, updateRecordTool];
+const tools = [createRecord, updateRecord];
 ```
 
 #### Using with Mastra
 
 ```typescript
-import { createRecordTool, updateRecordTool } from "@amp-labs/ai/mastra";
+import { createRecord, updateRecord } from "@amp-labs/ai/mastra";
 
 // Use in your Mastra workflow
-const tools = [createRecordTool, updateRecordTool];
+const tools = [createRecord, updateRecord];
 ```
 
 ## Ampersand MCP Server
