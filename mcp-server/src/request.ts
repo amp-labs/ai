@@ -15,7 +15,7 @@ export async function createSendRequestTool(
     {
       provider: providerSchema,
       body: z
-        .record(z.string(), z.string())
+        .record(z.string(), z.any())
         .optional()
         .describe("Body of the request"),
       endpoint: endpointSchema,
