@@ -31,3 +31,17 @@
     Can you create a new OAuth connection with HubSpot? 
 </prompt>
 
+
+## Test read tools & creation via direct api calls
+
+<prompt>
+    Can you create a contact in HubSpot directly with the sendRequest tool?
+</prompt>
+
+<prompt>
+    Can you me get me a contact from HubSpot?
+</prompt>
+
+<prompt>
+    Can you create a contact in HubSpot directly without the createRecord tool?
+</prompt>
