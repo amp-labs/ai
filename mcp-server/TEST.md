@@ -12,12 +12,32 @@
     Can you update a newly created contact in Hubspot with a random email id please?
 </prompt>
 
+### To test custom properties
+
+<prompt>
+    Can you create a contact in HubSpot with custom properties?
+</prompt>
+
+<prompt>
+    Can you retrieve custom properties for a contact in HubSpot?
+</prompt>
 
 ## This gives an error which gets recorded in Sentry 
 
 <prompt>
     Can you try to create a contact with Hubspot that gives an error? 
 </prompt>
+
+<prompt>
+    Can you try to create a contact with invalid email format in HubSpot?
+</prompt>
+
+<prompt>
+    Can you try to update a non-existent contact in HubSpot?
+</prompt>
+
+
+### To test authentication and connection
 
 <prompt>
     Can you check if a connection with HubSpot exists? 
@@ -44,4 +64,23 @@
 
 <prompt>
     Can you create a contact in HubSpot directly without the createRecord tool?
+</prompt>
+
+<prompt>
+    Can you get a list of all companies from HubSpot?
+</prompt>
+
+<prompt>
+    Can you search for contacts by email in HubSpot?
+</prompt>
+
+
+### To test data validation and edge cases
+
+<prompt>
+    Can you create a contact with very long name (>100 characters) in HubSpot?
+</prompt>
+
+<prompt>
+    Can you create a contact with special characters in the name in HubSpot?
 </prompt>
