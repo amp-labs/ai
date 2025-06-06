@@ -37,7 +37,7 @@
 </prompt>
 
 
-### Authentication and connection tests
+### To test authentication and connection
 
 <prompt>
     Can you check if a connection with HubSpot exists? 
