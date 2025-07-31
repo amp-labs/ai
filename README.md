@@ -18,7 +18,7 @@
 This repo contains the official Ampersand AI SDK and the offical MCP server for Ampersand.
 
 - [AI SDK](https://docs.withampersand.com/ai-sdk) - Official Ampersand AI SDK that exposes tools for your AI agents to manage and interact with integrations with your customer's SaaS tools.
-- [MCP server](https://docs.withampersand.com/mcp) - Official Ampersand MCP server that exposes the tools from the Ampersand AI SDK.
+- [MCP server](https://docs.withampersand.com/mcp-server) - Official Ampersand MCP server that exposes the tools from the Ampersand AI SDK.
 
 The `examples` directory contains examples of how to use the AI SDK with popular agent frameworks.
 
