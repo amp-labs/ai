@@ -12,5 +12,9 @@
   },
   "devDependencies": {
     "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"**/*.ts\""
   }
 }
