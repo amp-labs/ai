@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { providerSchema } from "./schemas";
 import { ClientSettings } from ".";
@@ -6,7 +5,7 @@ import crypto from "crypto";
 
 export async function createStartOAuthTool(
   server: Server,
-  settings?: ClientSettings
+  settings?: ClientSettings,
 ): Promise<void> {
   // @ts-ignore
   server.tool(
@@ -30,11 +29,14 @@ export async function createStartOAuthTool(
           },
           body: JSON.stringify({ provider, consumerRef, groupRef, projectId }),
         };
-        console.log("[START-OAUTH] API request to oauthConnect: ", options.body);
+        console.log(
+          "[START-OAUTH] API request to oauthConnect: ",
+          options.body,
+        );
 
         const response = await fetch(
           "https://api.withampersand.com/v1/oauth-connect",
-          options
+          options,
         );
         const data = await response.text();
         console.log("[START-OAUTH] API response from oauthConnect: ", data);
@@ -48,9 +50,9 @@ export async function createStartOAuthTool(
           {
             type: "text",
             text: oAuthUrl,
-          }
+          },
         ],
       };
-    }
+    },
   );
 }

@@ -47,7 +47,7 @@ class TransportManager {
 export async function connectServer(
   server: Server,
   useStdioTransport: boolean,
-  settings: any
+  settings: any,
 ): Promise<express.Application | undefined> {
   if (useStdioTransport) {
     console.log("Connecting to MCP server over stdio");
@@ -87,7 +87,7 @@ export async function connectServer(
     }
     console.log("[SESSION] Settings: ", settings);
     currentTransport = new SSEServerTransport("/messages", res);
-    const sessionId = transportManager.addTransport(currentTransport, res);
+    transportManager.addTransport(currentTransport, res);
     await server.connect(currentTransport);
   });
 
@@ -109,7 +109,7 @@ export async function connectServer(
         console.error(
           "Error handling POST message for sessionId:",
           sessionId,
-          error
+          error,
         );
 
         // If there's a critical error, clean up the transport
@@ -128,11 +128,11 @@ export async function connectServer(
   app.listen(port, () => {
     if (port !== DEFAULT_PORT) {
       console.error(
-        `Port ${DEFAULT_PORT} is already in use. Ampersand MCP Server running on SSE at http://localhost:${port}/${SSE_SERVER_VERSION}`
+        `Port ${DEFAULT_PORT} is already in use. Ampersand MCP Server running on SSE at http://localhost:${port}/${SSE_SERVER_VERSION}`,
       );
     } else {
       console.error(
-        `Ampersand MCP Server running on SSE at http://localhost:${port}/${SSE_SERVER_VERSION}`
+        `Ampersand MCP Server running on SSE at http://localhost:${port}/${SSE_SERVER_VERSION}`,
       );
     }
   });

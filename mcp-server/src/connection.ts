@@ -2,14 +2,12 @@ import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { providerSchema } from "./schemas";
-import {
-  Installation,
-} from "@amp-labs/sdk-node-platform/models/operations/updateinstallation";
+import { Installation } from "@amp-labs/sdk-node-platform/models/operations/updateinstallation";
 import { ClientSettings } from ".";
 
 export async function createConnectionManagerTools(
   server: Server,
-  settings?: ClientSettings
+  settings?: ClientSettings,
 ): Promise<void> {
   // @ts-ignore
   server.tool(
@@ -28,7 +26,7 @@ export async function createConnectionManagerTools(
           projectIdOrName:
             settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
           provider: provider,
-        }
+        };
         const data = await ampersandClient.connections.list(body);
         console.log("[CHECK-CONNECTION] API call to listConnections: ", body);
 
@@ -36,7 +34,10 @@ export async function createConnectionManagerTools(
         if (data.length > 0) {
           // @ts-ignore
           const connection = data[0];
-          console.log("[CHECK-CONNECTION] API response from listConnections:", connection);
+          console.log(
+            "[CHECK-CONNECTION] API response from listConnections:",
+            connection,
+          );
           return {
             content: [
               {
@@ -66,7 +67,7 @@ export async function createConnectionManagerTools(
           ],
         };
       }
-    }
+    },
   );
 
   // @ts-ignore
@@ -89,22 +90,25 @@ export async function createConnectionManagerTools(
             settings?.integrationName ||
             process.env.AMPERSAND_INTEGRATION_NAME ||
             "",
-        }
-        console.log("[CHECK-INSTALLATION] API call to listInstallations: ", body);
+        };
+        console.log(
+          "[CHECK-INSTALLATION] API call to listInstallations: ",
+          body,
+        );
         const data = await ampersandClient.installations.list(body);
 
         console.log(
           "[CHECK-INSTALLATION] API response from listInstallations: ",
-          data
+          data,
         );
         // @ts-ignore
         const relevantInstallations = data.filter(
           // @ts-ignore
-          (inst) => inst.connection?.provider === provider.toLowerCase()
+          (inst) => inst.connection?.provider === provider.toLowerCase(),
         );
         console.log(
           "[CHECK-INSTALLATION] filtered installations: ",
-          relevantInstallations
+          relevantInstallations,
         );
 
         if (relevantInstallations.length > 0) {
@@ -142,7 +146,7 @@ export async function createConnectionManagerTools(
           ],
         };
       }
-    }
+    },
   );
 
   // @ts-ignore
@@ -179,7 +183,10 @@ export async function createConnectionManagerTools(
             },
           },
         };
-        console.log("[CREATE-INSTALLATION] API call to createInstallation: ", requestBody);
+        console.log(
+          "[CREATE-INSTALLATION] API call to createInstallation: ",
+          requestBody,
+        );
 
         const data = await ampersandClient.installations.create({
           projectIdOrName:
@@ -191,7 +198,10 @@ export async function createConnectionManagerTools(
           requestBody,
         });
 
-        console.log("[CREATE-INSTALLATION] API response from createInstallation: ", data);
+        console.log(
+          "[CREATE-INSTALLATION] API response from createInstallation: ",
+          data,
+        );
 
         // @ts-ignore
         const created = data.id !== undefined;
@@ -223,7 +233,7 @@ export async function createConnectionManagerTools(
           ],
         };
       }
-    }
+    },
   );
 }
 
@@ -237,7 +247,7 @@ export async function createConnectionManagerTools(
  */
 export async function ensureInstallation(
   provider: string,
-  settings?: ClientSettings
+  settings?: ClientSettings,
 ): Promise<string> {
   // Instantiate the Ampersand Node Platform Client
   const ampersandClient = new SDKNodePlatform({
@@ -247,17 +257,20 @@ export async function ensureInstallation(
     projectIdOrName:
       settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
     provider: provider,
-  }
+  };
   console.log("[ENSURE-INSTALLATION] API call to listConnections: ", body);
 
   const connectionData = await ampersandClient.connections.list(body);
 
-  console.log("[ENSURE-INSTALLATION] API response from listConnections: ", connectionData);
+  console.log(
+    "[ENSURE-INSTALLATION] API response from listConnections: ",
+    connectionData,
+  );
 
   // @ts-ignore
   if (connectionData.length === 0) {
     throw new Error(
-      `No existing connections found for ${provider}. Please connect using OAuth.`
+      `No existing connections found for ${provider}. Please connect using OAuth.`,
     );
   }
 
@@ -268,7 +281,7 @@ export async function ensureInstallation(
 
   if (!groupRef) {
     throw new Error(
-      `Connection ${connectionId} for provider ${provider} does not have a groupRef.`
+      `Connection ${connectionId} for provider ${provider} does not have a groupRef.`,
     );
   }
 
@@ -276,23 +289,30 @@ export async function ensureInstallation(
     projectIdOrName:
       settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
     integrationId:
-      settings?.integrationName|| process.env.AMPERSAND_INTEGRATION_NAME || "",
+      settings?.integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "",
   });
 
   // @ts-ignore
   const relevantInstallations = installationData.filter(
     // @ts-ignore
-    (inst: Installation) => inst.connection?.provider === provider && inst.group?.groupRef === groupRef && inst.connection?.id === connectionId
+    (inst: Installation) =>
+      inst.connection?.provider === provider &&
+      inst.group?.groupRef === groupRef &&
+      inst.connection?.id === connectionId,
   );
 
-  console.log("[ENSURE-INSTALLATION] existing installation check", relevantInstallations, installationData);
+  console.log(
+    "[ENSURE-INSTALLATION] existing installation check",
+    relevantInstallations,
+    installationData,
+  );
 
   if (relevantInstallations.length === 0) {
     console.log(
       "[ENSURE-INSTALLATION] No existing installation found, creating one for connection:",
       connectionId,
       "group:",
-      groupRef
+      groupRef,
     );
 
     const requestBody = {
@@ -305,32 +325,43 @@ export async function ensureInstallation(
           proxy: { enabled: true },
         },
       },
-    }
+    };
 
     console.log(
-      "[ENSURE-INSTALLATION] API request to createInstallation", requestBody);
+      "[ENSURE-INSTALLATION] API request to createInstallation",
+      requestBody,
+    );
     const createData = await ampersandClient.installations.create({
-      projectIdOrName: settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
-      integrationId: settings?.integrationName || process.env.AMPERSAND_INTEGRATION_NAME || "",
+      projectIdOrName:
+        settings?.project || process.env.AMPERSAND_PROJECT_ID || "",
+      integrationId:
+        settings?.integrationName ||
+        process.env.AMPERSAND_INTEGRATION_NAME ||
+        "",
       requestBody,
     });
 
-    console.log("[ENSURE-INSTALLATION] API response from createInstallation", createData);
+    console.log(
+      "[ENSURE-INSTALLATION] API response from createInstallation",
+      createData,
+    );
 
     // @ts-ignore
     if (createData.installation?.id) {
       // @ts-ignore
-      console.log(`[ENSURE-INSTALLATION]Installation created for ${provider}, Installation ID: ${createData.installation.id}`);
+      console.log(
+        `[ENSURE-INSTALLATION]Installation created for ${provider}, Installation ID: ${createData.installation.id}`,
+      );
       // @ts-ignore
       return createData.installation.id;
     } else {
       throw new Error(
-        `Failed to create installation for ${provider}. API response: ${JSON.stringify(createData)}`
+        `Failed to create installation for ${provider}. API response: ${JSON.stringify(createData)}`,
       );
     }
   } else {
     console.log(
-      `[ENSURE-INSTALLATION]Installation already exists for ${provider} with ID: ${relevantInstallations[0].id}`
+      `[ENSURE-INSTALLATION]Installation already exists for ${provider} with ID: ${relevantInstallations[0].id}`,
     );
     return relevantInstallations[0].id;
   }
