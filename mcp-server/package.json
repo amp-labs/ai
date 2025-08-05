@@ -12,7 +12,10 @@
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
     "publish": "npm publish --access public",
     "lint": "eslint src --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "type-check": "tsc --noEmit"
   },
   "publishConfig": {
     "access": "public",
@@ -23,7 +26,7 @@
     "url": "git+https://github.com/amp-labs/ai.git"
   },
   "author": "Ampersand",
-  "description": "MCP server for Ampersand docs",
+  "description": "MCP server for Ampersand AI SDK",
   "dependencies": {
     "@amp-labs/ai": "^0.1.0",
     "@amp-labs/sdk-node-platform": "^0.2.3",

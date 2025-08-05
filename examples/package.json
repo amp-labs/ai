@@ -15,6 +15,9 @@
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"**/*.ts\""
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"**/*.ts\"",
+    "format:check": "prettier --check \"**/*.ts\"",
+    "type-check": "tsc --noEmit"
   }
 }
