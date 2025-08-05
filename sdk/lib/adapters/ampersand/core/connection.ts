@@ -50,4 +50,4 @@ export async function checkConnectionHelper({
     console.error("[Ampersand] Error while checking connection:", error);
     throw error;
   }
-} 
+}

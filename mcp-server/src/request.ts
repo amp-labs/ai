@@ -1,12 +1,16 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { ensureInstallation } from "./connection";
-import { endpointSchema, installationIdSchema, providerSchema } from "./schemas";
+import {
+  endpointSchema,
+  installationIdSchema,
+  providerSchema,
+} from "./schemas";
 import { ClientSettings } from ".";
 
 export async function createSendRequestTool(
   server: Server,
-  settings?: ClientSettings
+  settings?: ClientSettings,
 ): Promise<void> {
   // @ts-ignore
   server.tool(
@@ -49,13 +53,13 @@ export async function createSendRequestTool(
         settings,
         body,
       });
-    }
+    },
   );
 }
 
 export async function createSendReadRequestTool(
   server: Server,
-  settings?: ClientSettings
+  settings?: ClientSettings,
 ): Promise<void> {
   // @ts-ignore
   server.tool(
@@ -88,7 +92,7 @@ export async function createSendReadRequestTool(
         installationId,
         settings,
       });
-    }
+    },
   );
 }
 
@@ -110,7 +114,8 @@ async function callAmpersandProxy({
   body?: Record<string, any>;
 }) {
   try {
-    installationId = installationId || (await ensureInstallation(provider, settings));
+    installationId =
+      installationId || (await ensureInstallation(provider, settings));
     const fetchOptions: any = {
       method,
       headers: {
@@ -126,14 +131,22 @@ async function callAmpersandProxy({
       fetchOptions.body = JSON.stringify(body);
     }
 
-    console.log("[SEND-REQUEST] API request to proxy: ", endpoint, fetchOptions.body);
+    console.log(
+      "[SEND-REQUEST] API request to proxy: ",
+      endpoint,
+      fetchOptions.body,
+    );
 
     const response = await fetch(
       `https://proxy.withampersand.com/${endpoint}`,
-      fetchOptions
+      fetchOptions,
     );
 
-    console.log("[SEND-REQUEST] API response status from proxy: ", endpoint, response.status);
+    console.log(
+      "[SEND-REQUEST] API response status from proxy: ",
+      endpoint,
+      response.status,
+    );
 
     const data = await response.text();
     return {
@@ -153,7 +166,10 @@ async function callAmpersandProxy({
       ],
     };
   } catch (error) {
-    console.error(`Error in ${method === "GET" ? "sendReadRequest" : "sendRequest"} tool`, error);
+    console.error(
+      `Error in ${method === "GET" ? "sendReadRequest" : "sendRequest"} tool`,
+      error,
+    );
     return {
       isError: true,
       content: [

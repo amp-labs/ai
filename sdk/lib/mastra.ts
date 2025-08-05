@@ -1,1 +1,1 @@
-export * from "./adapters/mastra"; 
+export * from "./adapters/mastra";

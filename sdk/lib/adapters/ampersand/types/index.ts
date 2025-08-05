@@ -32,4 +32,4 @@ export type WriteResponse = {
   status: string;
   recordId: string;
   response: any;
-}; 
+};

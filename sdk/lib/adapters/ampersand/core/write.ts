@@ -1,5 +1,8 @@
 import { Ampersand } from "@amp-labs/sdk-node-write";
-import { WriteRecordsResponse, WriteRecordsSyncWriteResponseSuccess } from "@amp-labs/sdk-node-write/models/operations";
+import {
+  WriteRecordsResponse,
+  WriteRecordsSyncWriteResponseSuccess,
+} from "@amp-labs/sdk-node-write/models/operations";
 import { WriteResponse } from "../types";
 import * as Sentry from "@sentry/node";
 interface WriteParams {
@@ -33,7 +36,7 @@ export async function executeAmpersandWrite({
     const writeSDK = new Ampersand({
       apiKeyHeader: apiKey,
     });
-    
+
     const writeData = {
       projectIdOrName: projectId,
       integrationId: integrationName,
@@ -47,11 +50,12 @@ export async function executeAmpersandWrite({
     };
 
     const data: WriteRecordsResponse = await writeSDK.write.records(writeData);
-    
+
     return {
       success: true,
       status: "success",
-      recordId: (data as WriteRecordsSyncWriteResponseSuccess)?.result?.recordId || "",
+      recordId:
+        (data as WriteRecordsSyncWriteResponseSuccess)?.result?.recordId || "",
       response: data,
     };
   } catch (error) {
@@ -64,4 +68,4 @@ export async function executeAmpersandWrite({
       response: error,
     };
   }
-} 
+}

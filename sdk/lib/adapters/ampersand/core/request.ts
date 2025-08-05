@@ -46,7 +46,7 @@ export async function callAmpersandProxy({
   }
   const response = await fetch(
     `https://proxy.withampersand.com/${endpoint}`,
-    fetchOptions
+    fetchOptions,
   );
   const responseData = await response.json();
   return {
