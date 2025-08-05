@@ -1,0 +1,4 @@
+{
+    "extends": "../.releaserc.json",
+    "tagFormat": "mcp-server-v${version}"
+}

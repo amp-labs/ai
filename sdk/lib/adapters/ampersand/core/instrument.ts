@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from '@sentry/node';
 
 try {
   // NOTE:REPLACE WITH AMPERSAND SENTRY DSN before publishing

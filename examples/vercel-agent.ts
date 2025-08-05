@@ -1,11 +1,11 @@
 import { openai } from '@ai-sdk/openai';
 import { generateObject, generateText } from 'ai';
 import { z } from 'zod';
-import { createRecordTool, updateRecordTool } from "@amp-labs/ai/aisdk";
+import { createRecordTool, updateRecordTool } from '@amp-labs/ai/aisdk';
 
 // Vercel Agent with AI SDK tools by Ampersand
 // This is a simple example of how to use the AI SDK tools by Ampersand in a Vercel AI agent.
-async function handleCustomerQuery(query: string) {
+export async function handleCustomerQuery(query: string) {
   const model = openai('gpt-4o');
 
   // First step: Classify the query type

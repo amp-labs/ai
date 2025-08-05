@@ -24,7 +24,12 @@
     "build": "vite build --mode lib",
     "start": "node dist/index.js",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
-    "publish": "npm publish --access public"
+    "publish": "npm publish --access public",
+    "lint": "eslint lib --ext .ts",
+    "lint:fix": "eslint lib --ext .ts --fix",
+    "format": "prettier --write \"lib/**/*.ts\"",
+    "format:check": "prettier --check \"lib/**/*.ts\"",
+    "type-check": "tsc --noEmit"
   },
   "publishConfig": {
     "access": "public",
