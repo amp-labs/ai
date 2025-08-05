@@ -1,6 +1,6 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from '@sentry/node';
 
-if (process.env.NODE_ENV === "production" && process.env.AMPERSAND_SENTRY_DSN) {
+if (process.env.NODE_ENV === 'production' && process.env.AMPERSAND_SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.AMPERSAND_SENTRY_DSN,
 

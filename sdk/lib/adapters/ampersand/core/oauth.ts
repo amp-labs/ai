@@ -21,15 +21,15 @@ export async function getOAuthURL({
   apiKey: string;
 }): Promise<string> {
   const options: RequestInit = {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      "X-Api-Key": apiKey,
+      'Content-Type': 'application/json',
+      'X-Api-Key': apiKey,
     },
     body: JSON.stringify({ provider, consumerRef, groupRef, projectId }),
   };
   const response = await fetch(
-    "https://api.withampersand.com/v1/oauth-connect",
+    'https://api.withampersand.com/v1/oauth-connect',
     options,
   );
   return response.text();

@@ -1,11 +1,11 @@
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import express, { Request, Response } from "express";
-import { detect } from "detect-port";
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import express, { Request, Response } from 'express';
+import { detect } from 'detect-port';
 
 const DEFAULT_PORT = 3001;
-const SSE_SERVER_VERSION = "v1";
+const SSE_SERVER_VERSION = 'v1';
 
 /**
  * Similar to https://github.com/modelcontextprotocol/typescript-sdk/pull/197/files
@@ -22,7 +22,7 @@ class TransportManager {
     this.transports.set(sessionId, transport);
 
     // Set up cleanup when response ends
-    res.on("close", () => {
+    res.on('close', () => {
       this.removeTransport(sessionId);
     });
 
@@ -50,7 +50,7 @@ export async function connectServer(
   settings: any,
 ): Promise<express.Application | undefined> {
   if (useStdioTransport) {
-    console.log("Connecting to MCP server over stdio");
+    console.log('Connecting to MCP server over stdio');
     const transport = new StdioServerTransport();
     await server.connect(transport);
     return;
@@ -64,9 +64,9 @@ export async function connectServer(
 
   app.get(`/${SSE_SERVER_VERSION}/sse`, async (req: Request, res: Response) => {
     // Set headers for SSE
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
 
     if (req.query.project) {
       settings.project = req.query.project;
@@ -80,23 +80,23 @@ export async function connectServer(
     if (req.query.groupRef) {
       settings.groupRef = req.query.groupRef;
     }
-    if (req.headers["x-api-key"]) {
+    if (req.headers['x-api-key']) {
       // if headers are supported by the mcp client, we use that over the query params. The support for headers in limited.
       // VS code supports it for example like this: https://github.com/microsoft/vscode-docs/blob/74c4fd5aa3180b218fc389184659b621f05460ca/docs/copilot/chat/mcp-servers.md#configuration-example
-      settings.apiKey = req.headers["x-api-key"];
+      settings.apiKey = req.headers['x-api-key'];
     }
-    console.log("[SESSION] Settings: ", settings);
-    currentTransport = new SSEServerTransport("/messages", res);
+    console.log('[SESSION] Settings: ', settings);
+    currentTransport = new SSEServerTransport('/messages', res);
     transportManager.addTransport(currentTransport, res);
     await server.connect(currentTransport);
   });
 
-  app.post("/messages", async (req: Request, res: Response) => {
+  app.post('/messages', async (req: Request, res: Response) => {
     const sessionId = req.query.sessionId as string;
 
-    console.log("[SESSION] Session ID", sessionId);
+    console.log('[SESSION] Session ID', sessionId);
     if (!sessionId) {
-      res.status(400).json({ error: "Missing session ID param" });
+      res.status(400).json({ error: 'Missing session ID param' });
       return;
     }
 
@@ -107,7 +107,7 @@ export async function connectServer(
         await transport.handlePostMessage(req, res, req.body);
       } catch (error) {
         console.error(
-          "Error handling POST message for sessionId:",
+          'Error handling POST message for sessionId:',
           sessionId,
           error,
         );
@@ -115,13 +115,13 @@ export async function connectServer(
         // If there's a critical error, clean up the transport
         if (
           error instanceof Error &&
-          error.message.includes("session closed")
+          error.message.includes('session closed')
         ) {
           transportManager.removeTransport(sessionId);
         }
       }
     } else {
-      res.status(404).json({ error: "session not found" });
+      res.status(404).json({ error: 'session not found' });
     }
   });
 

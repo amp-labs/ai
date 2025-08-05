@@ -3,7 +3,7 @@
  * Each tool is designed to work with the Vercel AI SDK's tool system.
  */
 
-import { tool } from "ai";
+import { tool } from 'ai';
 import {
   createActionSchema,
   updateActionSchema,
@@ -39,8 +39,8 @@ import {
   StartOAuthInputType,
   StartOAuthOutputType,
   getOAuthURL,
-} from "./common";
-import { callAmpersandProxy } from "./ampersand/core/request";
+} from './common';
+import { callAmpersandProxy } from './ampersand/core/request';
 
 /**
  * Creates a new record in the Ampersand system using Vercel AI SDK.
@@ -186,8 +186,8 @@ export const startOAuth = tool({
     params: StartOAuthInputType,
   ): Promise<StartOAuthOutputType> => {
     const { provider, groupRef, consumerRef } = params;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
+    const projectId = process.env.AMPERSAND_PROJECT_ID || '';
+    const apiKey = process.env.AMPERSAND_API_KEY || '';
     const url = await getOAuthURL({
       provider,
       groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
@@ -223,9 +223,9 @@ export const sendRequest = tool({
       headers = {},
       installationId,
     } = params;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
-    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
+    const projectId = process.env.AMPERSAND_PROJECT_ID || '';
+    const apiKey = process.env.AMPERSAND_API_KEY || '';
+    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '';
     return callAmpersandProxy({
       provider,
       endpoint,
@@ -255,13 +255,13 @@ export const sendReadRequest = tool({
     params: SendReadRequestInputType,
   ): Promise<SendRequestOutputType> => {
     const { provider, endpoint, headers = {}, installationId } = params;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
-    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
+    const projectId = process.env.AMPERSAND_PROJECT_ID || '';
+    const apiKey = process.env.AMPERSAND_API_KEY || '';
+    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '';
     return callAmpersandProxy({
       provider,
       endpoint,
-      method: "GET",
+      method: 'GET',
       headers,
       installationId,
       apiKey,

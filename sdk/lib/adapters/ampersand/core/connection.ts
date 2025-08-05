@@ -1,5 +1,5 @@
-import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
-import * as Sentry from "@sentry/node";
+import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
+import * as Sentry from '@sentry/node';
 interface CheckConnectionParams {
   provider: string;
   apiKey?: string;
@@ -19,8 +19,8 @@ export interface CheckConnectionResult {
  */
 export async function checkConnectionHelper({
   provider,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
+  apiKey = process.env.AMPERSAND_API_KEY || '',
+  projectId = process.env.AMPERSAND_PROJECT_ID || '',
 }: CheckConnectionParams): Promise<CheckConnectionResult> {
   try {
     const client = new SDKNodePlatform({
@@ -47,7 +47,7 @@ export async function checkConnectionHelper({
     return { found: false };
   } catch (error) {
     Sentry.captureException(error);
-    console.error("[Ampersand] Error while checking connection:", error);
+    console.error('[Ampersand] Error while checking connection:', error);
     throw error;
   }
 }

@@ -1,12 +1,12 @@
-import { z } from "zod";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { ensureInstallation } from "./connection";
+import { z } from 'zod';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { ensureInstallation } from './connection';
 import {
   endpointSchema,
   installationIdSchema,
   providerSchema,
-} from "./schemas";
-import { ClientSettings } from ".";
+} from './schemas';
+import { ClientSettings } from '.';
 
 export async function createSendRequestTool(
   server: Server,
@@ -14,19 +14,19 @@ export async function createSendRequestTool(
 ): Promise<void> {
   // @ts-ignore
   server.tool(
-    "send-request",
+    'send-request',
     `Call provider APIs via the Ampersand sendRequest tool`,
     {
       provider: providerSchema,
       body: z
         .record(z.string(), z.any())
         .optional()
-        .describe("Body of the request"),
+        .describe('Body of the request'),
       endpoint: endpointSchema,
-      method: z.string().describe("HTTP method to use"),
+      method: z.string().describe('HTTP method to use'),
       headers: z
         .record(z.string(), z.string())
-        .describe("Headers to send with the request"),
+        .describe('Headers to send with the request'),
       installationId: installationIdSchema,
     },
     async ({
@@ -63,14 +63,14 @@ export async function createSendReadRequestTool(
 ): Promise<void> {
   // @ts-ignore
   server.tool(
-    "send-read-request",
+    'send-read-request',
     `Call provider APIs via the Ampersand sendReadRequest tool`,
     {
       provider: providerSchema,
       endpoint: endpointSchema,
       headers: z
         .record(z.string(), z.string())
-        .describe("Headers to send with the request"),
+        .describe('Headers to send with the request'),
       installationId: installationIdSchema,
     },
     async ({
@@ -87,7 +87,7 @@ export async function createSendReadRequestTool(
       return callAmpersandProxy({
         provider,
         endpoint,
-        method: "GET",
+        method: 'GET',
         headers,
         installationId,
         settings,
@@ -120,19 +120,19 @@ async function callAmpersandProxy({
       method,
       headers: {
         ...headers,
-        "Content-Type": "application/json",
-        "x-amp-project-id": settings?.project || "",
-        "x-api-key": settings?.apiKey || "",
-        "x-amp-proxy-version": "1",
-        "x-amp-installation-id": installationId,
+        'Content-Type': 'application/json',
+        'x-amp-project-id': settings?.project || '',
+        'x-api-key': settings?.apiKey || '',
+        'x-amp-proxy-version': '1',
+        'x-amp-installation-id': installationId,
       },
     };
-    if (body && method !== "GET" && Object.keys(body).length > 0) {
+    if (body && method !== 'GET' && Object.keys(body).length > 0) {
       fetchOptions.body = JSON.stringify(body);
     }
 
     console.log(
-      "[SEND-REQUEST] API request to proxy: ",
+      '[SEND-REQUEST] API request to proxy: ',
       endpoint,
       fetchOptions.body,
     );
@@ -143,7 +143,7 @@ async function callAmpersandProxy({
     );
 
     console.log(
-      "[SEND-REQUEST] API response status from proxy: ",
+      '[SEND-REQUEST] API response status from proxy: ',
       endpoint,
       response.status,
     );
@@ -152,29 +152,29 @@ async function callAmpersandProxy({
     return {
       content: [
         {
-          type: "text",
-          text: `${method === "GET" ? "SendReadRequest" : "SendRequest"} to ${provider} returned ${JSON.stringify(data)}`,
+          type: 'text',
+          text: `${method === 'GET' ? 'SendReadRequest' : 'SendRequest'} to ${provider} returned ${JSON.stringify(data)}`,
         },
         {
-          type: "text",
+          type: 'text',
           text: `Status: ${response.status}`,
         },
         {
-          type: "text",
+          type: 'text',
           text: `Response: ${JSON.stringify(data)}`,
         },
       ],
     };
   } catch (error) {
     console.error(
-      `Error in ${method === "GET" ? "sendReadRequest" : "sendRequest"} tool`,
+      `Error in ${method === 'GET' ? 'sendReadRequest' : 'sendRequest'} tool`,
       error,
     );
     return {
       isError: true,
       content: [
         {
-          type: "text",
+          type: 'text',
           text: `Error: ${error}`,
         },
       ],

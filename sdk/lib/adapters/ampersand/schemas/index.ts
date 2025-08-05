@@ -1,22 +1,22 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Tool descriptions
 export const createRecordToolDescription =
-  "Create a record in a SaaS platform (e.g. create a new Contact in Salesforce)";
+  'Create a record in a SaaS platform (e.g. create a new Contact in Salesforce)';
 export const updateRecordToolDescription =
   "Update a record in a SaaS platform (e.g. update a contact's email address in Hubspot)";
 export const checkConnectionToolDescription =
-  "Check if there is an active connection for a provider on Ampersand";
+  'Check if there is an active connection for a provider on Ampersand';
 export const createInstallationToolDescription =
-  "Create a new installation for a provider on Ampersand";
+  'Create a new installation for a provider on Ampersand';
 export const checkInstallationToolDescription =
-  "Check if an installation exists for a provider on Ampersand";
+  'Check if an installation exists for a provider on Ampersand';
 export const startOAuthToolDescription =
-  "Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL";
+  'Connect to a SaaS provider using the Ampersand OAuth flow and obtain a connection URL';
 export const sendRequestToolDescription =
-  "Call provider APIs via the Ampersand sendRequest tool";
+  'Call provider APIs via the Ampersand sendRequest tool';
 export const sendReadRequestToolDescription =
-  "Call provider APIs via the Ampersand sendReadRequest tool (GET only)";
+  'Call provider APIs via the Ampersand sendReadRequest tool (GET only)';
 
 // Schema for associations
 export const associationsSchema = z
@@ -34,7 +34,7 @@ export const associationsSchema = z
     }),
   )
   .optional()
-  .describe("Optional associations for the record");
+  .describe('Optional associations for the record');
 
 export const providerSchema = z
   .string()
@@ -57,23 +57,23 @@ export const installationIdSchema = z
 
 // Base schema for write operations
 export const baseWriteSchema = {
-  objectName: z.string().describe("The name of the object to write to"),
-  record: z.record(z.any()).describe("The record data to write"),
+  objectName: z.string().describe('The name of the object to write to'),
+  record: z.record(z.any()).describe('The record data to write'),
   associations: associationsSchema,
 };
 
 // Create operation schema
 export const createActionSchema = z.object({
   ...baseWriteSchema,
-  type: z.enum(["create"]).describe("The type of write operation"),
-  groupRef: z.string().describe("The group reference for the write operation"),
+  type: z.enum(['create']).describe('The type of write operation'),
+  groupRef: z.string().describe('The group reference for the write operation'),
 });
 
 // Update operation schema
 export const updateActionSchema = z.object({
   ...baseWriteSchema,
-  type: z.enum(["update"]).describe("The type of write operation"),
-  groupRef: z.string().describe("The group reference for the write operation"),
+  type: z.enum(['update']).describe('The type of write operation'),
+  groupRef: z.string().describe('The group reference for the write operation'),
 });
 
 // Common output schema
@@ -123,11 +123,11 @@ export const checkInstallationOutputSchema = z.object({
 // OAuth tool schemas
 export const startOAuthInputSchema = z.object({
   provider: providerSchema,
-  groupRef: z.string().optional().describe("The group reference for Ampersand"),
+  groupRef: z.string().optional().describe('The group reference for Ampersand'),
   consumerRef: z
     .string()
     .optional()
-    .describe("The consumer reference for Ampersand"),
+    .describe('The consumer reference for Ampersand'),
 });
 
 export const startOAuthOutputSchema = z.object({
@@ -137,13 +137,13 @@ export const startOAuthOutputSchema = z.object({
 // Proxy call tool schemas
 export const sendRequestInputSchema = z.object({
   provider: providerSchema,
-  body: z.record(z.any()).optional().describe("Body of the request"),
+  body: z.record(z.any()).optional().describe('Body of the request'),
   endpoint: endpointSchema,
-  method: z.string().describe("HTTP method to use"),
+  method: z.string().describe('HTTP method to use'),
   headers: z
     .record(z.string())
     .optional()
-    .describe("Headers to send with the request"),
+    .describe('Headers to send with the request'),
   installationId: installationIdSchema,
 });
 
@@ -158,7 +158,7 @@ export const sendReadRequestInputSchema = z.object({
   headers: z
     .record(z.string())
     .optional()
-    .describe("Headers to send with the request"),
+    .describe('Headers to send with the request'),
   installationId: installationIdSchema,
 });
 

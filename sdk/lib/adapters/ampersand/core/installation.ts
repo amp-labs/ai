@@ -1,6 +1,6 @@
-import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
-import { checkConnectionHelper } from "./connection";
-import * as Sentry from "@sentry/node";
+import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
+import { checkConnectionHelper } from './connection';
+import * as Sentry from '@sentry/node';
 interface CheckInstallationParams {
   provider: string;
   apiKey?: string;
@@ -34,9 +34,9 @@ export interface CreateInstallationResult {
  */
 export async function checkInstallationHelper({
   provider,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  apiKey = process.env.AMPERSAND_API_KEY || '',
+  projectId = process.env.AMPERSAND_PROJECT_ID || '',
+  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '',
 }: CheckInstallationParams): Promise<CheckInstallationResult> {
   try {
     const client = new SDKNodePlatform({
@@ -65,7 +65,7 @@ export async function checkInstallationHelper({
     return { found: false };
   } catch (error) {
     Sentry.captureException(error);
-    console.error("[Ampersand] Error while checking installation:", error);
+    console.error('[Ampersand] Error while checking installation:', error);
     throw error;
   }
 }
@@ -77,9 +77,9 @@ export async function createInstallationHelper({
   provider,
   connectionId,
   groupRef,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  apiKey = process.env.AMPERSAND_API_KEY || '',
+  projectId = process.env.AMPERSAND_PROJECT_ID || '',
+  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '',
 }: CreateInstallationParams): Promise<CreateInstallationResult> {
   try {
     const client = new SDKNodePlatform({
@@ -93,7 +93,7 @@ export async function createInstallationHelper({
         connectionId,
         groupRef,
         config: {
-          createdBy: "ai-sdk:create-installation",
+          createdBy: 'ai-sdk:create-installation',
           content: {
             provider,
             proxy: { enabled: true },
@@ -107,7 +107,7 @@ export async function createInstallationHelper({
     return { created: !!installationId, installationId, data };
   } catch (error) {
     Sentry.captureException(error);
-    console.error("[Ampersand] Error while creating installation:", error);
+    console.error('[Ampersand] Error while creating installation:', error);
     throw error;
   }
 }

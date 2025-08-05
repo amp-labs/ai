@@ -2,10 +2,10 @@
  * This file contains Model Context Protocol (MCP) compatible tools for integrating with Ampersand.
  */
 
-import "./ampersand/core/instrument";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { z } from "zod";
-import * as Sentry from "@sentry/node";
+import './ampersand/core/instrument';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { z } from 'zod';
+import * as Sentry from '@sentry/node';
 import {
   providerSchema,
   associationsSchema,
@@ -31,7 +31,7 @@ import {
   startOAuthInputSchema,
   StartOAuthInputType,
   ensureInstallationExists,
-} from "./common";
+} from './common';
 
 type MCPResponse = {
   content: Array<{ type: string; text: string }>;
@@ -56,7 +56,7 @@ type ClientSettings = {
  */
 export const createWriteActionTool = async (
   server: Server,
-  type: "create" | "update",
+  type: 'create' | 'update',
   name: string,
   settings: ClientSettings,
 ) => {
@@ -66,13 +66,13 @@ export const createWriteActionTool = async (
     `Perform a ${type} action on provider`,
     {
       provider: providerSchema,
-      objectName: z.string().describe("The name of the object to write to"),
-      type: z.enum([type]).describe("The type of write operation"),
-      record: z.record(z.any()).describe("The record data to write"),
+      objectName: z.string().describe('The name of the object to write to'),
+      type: z.enum([type]).describe('The type of write operation'),
+      record: z.record(z.any()).describe('The record data to write'),
       groupRef: z
         .string()
         .describe(
-          "The group reference for the SaaS instance that should be written to",
+          'The group reference for the SaaS instance that should be written to',
         ),
       associations: associationsSchema,
     },
@@ -89,12 +89,12 @@ export const createWriteActionTool = async (
         record,
         groupRef: settings.groupRef || groupRef,
         associations,
-        apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "",
-        projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "",
+        apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || '',
+        projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || '',
         integrationName:
           settings.integrationName ||
           process.env.AMPERSAND_INTEGRATION_NAME ||
-          "",
+          '',
       });
 
       if (result.success) {
@@ -105,15 +105,15 @@ export const createWriteActionTool = async (
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Successfully performed ${type} operation on ${objectName}`,
             },
             {
-              type: "text",
-              text: `Record ID: ${result.recordId || "N/A"}`,
+              type: 'text',
+              text: `Record ID: ${result.recordId || 'N/A'}`,
             },
             {
-              type: "text",
+              type: 'text',
               text: `Response: ${JSON.stringify(result.response)}`,
             },
           ],
@@ -123,7 +123,7 @@ export const createWriteActionTool = async (
           isError: true,
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Error performing write operation: ${result.response}`,
             },
           ],
@@ -145,21 +145,21 @@ export const createCheckConnectionTool = async (
 ) => {
   // @ts-ignore
   return server.tool(
-    "check-connection",
+    'check-connection',
     checkConnectionToolDescription,
     checkConnectionInputSchema.shape,
     async (params: CheckConnectionInputType): Promise<MCPResponse> => {
       try {
         const res = await checkConnectionHelper({
           ...params,
-          apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "",
-          projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "",
+          apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || '',
+          projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || '',
         });
         if (res.found) {
           return {
             content: [
               {
-                type: "text",
+                type: 'text',
                 text: `Connection found for ${params.provider} connectionId: ${res.connectionId}, groupRef: ${res.groupRef}`,
               },
             ],
@@ -168,7 +168,7 @@ export const createCheckConnectionTool = async (
           return {
             content: [
               {
-                type: "text",
+                type: 'text',
                 text: `No existing connections found for ${params.provider}`,
               },
             ],
@@ -180,7 +180,7 @@ export const createCheckConnectionTool = async (
           isError: true,
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Error checking connection: ${err instanceof Error ? err.message : err}`,
             },
           ],
@@ -202,21 +202,21 @@ export const createCreateInstallationTool = async (
 ) => {
   // @ts-ignore
   return server.tool(
-    "create-installation",
+    'create-installation',
     createInstallationToolDescription,
     createInstallationInputSchema.shape,
     async (params: CreateInstallationInputType): Promise<MCPResponse> => {
       try {
         const res = await createInstallationHelper({
           ...params,
-          apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "",
-          projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "",
+          apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || '',
+          projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || '',
         });
         return {
           content: [
             {
-              type: "text",
-              text: `Installation ${res.created ? "created" : "not created"} for ${params.provider}. ID: ${res.installationId}`,
+              type: 'text',
+              text: `Installation ${res.created ? 'created' : 'not created'} for ${params.provider}. ID: ${res.installationId}`,
             },
           ],
         };
@@ -226,7 +226,7 @@ export const createCreateInstallationTool = async (
           isError: true,
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Error creating installation: ${err instanceof Error ? err.message : err}`,
             },
           ],
@@ -248,21 +248,21 @@ export const createCheckInstallationTool = async (
 ) => {
   // @ts-ignore
   return server.tool(
-    "check-installation",
+    'check-installation',
     checkInstallationToolDescription,
     checkInstallationInputSchema.shape,
     async (params: CheckInstallationInputType): Promise<MCPResponse> => {
       try {
         const res = await checkInstallationHelper({
           ...params,
-          apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || "",
-          projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || "",
+          apiKey: settings.apiKey || process.env.AMPERSAND_API_KEY || '',
+          projectId: settings.project || process.env.AMPERSAND_PROJECT_ID || '',
         });
         if (res.found) {
           return {
             content: [
               {
-                type: "text",
+                type: 'text',
                 text: `Installation found for ${params.provider} ID: ${res.installationId}`,
               },
             ],
@@ -271,7 +271,7 @@ export const createCheckInstallationTool = async (
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `No installation found for ${params.provider}`,
             },
           ],
@@ -282,7 +282,7 @@ export const createCheckInstallationTool = async (
           isError: true,
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Error: ${err instanceof Error ? err.message : err}`,
             },
           ],
@@ -304,23 +304,23 @@ export const createStartOAuthTool = async (
 ) => {
   // @ts-ignore
   return server.tool(
-    "start-oauth",
+    'start-oauth',
     startOAuthToolDescription,
     startOAuthInputSchema.shape,
     async (params: StartOAuthInputType): Promise<MCPResponse> => {
       const { provider, groupRef, consumerRef } = params;
       const finalConsumerRef =
         consumerRef || Math.random().toString(36).substring(2, 15);
-      const finalGroupRef = settings?.groupRef || groupRef || "";
+      const finalGroupRef = settings?.groupRef || groupRef || '';
       const projectId =
-        settings?.project || process.env.AMPERSAND_PROJECT_ID || "";
-      let url = "";
+        settings?.project || process.env.AMPERSAND_PROJECT_ID || '';
+      let url = '';
       try {
         const response = await fetch(
-          "https://api.withampersand.com/v1/oauth-connect",
+          'https://api.withampersand.com/v1/oauth-connect',
           {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               provider,
               consumerRef: finalConsumerRef,
@@ -333,7 +333,7 @@ export const createStartOAuthTool = async (
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `OAuth URL generated for ${provider}: ${url}`,
             },
           ],
@@ -344,7 +344,7 @@ export const createStartOAuthTool = async (
           isError: true,
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Error generating OAuth URL: ${err instanceof Error ? err.message : err}`,
             },
           ],
@@ -366,7 +366,7 @@ export const createSendRequestTool = async (
 ) => {
   // @ts-ignore
   return server.tool(
-    "send-request",
+    'send-request',
     sendRequestToolDescription,
     sendRequestInputSchema.shape,
     async (params: SendRequestInputType): Promise<MCPResponse> => {
@@ -380,12 +380,12 @@ export const createSendRequestTool = async (
       } = params;
       try {
         const projectId =
-          settings?.project || process.env.AMPERSAND_PROJECT_ID || "";
-        const apiKey = settings?.apiKey || process.env.AMPERSAND_API_KEY || "";
+          settings?.project || process.env.AMPERSAND_PROJECT_ID || '';
+        const apiKey = settings?.apiKey || process.env.AMPERSAND_API_KEY || '';
         const integrationName =
           settings?.integrationName ||
           process.env.AMPERSAND_INTEGRATION_NAME ||
-          "";
+          '';
         const finalInstallationId =
           installationId ??
           (await ensureInstallationExists(
@@ -401,11 +401,11 @@ export const createSendRequestTool = async (
             method,
             headers: {
               ...headers,
-              "Content-Type": "application/json",
-              "x-amp-project-id": projectId,
-              "x-api-key": apiKey,
-              "x-amp-proxy-version": "1",
-              "x-amp-installation-id": finalInstallationId,
+              'Content-Type': 'application/json',
+              'x-amp-project-id': projectId,
+              'x-api-key': apiKey,
+              'x-amp-proxy-version': '1',
+              'x-amp-installation-id': finalInstallationId,
             },
             body: body ? JSON.stringify(body) : undefined,
           },
@@ -415,10 +415,10 @@ export const createSendRequestTool = async (
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `API call successful. Status: ${response.status}`,
             },
-            { type: "text", text: `Response: ${JSON.stringify(responseData)}` },
+            { type: 'text', text: `Response: ${JSON.stringify(responseData)}` },
           ],
         };
       } catch (err) {
@@ -427,7 +427,7 @@ export const createSendRequestTool = async (
           isError: true,
           content: [
             {
-              type: "text",
+              type: 'text',
               text: `Error making API call: ${err instanceof Error ? err.message : err}`,
             },
           ],

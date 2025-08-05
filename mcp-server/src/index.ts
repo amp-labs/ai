@@ -1,32 +1,32 @@
-import "./instrument";
-import * as Sentry from "@sentry/node";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { connectServer } from "./session";
-import { initialize } from "./initialize";
-import { createSendRequestTool, createSendReadRequestTool } from "./request";
-import { createStartOAuthTool } from "./oauth";
-import { createCreateTool, createUpdateTool } from "./write";
-import express from "express";
-import { createConnectionManagerTools } from "./connection";
+import './instrument';
+import * as Sentry from '@sentry/node';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { connectServer } from './session';
+import { initialize } from './initialize';
+import { createSendRequestTool, createSendReadRequestTool } from './request';
+import { createStartOAuthTool } from './oauth';
+import { createCreateTool, createUpdateTool } from './write';
+import express from 'express';
+import { createConnectionManagerTools } from './connection';
 
 const args = process.argv.slice(2);
 const useStdioTransport =
-  args.includes("--transport") &&
-  args[args.indexOf("--transport") + 1] === "stdio";
-const project = args.includes("--project")
-  ? args[args.indexOf("--project") + 1]
-  : process.env.AMPERSAND_PROJECT_ID || "";
-const integrationName = args.includes("--integrationName")
-  ? args[args.indexOf("--integrationName") + 1]
-  : process.env.AMPERSAND_INTEGRATION_NAME || "";
-const groupRef = args.includes("--groupRef")
-  ? args[args.indexOf("--groupRef") + 1]
-  : process.env.AMPERSAND_GROUP_REF || "";
+  args.includes('--transport') &&
+  args[args.indexOf('--transport') + 1] === 'stdio';
+const project = args.includes('--project')
+  ? args[args.indexOf('--project') + 1]
+  : process.env.AMPERSAND_PROJECT_ID || '';
+const integrationName = args.includes('--integrationName')
+  ? args[args.indexOf('--integrationName') + 1]
+  : process.env.AMPERSAND_INTEGRATION_NAME || '';
+const groupRef = args.includes('--groupRef')
+  ? args[args.indexOf('--groupRef') + 1]
+  : process.env.AMPERSAND_GROUP_REF || '';
 
 export const clientSettings = {
   project: project,
   integrationName: integrationName,
-  apiKey: process.env.AMPERSAND_API_KEY || "",
+  apiKey: process.env.AMPERSAND_API_KEY || '',
   groupRef: groupRef,
 };
 
@@ -52,7 +52,7 @@ let mcpApp: Promise<express.Application | undefined> | null = null;
 try {
   mcpApp = main();
 } catch (error: any) {
-  console.error("Fatal error in trying to initialize MCP server: ", error);
+  console.error('Fatal error in trying to initialize MCP server: ', error);
   Sentry.captureException(error);
   process.exit(1);
 }

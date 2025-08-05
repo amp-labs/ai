@@ -1,13 +1,13 @@
-import { Ampersand } from "@amp-labs/sdk-node-write";
+import { Ampersand } from '@amp-labs/sdk-node-write';
 import {
   WriteRecordsResponse,
   WriteRecordsSyncWriteResponseSuccess,
-} from "@amp-labs/sdk-node-write/models/operations";
-import { WriteResponse } from "../types";
-import * as Sentry from "@sentry/node";
+} from '@amp-labs/sdk-node-write/models/operations';
+import { WriteResponse } from '../types';
+import * as Sentry from '@sentry/node';
 interface WriteParams {
   objectName: string;
-  type: "create" | "update";
+  type: 'create' | 'update';
   record: Record<string, any>;
   groupRef: string;
   associations?: Array<{
@@ -28,9 +28,9 @@ export async function executeAmpersandWrite({
   record,
   groupRef,
   associations,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  apiKey = process.env.AMPERSAND_API_KEY || '',
+  projectId = process.env.AMPERSAND_PROJECT_ID || '',
+  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '',
 }: WriteParams): Promise<WriteResponse> {
   try {
     const writeSDK = new Ampersand({
@@ -53,18 +53,18 @@ export async function executeAmpersandWrite({
 
     return {
       success: true,
-      status: "success",
+      status: 'success',
       recordId:
-        (data as WriteRecordsSyncWriteResponseSuccess)?.result?.recordId || "",
+        (data as WriteRecordsSyncWriteResponseSuccess)?.result?.recordId || '',
       response: data,
     };
   } catch (error) {
     Sentry.captureException(error);
-    console.error("Error in write operation:", error);
+    console.error('Error in write operation:', error);
     return {
       success: false,
-      status: "error",
-      recordId: "",
+      status: 'error',
+      recordId: '',
       response: error,
     };
   }
