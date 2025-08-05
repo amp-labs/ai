@@ -1,8 +1,17 @@
 {
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
     "husky": "^8.0.0",
-    "prettier": "^3.0.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.5",
     "turbo": "^1.10.0"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "lint": "turbo run lint",
+    "format": "turbo run format"
   },
   "packageManager": "pnpm@8.9.0",
   "engines": {
