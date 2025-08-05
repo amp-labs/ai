@@ -6,7 +6,7 @@ export const providerSchema = z
 
 export const endpointSchema = z
   .string()
-  .describe(`The endpoint to call on the provider, without the base URL, and including the version. (e.g. If the full URL is "my-workspace.my.salesforce.com/services/data/v60.0/sobjects/Account", the endpoint is "v60.0/sobjects/Account")`);
+  .describe(`The endpoint to call on the provider, without the base URL. For Salesforce, include the full path after the instance URL (e.g. "services/data/v58.0/sobjects/Account"). For other providers, use their standard API path format.`);
 
 export const installationIdSchema = z
   .string()

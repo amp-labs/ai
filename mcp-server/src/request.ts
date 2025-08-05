@@ -127,6 +127,7 @@ async function callAmpersandProxy({
     }
 
     console.log("[SEND-REQUEST] API request to proxy: ", endpoint, fetchOptions.body);
+    console.log("[SEND-REQUEST] Full URL: ", `https://proxy.withampersand.com/${endpoint}`);
 
     const response = await fetch(
       `https://proxy.withampersand.com/${endpoint}`,
