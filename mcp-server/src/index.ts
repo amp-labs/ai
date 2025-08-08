@@ -3,11 +3,17 @@ import * as Sentry from "@sentry/node";
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './session';
 import { initialize } from './initialize';
-import { createSendRequestTool, createSendReadRequestTool } from './request';
-import { createStartOAuthTool } from './oauth';
-import { createCreateTool, createUpdateTool } from './write';
+import { 
+  createWriteActionTool,
+  createCheckConnectionTool,
+  createCreateInstallationTool,
+  createCheckInstallationTool,
+  createStartOAuthTool,
+  createSendRequestTool
+} from '@amp-labs/ai/mcp';
+import { z } from 'zod';
+import { providerSchema, endpointSchema, installationIdSchema } from './schemas';
 import express from 'express';
-import { createConnectionManagerTools } from './connection';
 
 const args = process.argv.slice(2);
 const useStdioTransport = args.includes('--transport') && args[args.indexOf('--transport') + 1] === 'stdio';
@@ -25,6 +31,83 @@ export const clientSettings = {
 
 export type ClientSettings = typeof clientSettings;
 
+async function createSendReadRequestTool(
+  server: Server,
+  settings?: ClientSettings
+): Promise<void> {
+  // @ts-ignore
+  server.tool(
+    "send-read-request",
+    `Call provider APIs via the Ampersand sendReadRequest tool`,
+    {
+      provider: providerSchema,
+      endpoint: endpointSchema,
+      headers: z
+        .record(z.string(), z.string())
+        .describe("Headers to send with the request"),
+      installationId: installationIdSchema,
+    },
+    async ({
+      endpoint,
+      headers,
+      installationId,
+      provider,
+    }: {
+      endpoint: string;
+      headers: Record<string, string>;
+      installationId: string;
+      provider: string;
+    }) => {
+      try {
+        const fetchOptions: any = {
+          method: "GET",
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+            "x-amp-project-id": settings?.project || "",
+            "x-api-key": settings?.apiKey || "",
+            "x-amp-proxy-version": "1",
+            "x-amp-installation-id": installationId,
+          },
+        };
+
+        const response = await fetch(
+          `https://proxy.withampersand.com/${endpoint}`,
+          fetchOptions
+        );
+
+        const data = await response.text();
+        return {
+          content: [
+            {
+              type: "text",
+              text: `SendReadRequest to ${provider} returned ${JSON.stringify(data)}`,
+            },
+            {
+              type: "text",
+              text: `Status: ${response.status}`,
+            },
+            {
+              type: "text",
+              text: `Response: ${JSON.stringify(data)}`,
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          isError: true,
+          content: [
+            {
+              type: "text",
+              text: `Error: ${error}`,
+            },
+          ],
+        };
+      }
+    }
+  );
+}
+
 async function main(): Promise<express.Application | undefined> {
     // @ts-ignore
     const server = initialize() as Server;
@@ -33,9 +116,11 @@ async function main(): Promise<express.Application | undefined> {
     await createStartOAuthTool(server, clientSettings);
     await createSendRequestTool(server, clientSettings);
     await createSendReadRequestTool(server, clientSettings);
-    await createConnectionManagerTools(server, clientSettings);
-    await createCreateTool(server, clientSettings);
-    await createUpdateTool(server, clientSettings);
+    await createCheckConnectionTool(server, clientSettings);
+    await createCreateInstallationTool(server, clientSettings);
+    await createCheckInstallationTool(server, clientSettings);
+    await createWriteActionTool(server, "create", "create-record", clientSettings);
+    await createWriteActionTool(server, "update", "update-record", clientSettings);
     const app = await connectServer(server, useStdioTransport, clientSettings);
     return app;
 }
