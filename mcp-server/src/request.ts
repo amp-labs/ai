@@ -136,6 +136,10 @@ async function callAmpersandProxy({
       endpoint,
       fetchOptions.body,
     );
+    console.log(
+      '[SEND-REQUEST] Full URL: ',
+      `https://proxy.withampersand.com/${endpoint}`,
+    );
 
     const response = await fetch(
       `https://proxy.withampersand.com/${endpoint}`,
