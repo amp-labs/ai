@@ -1,10 +1,10 @@
 import {
-  createRecordTool as createRecordToolMastra,
-  updateRecordTool as updateRecordToolMastra,
+  createRecord as createRecordToolMastra,
+  updateRecord as updateRecordToolMastra,
 } from '@amp-labs/ai/mastra';
 import {
-  createRecordTool as createRecordToolAISDK,
-  updateRecordTool as updateRecordToolAISDK,
+  createRecord as createRecordToolAISDK,
+  updateRecord as updateRecordToolAISDK,
 } from '@amp-labs/ai/aisdk';
 
 // Use in your AI agent configuration

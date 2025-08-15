@@ -2,7 +2,6 @@ import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
 import { z } from 'zod';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { providerSchema } from './schemas';
-import { Installation } from '@amp-labs/sdk-node-platform/models/operations/updateinstallation';
 import { ClientSettings } from '.';
 
 export async function createConnectionManagerTools(
@@ -295,7 +294,7 @@ export async function ensureInstallation(
   // @ts-ignore
   const relevantInstallations = installationData.filter(
     // @ts-ignore
-    (inst: Installation) =>
+    (inst: any) =>
       inst.connection?.provider === provider &&
       inst.group?.groupRef === groupRef &&
       inst.connection?.id === connectionId,
@@ -347,13 +346,12 @@ export async function ensureInstallation(
     );
 
     // @ts-ignore
-    if (createData.installation?.id) {
-      // @ts-ignore
+    const installationId = createData.installation?.id;
+    if (installationId) {
       console.log(
-        `[ENSURE-INSTALLATION]Installation created for ${provider}, Installation ID: ${createData.installation.id}`,
+        `[ENSURE-INSTALLATION]Installation created for ${provider}, Installation ID: ${installationId}`,
       );
-      // @ts-ignore
-      return createData.installation.id;
+      return installationId;
     } else {
       throw new Error(
         `Failed to create installation for ${provider}. API response: ${JSON.stringify(createData)}`,

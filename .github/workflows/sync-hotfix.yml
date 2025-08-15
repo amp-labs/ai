@@ -1,0 +1,50 @@
+name: Sync Hotfix to Main
+
+on:
+  push:
+    branches: ['release/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-sync-pr:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, 'fix:') ||
+      contains(github.event.head_commit.message, 'chore(release)')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Ensure 'hotfix-sync' label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create hotfix-sync --color FFA500 --description "Hotfix sync from release branch" || true
+      
+      - name: Create PR to sync hotfix
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the current branch name
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          
+          # Create a PR from release branch to main
+          gh pr create \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "🔄 Sync: Merge $BRANCH_NAME to main" \
+            --body "This PR merges changes from the release branch back to main.
+            
+            Branch: $BRANCH_NAME
+            Commit: $GITHUB_SHA
+            
+            Please review for conflicts before merging." \
+            --label "hotfix-sync" || echo "PR already exists or cannot be created"

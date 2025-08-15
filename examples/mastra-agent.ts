@@ -2,10 +2,10 @@ import { MCPClient } from '@mastra/mcp';
 import { Agent } from '@mastra/core/agent';
 import { openai } from '@ai-sdk/openai';
 import {
-  createRecordTool as createRecordToolAISDK,
-  updateRecordTool as updateRecordToolAISDK,
+  createRecord as createRecordToolAISDK,
+  updateRecord as updateRecordToolAISDK,
 } from '@amp-labs/ai/aisdk';
-import { createRecordTool, updateRecordTool } from '@amp-labs/ai/mastra';
+import { createRecord, updateRecord } from '@amp-labs/ai/mastra';
 
 // Mastra Agent with AI SDK tools
 export const aiSDKToolsAgent: Agent = new Agent({
@@ -24,8 +24,8 @@ export const mastraToolsAgent: Agent = new Agent({
   instructions: 'You can use tools defined in Mastra.',
   model: openai('gpt-4o-mini'),
   tools: {
-    createRecordTool,
-    updateRecordTool,
+    createRecord,
+    updateRecord,
   },
 });
 

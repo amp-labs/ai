@@ -1,6 +1,21 @@
 {
     "pipeline": {
+        "build": {
+            "dependsOn": [
+                "^build"
+            ],
+            "outputs": [
+                "dist/**"
+            ]
+        },
         "lint": {},
-        "format": {}
+        "lint:fix": {},
+        "format": {},
+        "format:check": {},
+        "type-check": {
+            "dependsOn": [
+                "^build"
+            ]
+        }
     }
 }
