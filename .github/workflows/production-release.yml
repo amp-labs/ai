@@ -1,9 +1,15 @@
-name: Release
+name: Production Release
 
 on:
   push:
     branches:
-      - main
+      - 'release/**'
+    paths:
+      - 'sdk/**'
+      - 'mcp-server/**'
+      - '!**.md'
+      - '!**/*.test.ts'
+      - '!**/TEST.md'
 
 permissions:
   contents: write
@@ -11,8 +17,9 @@ permissions:
   pull-requests: write
 
 jobs:
-  release:
+  release-production:
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,11 +35,10 @@ jobs:
           cache: 'pnpm'
           
       - run: pnpm install
-      - run: pnpm -F @amp-labs/ai build
-      - run: pnpm -F @amp-labs/mcp-server build
+      - run: pnpm turbo run build --filter=@amp-labs/*
       
-      - name: Release
+      - name: Release Production
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm release
+        run: pnpm -r --filter=@amp-labs/* exec semantic-release

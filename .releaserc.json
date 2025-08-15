@@ -1,12 +1,25 @@
 {
     "branches": [
-        "main"
+        {
+            "name": "main",
+            "prerelease": "preview",
+            "channel": "preview"
+        },
+        {
+            "name": "release/+([0-9])?(.{+([0-9]),x})",
+            "channel": "${name.replace(/^release\\//g, '')}"
+        }
     ],
     "plugins": [
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
         "@semantic-release/changelog",
-        "@semantic-release/npm",
+        [
+            "@semantic-release/npm",
+            {
+                "npmPublish": true
+            }
+        ],
         "@semantic-release/github",
         [
             "@semantic-release/git",
