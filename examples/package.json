@@ -17,7 +17,6 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"**/*.ts\"",
-    "format:check": "prettier --check \"**/*.ts\"",
-    "type-check": "tsc --noEmit"
+    "format:check": "prettier --check \"**/*.ts\""
   }
 }
