@@ -1,15 +1,13 @@
-name: Production Release
+name: Release
 
 on:
   push:
-    branches:
-      - 'release/**'
+    branches: [main, 'release/**']
     paths:
       - 'sdk/**'
       - 'mcp-server/**'
       - '!**.md'
-      - '!**/*.test.ts'
-      - '!**/TEST.md'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,8 +15,9 @@ permissions:
   pull-requests: write
 
 jobs:
-  release-production:
+  release:
     runs-on: ubuntu-latest
+    if: !contains(github.event.head_commit.message, '[skip ci]')
     
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +36,7 @@ jobs:
       - run: pnpm install
       - run: pnpm turbo run build --filter=@amp-labs/*
       
-      - name: Release Production
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

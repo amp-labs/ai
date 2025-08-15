@@ -2,9 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/**']
   pull_request:
-    branches: [main]
+    branches: [main, 'release/**']
+  workflow_dispatch:
 
 jobs:
   lint-and-type-check:
@@ -22,17 +23,8 @@ jobs:
           node-version: 20
           cache: 'pnpm'
           
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-        
-      - name: Check formatting
-        run: pnpm turbo run format:check
-        
-      - name: Lint
-        run: pnpm turbo run lint
-        
-      - name: Type check
-        run: pnpm turbo run type-check
-        
-      - name: Build
-        run: pnpm turbo run build
+      - run: pnpm install
+      - run: pnpm turbo run format:check
+      - run: pnpm turbo run lint
+      - run: pnpm turbo run type-check
+      - run: pnpm turbo run build
