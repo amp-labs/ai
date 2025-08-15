@@ -1,9 +1,9 @@
-import { ensureInstallationExists } from "./installation";
+import { ensureInstallationExists } from './installation';
 
 export async function callAmpersandProxy({
   provider,
   endpoint,
-  method = "GET",
+  method = 'GET',
   headers = {},
   installationId,
   apiKey,
@@ -34,19 +34,19 @@ export async function callAmpersandProxy({
     method,
     headers: {
       ...headers,
-      "Content-Type": "application/json",
-      "x-amp-project-id": projectId,
-      "x-api-key": apiKey,
-      "x-amp-proxy-version": "1",
-      "x-amp-installation-id": finalInstallationId,
+      'Content-Type': 'application/json',
+      'x-amp-project-id': projectId,
+      'x-api-key': apiKey,
+      'x-amp-proxy-version': '1',
+      'x-amp-installation-id': finalInstallationId,
     },
   };
-  if (body && method !== "GET" && Object.keys(body).length > 0) {
+  if (body && method !== 'GET' && Object.keys(body).length > 0) {
     fetchOptions.body = JSON.stringify(body);
   }
   const response = await fetch(
     `https://proxy.withampersand.com/${endpoint}`,
-    fetchOptions
+    fetchOptions,
   );
   const responseData = await response.json();
   return {

@@ -3,9 +3,9 @@
  * Each tool is designed to work with the Vercel AI SDK's tool system.
  */
 
-import { tool } from "ai";
-import { 
-  createActionSchema, 
+import { tool } from 'ai';
+import {
+  createActionSchema,
   updateActionSchema,
   executeAmpersandWrite,
   CreateParams,
@@ -39,15 +39,14 @@ import {
   StartOAuthInputType,
   StartOAuthOutputType,
   getOAuthURL,
-} from "./common";
-import { z } from "zod";
-import { callAmpersandProxy } from "./ampersand/core/request";
+} from './common';
+import { callAmpersandProxy } from './ampersand/core/request';
 
 /**
  * Creates a new record in the Ampersand system using Vercel AI SDK.
  * @remarks
  * Requires the 'ai' package to be installed via npm.
- * 
+ *
  * @param objectName - The name of the object to create
  * @param type - The type of operation (create)
  * @param record - The record data to write
@@ -58,7 +57,13 @@ import { callAmpersandProxy } from "./ampersand/core/request";
 export const createRecord = tool({
   description: createRecordToolDescription,
   parameters: createActionSchema,
-  execute: async ({ objectName, type, record, groupRef, associations }: CreateParams) => {
+  execute: async ({
+    objectName,
+    type,
+    record,
+    groupRef,
+    associations,
+  }: CreateParams) => {
     const result = await executeAmpersandWrite({
       objectName,
       type,
@@ -77,7 +82,7 @@ export const createRecord = tool({
 /**
  * Updates an existing record in the Ampersand system using Vercel AI SDK.
  * @remarks
- * 
+ *
  * @param objectName - The name of the object to update
  * @param type - The type of operation (update)
  * @param record - The updated record data
@@ -88,7 +93,13 @@ export const createRecord = tool({
 export const updateRecord = tool({
   description: updateRecordToolDescription,
   parameters: updateActionSchema,
-  execute: async ({ objectName, type, record, groupRef, associations }: UpdateParams) => {
+  execute: async ({
+    objectName,
+    type,
+    record,
+    groupRef,
+    associations,
+  }: UpdateParams) => {
     const result = await executeAmpersandWrite({
       objectName,
       type,
@@ -112,7 +123,9 @@ export const updateRecord = tool({
 export const checkConnection = tool({
   description: checkConnectionToolDescription,
   parameters: checkConnectionInputSchema,
-  execute: async (params: CheckConnectionInputType): Promise<CheckConnectionOutputType> => {
+  execute: async (
+    params: CheckConnectionInputType,
+  ): Promise<CheckConnectionOutputType> => {
     const { provider } = params;
     const res = await checkConnectionHelper({ provider });
     return res;
@@ -129,9 +142,15 @@ export const checkConnection = tool({
 export const createInstallation = tool({
   description: createInstallationToolDescription,
   parameters: createInstallationInputSchema,
-  execute: async (params: CreateInstallationInputType): Promise<CreateInstallationOutputType> => {
+  execute: async (
+    params: CreateInstallationInputType,
+  ): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = params;
-    const res = await createInstallationHelper({ provider, connectionId, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef });
+    const res = await createInstallationHelper({
+      provider,
+      connectionId,
+      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+    });
     return res;
   },
 });
@@ -144,7 +163,9 @@ export const createInstallation = tool({
 export const checkInstallation = tool({
   description: checkInstallationToolDescription,
   parameters: checkInstallationInputSchema,
-  execute: async (params: CheckInstallationInputType): Promise<CheckInstallationOutputType> => {
+  execute: async (
+    params: CheckInstallationInputType,
+  ): Promise<CheckInstallationOutputType> => {
     const { provider } = params;
     const res = await checkInstallationHelper({ provider });
     return res;
@@ -161,11 +182,19 @@ export const checkInstallation = tool({
 export const startOAuth = tool({
   description: startOAuthToolDescription,
   parameters: startOAuthInputSchema,
-  execute: async (params: StartOAuthInputType): Promise<StartOAuthOutputType> => {
+  execute: async (
+    params: StartOAuthInputType,
+  ): Promise<StartOAuthOutputType> => {
     const { provider, groupRef, consumerRef } = params;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
-    const url = await getOAuthURL({ provider, groupRef: process.env.AMPERSAND_GROUP_REF || groupRef, consumerRef, projectId, apiKey });
+    const projectId = process.env.AMPERSAND_PROJECT_ID || '';
+    const apiKey = process.env.AMPERSAND_API_KEY || '';
+    const url = await getOAuthURL({
+      provider,
+      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+      consumerRef,
+      projectId,
+      apiKey,
+    });
     return { url };
   },
 });
@@ -183,11 +212,20 @@ export const startOAuth = tool({
 export const sendRequest = tool({
   description: sendRequestToolDescription,
   parameters: sendRequestInputSchema,
-  execute: async (params: SendRequestInputType): Promise<SendRequestOutputType> => {
-    const { provider, body, endpoint, method, headers = {}, installationId } = params;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
-    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
+  execute: async (
+    params: SendRequestInputType,
+  ): Promise<SendRequestOutputType> => {
+    const {
+      provider,
+      body,
+      endpoint,
+      method,
+      headers = {},
+      installationId,
+    } = params;
+    const projectId = process.env.AMPERSAND_PROJECT_ID || '';
+    const apiKey = process.env.AMPERSAND_API_KEY || '';
+    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '';
     return callAmpersandProxy({
       provider,
       endpoint,
@@ -213,15 +251,17 @@ export const sendRequest = tool({
 export const sendReadRequest = tool({
   description: sendReadRequestToolDescription,
   parameters: sendReadRequestInputSchema,
-  execute: async (params: SendReadRequestInputType): Promise<SendRequestOutputType> => {
+  execute: async (
+    params: SendReadRequestInputType,
+  ): Promise<SendRequestOutputType> => {
     const { provider, endpoint, headers = {}, installationId } = params;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || "";
-    const apiKey = process.env.AMPERSAND_API_KEY || "";
-    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "";
+    const projectId = process.env.AMPERSAND_PROJECT_ID || '';
+    const apiKey = process.env.AMPERSAND_API_KEY || '';
+    const integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '';
     return callAmpersandProxy({
       provider,
       endpoint,
-      method: "GET",
+      method: 'GET',
       headers,
       installationId,
       apiKey,

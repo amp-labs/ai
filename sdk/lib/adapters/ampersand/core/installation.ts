@@ -1,6 +1,6 @@
-import { SDKNodePlatform } from "@amp-labs/sdk-node-platform";
-import { checkConnectionHelper } from "./connection";
-import * as Sentry from "@sentry/node";
+import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
+import { checkConnectionHelper } from './connection';
+import * as Sentry from '@sentry/node';
 interface CheckInstallationParams {
   provider: string;
   apiKey?: string;
@@ -34,9 +34,9 @@ export interface CreateInstallationResult {
  */
 export async function checkInstallationHelper({
   provider,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  apiKey = process.env.AMPERSAND_API_KEY || '',
+  projectId = process.env.AMPERSAND_PROJECT_ID || '',
+  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '',
 }: CheckInstallationParams): Promise<CheckInstallationResult> {
   try {
     const client = new SDKNodePlatform({
@@ -49,17 +49,23 @@ export async function checkInstallationHelper({
     });
 
     // @ts-ignore – Filter by provider (Ampersand lower-cases internally)
-    const filtered = installations.filter((inst: any) => inst.connection?.provider === provider.toLowerCase());
+    const filtered = installations.filter(
+      (inst: any) => inst.connection?.provider === provider.toLowerCase(),
+    );
 
     if (filtered.length > 0) {
       const installation = filtered[0];
-      return { found: true, installationId: installation.id, data: installation };
+      return {
+        found: true,
+        installationId: installation.id,
+        data: installation,
+      };
     }
 
     return { found: false };
   } catch (error) {
     Sentry.captureException(error);
-    console.error("[Ampersand] Error while checking installation:", error);
+    console.error('[Ampersand] Error while checking installation:', error);
     throw error;
   }
 }
@@ -71,9 +77,9 @@ export async function createInstallationHelper({
   provider,
   connectionId,
   groupRef,
-  apiKey = process.env.AMPERSAND_API_KEY || "",
-  projectId = process.env.AMPERSAND_PROJECT_ID || "",
-  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || "",
+  apiKey = process.env.AMPERSAND_API_KEY || '',
+  projectId = process.env.AMPERSAND_PROJECT_ID || '',
+  integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '',
 }: CreateInstallationParams): Promise<CreateInstallationResult> {
   try {
     const client = new SDKNodePlatform({
@@ -87,7 +93,7 @@ export async function createInstallationHelper({
         connectionId,
         groupRef,
         config: {
-          createdBy: "ai-sdk:create-installation",
+          createdBy: 'ai-sdk:create-installation',
           content: {
             provider,
             proxy: { enabled: true },
@@ -101,7 +107,7 @@ export async function createInstallationHelper({
     return { created: !!installationId, installationId, data };
   } catch (error) {
     Sentry.captureException(error);
-    console.error("[Ampersand] Error while creating installation:", error);
+    console.error('[Ampersand] Error while creating installation:', error);
     throw error;
   }
 }
@@ -109,15 +115,31 @@ export async function createInstallationHelper({
 /**
  * Ensure an installation exists, creating one if necessary. Returns the installationId.
  */
-export async function ensureInstallationExists(provider: string, apiKey: string, projectId: string, integrationName: string): Promise<string> {
+export async function ensureInstallationExists(
+  provider: string,
+  apiKey: string,
+  projectId: string,
+  integrationName: string,
+): Promise<string> {
   // First, verify a connection exists and grab its identifiers
-  const connection = await checkConnectionHelper({ provider, apiKey, projectId });
+  const connection = await checkConnectionHelper({
+    provider,
+    apiKey,
+    projectId,
+  });
   if (!connection.found || !connection.connectionId || !connection.groupRef) {
-    throw new Error(`No existing connections found for ${provider}. Please connect using OAuth.`);
+    throw new Error(
+      `No existing connections found for ${provider}. Please connect using OAuth.`,
+    );
   }
 
   // Check existing installation list
-  const installation = await checkInstallationHelper({ provider, apiKey, projectId, integrationName });
+  const installation = await checkInstallationHelper({
+    provider,
+    apiKey,
+    projectId,
+    integrationName,
+  });
   if (installation.found && installation.installationId) {
     return installation.installationId;
   }
@@ -137,4 +159,4 @@ export async function ensureInstallationExists(provider: string, apiKey: string,
   }
 
   return createRes.installationId;
-} 
+}

@@ -1,7 +1,7 @@
 // Type definitions for the parameters
 export type CreateParams = {
   objectName: string;
-  type: "create";
+  type: 'create';
   record: Record<string, any>;
   groupRef: string;
   associations?: Array<{
@@ -15,7 +15,7 @@ export type CreateParams = {
 
 export type UpdateParams = {
   objectName: string;
-  type: "update";
+  type: 'update';
   record: Record<string, any>;
   groupRef: string;
   associations?: Array<{
@@ -32,4 +32,4 @@ export type WriteResponse = {
   status: string;
   recordId: string;
   response: any;
-}; 
+};
