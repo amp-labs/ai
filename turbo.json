@@ -12,6 +12,10 @@
         "lint:fix": {},
         "format": {},
         "format:check": {},
-        "type-check": {}
+        "type-check": {
+            "dependsOn": [
+                "^build"
+            ]
+        }
     }
 }
