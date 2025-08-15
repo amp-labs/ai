@@ -1,5 +1,5 @@
 {
-  "name": "@amp-labs/examples",
+  "name": "examples",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
