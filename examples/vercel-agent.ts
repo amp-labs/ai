@@ -1,6 +1,6 @@
 import { openai } from '@ai-sdk/openai';
 import { generateObject, generateText } from 'ai';
-import { z } from 'zod/v3';
+import { z } from 'zod';
 import { createRecord, updateRecord } from '@amp-labs/ai/aisdk';
 
 // Vercel Agent with AI SDK tools by Ampersand

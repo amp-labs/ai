@@ -1,6 +1,6 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { TrieveSDK, ChunkMetadata } from 'trieve-ts-sdk';
-import { z } from 'zod/v3';
+import { z } from 'zod';
 
 export const SUBDOMAIN: string = 'ampersand-24eb5c1a';
 export const SERVER_URL: string = 'https://leaves.mintlify.com';
