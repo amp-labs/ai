@@ -46,17 +46,19 @@
     "@amp-labs/sdk-node-write": "^0.2.4",
     "@modelcontextprotocol/sdk": "^1.6.1",
     "@sentry/node": "^9.22.0",
+    "ai": "^5.0.0",
+    "ai-legacy": "npm:ai@^4.3.2",
     "axios": "^1.8.1",
     "build": "^0.1.4",
     "dashify": "^2.0.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "trieve-ts-sdk": "^0.0.62",
-    "zod": "^3.24.2"
+    "zod": "^4.1.12"
   },
   "peerDependencies": {
     "@mastra/core": "^0.9.1",
-    "ai": "^4.3.13"
+    "ai": "^5.0.0"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
