@@ -40,23 +40,23 @@ When you generate this migration checklist, you must IMMEDIATELY:
 2. ✅ **RUN** `git add AI_SDK_5_MIGRATION.md`
 3. ✅ **RUN** `git commit -m "Add migration checklist"`
 
-- [ ] **ACTION**: Run `git status` to check for uncommitted changes
-- [ ] **ACTION**: If there are uncommitted changes, commit them with `git commit -am "Pre-migration checkpoint"`
-- [ ] **ACTION**: 🔴 **CRITICAL** 🔴 Create migration branch: `git checkout -b ai-sdk-5-migration`
-- [ ] **ACTION**: 🔴 **CRITICAL** 🔴 Commit migration guide: `git add AI_SDK_5_MIGRATION.md && git commit -m "Add migration checklist"`
-- [ ] **ACTION**: Verify clean working directory with `git status`
+- [x] **ACTION**: Run `git status` to check for uncommitted changes
+- [x] **ACTION**: If there are uncommitted changes, commit them with `git commit -am "Pre-migration checkpoint"`
+- [x] **ACTION**: 🔴 **CRITICAL** 🔴 Create migration branch: `git checkout -b ai-sdk-5-migration`
+- [x] **ACTION**: 🔴 **CRITICAL** 🔴 Commit migration guide: `git add AI_SDK_5_MIGRATION.md && git commit -m "Add migration checklist"`
+- [x] **ACTION**: Verify clean working directory with `git status`
 
 ### 1.2 Review Current Setup
-- [ ] **ACTION**: Search codebase for AI SDK imports: `grep -r "from 'ai'" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"`
-- [ ] **ACTION**: Check current `ai` package version in package.json
-- [ ] **INFO**: Note current version here: ___
-- [ ] **ACTION**: Search for `message.content` usage: `grep -r "message\.content" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"`
-- [ ] **INFO**: Files accessing message.content: ___ (these will ALL need refactoring)
+- [x] **ACTION**: Search codebase for AI SDK imports: `grep -r "from 'ai'" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"`
+- [x] **ACTION**: Check current `ai` package version in package.json
+- [x] **INFO**: Note current version here: ^4.3.13 (found in sdk/package.json and examples/package.json)
+- [x] **ACTION**: Search for `message.content` usage: `grep -r "message\.content" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"`
+- [x] **INFO**: Files accessing message.content: None found (good - no message.content refactoring needed)
 
 ### 1.3 Assess Data Migration Needs
-- [ ] **ACTION**: Do you have existing message data in a database? (Yes/No): ___
-- [ ] **ACTION**: If Yes, estimate number of stored messages: ___
-- [ ] **INFO**: If you have existing messages, you'll need a backward compatibility layer (see Phase 5)
+- [x] **ACTION**: Do you have existing message data in a database? (Yes/No): No (SDK doesn't persist messages, but users of this SDK may have stored messages)
+- [x] **ACTION**: If Yes, estimate number of stored messages: N/A
+- [x] **INFO**: If you have existing messages, you'll need a backward compatibility layer (see Phase 5)
 
 **After completing Phase 1, update this file to mark items as [x], then proceed to Phase 2.**
 
@@ -65,23 +65,25 @@ When you generate this migration checklist, you must IMMEDIATELY:
 ## Phase 2: Update Dependencies
 
 ### 2.1 Update Core Package
-- [ ] **ACTION**: Run `pnpm add ai@latest`
-- [ ] **ACTION**: Verify version in package.json shows ^5.0.0 or higher
-- [ ] **INFO**: New version installed: ___
+- [x] **ACTION**: Run `pnpm add ai@latest`
+- [x] **ACTION**: Verify version in package.json shows ^5.0.0 or higher
+- [x] **INFO**: New version installed: 5.0.98
 
 ### 2.2 Update Provider & UI Packages (if used)
-- [ ] **ACTION**: Check package.json for these packages and update if present:
+- [x] **ACTION**: Check package.json for these packages and update if present:
   - `pnpm add @ai-sdk/openai@latest @ai-sdk/anthropic@latest @ai-sdk/google@latest` (providers)
   - `pnpm add @ai-sdk/react@latest @ai-sdk/rsc@latest` (UI packages)
+- [x] **INFO**: Updated @ai-sdk/openai to ^2.0.71
 
 ### 2.3 Update Other Dependencies
-- [ ] **ACTION**: Update zod: `pnpm add zod@latest` (required 4.1.8+ for TypeScript performance)
-- [ ] **ACTION**: Run `pnpm install` to ensure lock file is updated
+- [x] **ACTION**: Update zod: `pnpm add zod@latest` (required 4.1.8+ for TypeScript performance)
+- [x] **ACTION**: Run `pnpm install` to ensure lock file is updated
+- [x] **INFO**: Updated zod to ^4.1.12 (Note: peer dependency warnings with @mastra/core expecting zod 3.x - expected)
 
 ### 2.4 Add Legacy AI SDK Alias (Required for Phase 5)
 **💡 Required for type-safe message transformations in Phase 5.**
 
-- [ ] **ACTION**: Add AI SDK v4 as alias in package.json:
+- [x] **ACTION**: Add AI SDK v4 as alias in package.json:
 ```json
 {
   "dependencies": {
@@ -90,10 +92,10 @@ When you generate this migration checklist, you must IMMEDIATELY:
   }
 }
 ```
-- [ ] **ACTION**: Run `pnpm install`
+- [x] **ACTION**: Run `pnpm install`
 
 ### 2.5 Commit Changes
-- [ ] **ACTION**: Commit package updates: `git add package.json pnpm-lock.yaml && git commit -m "Update to AI SDK 5"`
+- [x] **ACTION**: Commit package updates: `git add package.json pnpm-lock.yaml && git commit -m "Update to AI SDK 5"`
 
 **After completing Phase 2, update this file to mark items as [x], then proceed to Phase 3.**
 
@@ -102,17 +104,22 @@ When you generate this migration checklist, you must IMMEDIATELY:
 ## Phase 3: Run Automated Codemods
 
 ### 3.1 Run Codemods
-- [ ] **ACTION**: Run codemod: `npx @ai-sdk/codemod@latest v5`
-- [ ] **ACTION**: Review changes with `git diff`
+- [x] **ACTION**: Run codemod: `npx @ai-sdk/codemod@latest v5`
+- [x] **ACTION**: Review changes with `git diff`
 - [ ] **ACTION**: Commit codemod changes: `git add -A && git commit -m "Apply AI SDK 5 codemods"`
 
 **Note:** Codemods fix ~80% of breaking changes automatically.
 
+**Changes made by codemod:**
+- Changed `parameters` → `inputSchema` in all tool definitions
+- Changed `reasoning` → `reasoningText` in example
+- Changed zod imports to `zod/v3` (may need manual review - we're using zod v4)
+
 ### 3.2 Find All FIXME Comments
-- [ ] **ACTION**: Search entire codebase: `grep -r "FIXME" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" .`
-- [ ] **ACTION**: List ALL FIXME locations with file paths and line numbers
-- [ ] **INFO**: Total FIXME comments found: ___
-- [ ] **ACTION**: Create a plan for addressing each FIXME in Phase 4
+- [x] **ACTION**: Search entire codebase: `grep -r "FIXME" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" .`
+- [x] **ACTION**: List ALL FIXME locations with file paths and line numbers
+- [x] **INFO**: Total FIXME comments found: 0 (no FIXME comments in code, only in checklist)
+- [x] **ACTION**: Create a plan for addressing each FIXME in Phase 4
 
 **After completing Phase 3, update this file to mark items as [x], then proceed to Phase 4.**
 

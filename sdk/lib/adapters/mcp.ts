@@ -4,7 +4,7 @@
 
 import './ampersand/core/instrument';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import * as Sentry from '@sentry/node';
 import {
   providerSchema,

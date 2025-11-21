@@ -1,6 +1,6 @@
 import { openai } from '@ai-sdk/openai';
 import { generateObject, generateText } from 'ai';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 import { createRecord, updateRecord } from '@amp-labs/ai/aisdk';
 
 // Vercel Agent with AI SDK tools by Ampersand
@@ -12,7 +12,7 @@ export async function handleCustomerQuery(query: string) {
   const { object: classification } = await generateObject({
     model,
     schema: z.object({
-      reasoning: z.string(),
+      reasoningText: z.string(),
       type: z.enum(['general', 'refund', 'technical']),
       complexity: z.enum(['simple', 'complex']),
     }),
