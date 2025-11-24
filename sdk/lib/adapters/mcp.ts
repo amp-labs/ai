@@ -68,7 +68,9 @@ export const createWriteActionTool = async (
       provider: providerSchema,
       objectName: z.string().describe('The name of the object to write to'),
       type: z.enum([type]).describe('The type of write operation'),
-      record: z.record(z.any()).describe('The record data to write'),
+      record: z
+        .record(z.string(), z.any())
+        .describe('The record data to write'),
       groupRef: z
         .string()
         .describe(
