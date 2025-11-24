@@ -1,50 +1,49 @@
-import { defineConfig } from "vite";
-import { VitePluginNode } from "vite-plugin-node";
-import dts from "vite-plugin-dts";
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   define: {
-    'process.env': {
-      AMPERSAND_SENTRY_DSN: process.env.AMPERSAND_SENTRY_DSN, // build time env var
-    },
+    'process.env.AMPERSAND_SENTRY_DSN': JSON.stringify(
+      process.env.AMPERSAND_SENTRY_DSN,
+    ),
   },
   server: {
     port: 3001,
   },
   build: {
-    outDir: "./dist",
+    outDir: './dist',
     lib: {
       entry: {
-        mastra: "./lib/adapters/mastra.ts",
-        mcp: "./lib/adapters/mcp.ts",
-        aisdk: "./lib/adapters/aisdk.ts",
+        mastra: './lib/adapters/mastra.ts',
+        mcp: './lib/adapters/mcp.ts',
+        aisdk: './lib/adapters/aisdk.ts',
       },
-      formats: ["cjs", "es"],
+      formats: ['cjs', 'es'],
       fileName: (format, entryName) =>
-        entryName === "index" ? `index.${format}` : `${entryName}/index.${format}`,
+        entryName === 'index'
+          ? `index.${format}`
+          : `${entryName}/index.${format}`,
     },
     rollupOptions: {
       external: [
-        "express",
-        "dotenv",
-        "zod",
-        "trieve-ts-sdk",
-        "axios",
-        "dashify",
-        "mintlify-validation",
-        "mintlify-openapi-parser",
-        "ai",
-        "@mastra/core",
-        "@amp-labs/sdk-node-platform",
-        "@amp-labs/sdk-node-write",
-        "@modelcontextprotocol/sdk",
-        "@sentry/node",
+        'express',
+        'dotenv',
+        'zod',
+        'trieve-ts-sdk',
+        'axios',
+        'dashify',
+        'mintlify-validation',
+        'mintlify-openapi-parser',
+        'ai',
+        '@mastra/core',
+        '@amp-labs/sdk-node-platform',
+        '@amp-labs/sdk-node-write',
+        '@modelcontextprotocol/sdk',
+        '@sentry/node',
       ],
     },
     sourcemap: true,
-    target: "node16",
+    target: 'node16',
   },
-  plugins: [
-    dts({ rollupTypes: true }),
-  ],
+  plugins: [dts({ rollupTypes: true })],
 });

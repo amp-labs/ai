@@ -2,3 +2,4 @@ packages:
   - 'mcp-server'
   - 'sdk'
   - 'examples'
+  - 'test'
