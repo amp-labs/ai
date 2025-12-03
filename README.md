@@ -58,6 +58,54 @@ import { createRecord, updateRecord } from "@amp-labs/ai/mastra";
 const tools = [createRecord, updateRecord];
 ```
 
+### Testing
+
+The `test` directory contains end-to-end tests for the AI SDK.
+
+#### Running the Simple Test
+
+**Prerequisites:**
+- OpenAI API key (required for AI model)
+- Ampersand API credentials
+
+1. Configure environment variables in `test/.env`:
+   ```bash
+   OPENAI_API_KEY=your_openai_api_key_here
+   AMPERSAND_API_KEY=your_ampersand_api_key_here
+   AMPERSAND_PROJECT_ID=your_project_id_here
+   AMPERSAND_GROUP_REF=your_group_ref_here
+   ```
+
+2. Run the test:
+   ```bash
+   # From the root directory
+   pnpm --filter ai-e2e-test test:simple
+
+   # Or from the test directory
+   cd test
+   pnpm test:simple
+   ```
+
+The simple test demonstrates how to use the `checkConnection` tool with the Vercel AI SDK to verify Salesforce connections.
+
+#### Testing Local Changes
+
+The test uses your **local SDK build** via pnpm workspace linking. To test modifications to the SDK:
+
+1. Make changes to SDK source files in `sdk/lib/`
+
+2. Rebuild the SDK:
+   ```bash
+   pnpm --filter @amp-labs/ai build
+   ```
+
+3. Re-run the test to verify your changes:
+   ```bash
+   pnpm --filter ai-e2e-test test:simple
+   ```
+
+The test will use the freshly built SDK from `sdk/dist/`, allowing you to iterate quickly on SDK changes.
+
 ## Ampersand MCP Server
 
 Connect your agents to the 150+ connectors we offer at Ampersand via this multi-tenant MCP server. We expose the primitives we offer on the Ampersand platform as native tools here.
