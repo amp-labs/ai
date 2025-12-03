@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tsx ai-e2e-vercel-ai.ts",
     "test:simple": "tsx ai-e2e-simple.ts",
-    "test:ts-node": "ts-node ai-e2e-vercel-ai.ts"
+    "test:schema": "tsx ai-e2e-schema-validation.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.21",

@@ -270,3 +270,25 @@ export const sendReadRequest = tool({
     });
   },
 });
+
+// Re-export schemas for testing and validation
+export {
+  createActionSchema,
+  updateActionSchema,
+  checkConnectionInputSchema,
+  checkConnectionOutputSchema,
+  createInstallationInputSchema,
+  createInstallationOutputSchema,
+  checkInstallationInputSchema,
+  checkInstallationOutputSchema,
+  startOAuthInputSchema,
+  startOAuthOutputSchema,
+  sendRequestInputSchema,
+  sendRequestOutputSchema,
+  sendReadRequestInputSchema,
+  associationsSchema,
+  providerSchema,
+  endpointSchema,
+  installationIdSchema,
+  writeOutputSchema,
+} from './ampersand/schemas';
