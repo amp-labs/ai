@@ -9,6 +9,34 @@ import * as dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
+const checkEnvironmentVariables = () => {
+  console.log('Environment variables:');
+  console.log(
+    '- AMPERSAND_API_KEY:',
+    process.env.AMPERSAND_API_KEY ? 'SET' : 'NOT SET',
+  );
+  console.log('- AMPERSAND_PROJECT_ID:', process.env.AMPERSAND_PROJECT_ID);
+  console.log('- AMPERSAND_GROUP_REF:', process.env.AMPERSAND_GROUP_REF);
+  console.log();
+  console.log(
+    '- OPENAI_API_KEY:',
+    process.env.OPENAI_API_KEY ? 'SET' : 'NOT SET',
+  );
+
+  if (!process.env.AMPERSAND_API_KEY) {
+    throw new Error('AMPERSAND_API_KEY is not set');
+  }
+  if (!process.env.AMPERSAND_PROJECT_ID) {
+    throw new Error('AMPERSAND_PROJECT_ID is not set');
+  }
+  if (!process.env.AMPERSAND_GROUP_REF) {
+    throw new Error('AMPERSAND_GROUP_REF is not set');
+  }
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is not set');
+  }
+};
+
 /**
  * This test checks the connection and installation of the Salesforce connector.
  * It uses the checkConnection and checkInstallation tools to check the connection and installation.
@@ -19,20 +47,12 @@ dotenv.config();
  */
 async function testSimpleToolCall() {
   console.log('Starting simple tool call test...\n');
-  console.log('Environment variables:');
-  console.log(
-    '- AMPERSAND_API_KEY:',
-    process.env.AMPERSAND_API_KEY ? 'SET' : 'NOT SET',
-  );
-  console.log('- AMPERSAND_PROJECT_ID:', process.env.AMPERSAND_PROJECT_ID);
-  console.log('- AMPERSAND_GROUP_REF:', process.env.AMPERSAND_GROUP_REF);
-  console.log();
 
+  checkEnvironmentVariables(); // check if the environment variables are set
   // comment out the following code to test the tool call (will use OpenAI credits)
-  // Test 1: Check connection - simple string parameter
 
+  // Test 1: Check connection - simple string parameter
   try {
-    // Test 1: Check connection - simple string parameter
     console.log('Test 1: Checking connection for Salesforce...');
     const checkResult = await generateText({
       model: openai('gpt-4o-mini'),
