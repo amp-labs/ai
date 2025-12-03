@@ -28,21 +28,30 @@ async function main() {
 
   const runner = new TestRunner();
 
+  const GROUP_REF = process.env.AMPERSAND_GROUP_REF || '';
+  const CONTACT_ID = '003Dp00000Sy9SOIAZ'; // ID from createRecord test - update this with your test contact ID
+
   // Test 1: Update a Contact in Salesforce
   await runner.test(
     'updateRecord: Update Contact email in Salesforce',
     async () => {
+      const prompt = `Use the updateRecord tool with these EXACT parameters (do not modify or interpret them):
+
+objectName: "contact"
+type: "update"
+record: {"id":"${CONTACT_ID}","Email":"updated-e2e@example.com","Phone":"555-1234"}
+groupRef: "${GROUP_REF}"
+
+The record parameter MUST be an object with id, Email, and Phone fields. Do not parse or interpret the data - pass it exactly as shown above.`;
+
       log.info('Calling AI to update a Contact in Salesforce...');
-      log.warn(
-        'NOTE: You need to provide a valid contact ID for this test to work',
-      );
+      log.warn(`This will update Contact ${CONTACT_ID} in Salesforce`);
 
       const result = await generateText({
-        model: openai('o3-mini'),
+        model: openai('gpt-4o-mini'),
         tools: { updateRecord },
         maxSteps: 5,
-        prompt:
-          'Update the contact with ID "003xx000004TmiQAAS" in Salesforce to change the email to "updated@example.com"',
+        prompt,
       });
 
       log.debug(`AI Response: ${result.text}`);
