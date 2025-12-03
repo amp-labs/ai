@@ -27,18 +27,28 @@ async function main() {
 
   const runner = new TestRunner();
 
+  const SALESFORCE_ENDPOINT = `services/data/v56.0/sobjects`;
+  const INSTALLATION_ID = '60e8efe5-aa48-4c3d-8e83-1755dffc24f0'; // should fetch from check installation tool
+
   // Test 1: GET request to fetch Salesforce objects
   await runner.test(
     'sendRequest: GET request to list Salesforce objects',
     async () => {
+      const prompt = `Use sendRequest to make a GET request using these exact parameters:
+- provider: "salesforce"
+- endpoint: "${SALESFORCE_ENDPOINT}"
+- installationId: "${INSTALLATION_ID}"
+- method: "GET"
+
+Do not modify the endpoint path - use it exactly as provided.`;
+
       log.info('Calling AI to make GET request to Salesforce...');
 
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { sendRequest },
         maxSteps: 5,
-        prompt:
-          'Make a GET request to Salesforce API endpoint v60.0/sobjects to list available objects',
+        prompt,
       });
 
       log.debug(`AI Response: ${result.text}`);
@@ -69,39 +79,52 @@ async function main() {
   );
 
   // Test 2: POST request to create a record
-  await runner.test(
-    'sendRequest: POST request to create Salesforce Contact',
-    async () => {
-      log.info('Calling AI to make POST request to Salesforce...');
-
-      const result = await generateText({
-        model: openai('o3-mini'),
-        tools: { sendRequest },
-        maxSteps: 5,
-        prompt:
-          'Make a POST request to Salesforce endpoint v60.0/sobjects/Contact with body containing FirstName "API" and LastName "Test"',
-      });
-
-      const toolCalls = result.steps[0]?.toolCalls;
-      assert(toolCalls && toolCalls.length > 0, 'Tool should have been called');
-
-      // Access tool results (AI SDK v4+ structure)
-      const toolResults = result.steps[0]?.toolResults;
-      assert(
-        toolResults && toolResults.length > 0,
-        'Tool should have returned results',
-      );
-
-      const toolResult = toolResults[0].result;
-      assert('status' in toolResult, 'Result should have "status" field');
-      assert(
-        toolResult.status === 201 || toolResult.status === 200,
-        'POST request should return 200/201 status',
-      );
-
-      log.success(`Record created via API with status: ${toolResult.status}`);
-    },
-  );
+  // NOTE: Commented out by default as it creates actual data in Salesforce
+  // Uncomment to test POST functionality
+  // await runner.test(
+  //   'sendRequest: POST request to create Salesforce Contact',
+  //   async () => {
+  //     const CONTACT_ENDPOINT = `services/data/v56.0/sobjects/Contact`;
+  //     const contactData = {
+  //       FirstName: 'API',
+  //       LastName: 'Test',
+  //     };
+  //
+  //     const prompt = `Use sendRequest to make a POST request to Salesforce endpoint ${CONTACT_ENDPOINT} with installation ID ${INSTALLATION_ID} and request body ${JSON.stringify(contactData)} to create a new contact`;
+  //
+  //     log.info('Calling AI to make POST request to Salesforce...');
+  //     log.warn('This will create an actual Contact record in Salesforce');
+  //
+  //     const result = await generateText({
+  //       model: openai('gpt-4o-mini'),
+  //       tools: { sendRequest },
+  //       maxSteps: 5,
+  //       prompt,
+  //     });
+  //
+  //     const toolCalls = result.steps[0]?.toolCalls;
+  //     assert(toolCalls && toolCalls.length > 0, 'Tool should have been called');
+  //
+  //     // Access tool results (AI SDK v4+ structure)
+  //     const toolResults = result.steps[0]?.toolResults;
+  //     assert(
+  //       toolResults && toolResults.length > 0,
+  //       'Tool should have returned results',
+  //     );
+  //
+  //     const toolResult = toolResults[0].result;
+  //     assert('status' in toolResult, 'Result should have "status" field');
+  //     assert(
+  //       toolResult.status === 201 || toolResult.status === 200,
+  //       'POST request should return 200/201 status',
+  //     );
+  //
+  //     log.success(`Record created via API with status: ${toolResult.status}`);
+  //     if (toolResult.response?.id) {
+  //       log.info(`Created Contact ID: ${toolResult.response.id}`);
+  //     }
+  //   },
+  // );
 
   runner.summarize();
 }
