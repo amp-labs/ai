@@ -35,7 +35,8 @@ async function main() {
     log.info('Calling AI to get Salesforce OAuth URL...');
 
     const groupRef = process.env.AMPERSAND_GROUP_REF;
-    const consumerRef = `test-user-${Date.now()}`; // Generate unique consumer ref for each test
+    // const today = new Date().toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
+    const consumerRef = process.env.AMPERSAND_CONSUMER_REF;
     // Note: Salesforce requires providerWorkspaceRef (subdomain)
     // This should be set in .env as SALESFORCE_SUBDOMAIN
     const salesforceSubdomain = process.env.SALESFORCE_SUBDOMAIN;
