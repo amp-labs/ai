@@ -83,7 +83,7 @@ The `test` directory contains end-to-end tests for the AI SDK.
 
    # Or from the test directory
    cd test
-   npm run test:simple
+   pnpm test:simple
    ```
 
 The simple test demonstrates how to use the `checkConnection` tool with the Vercel AI SDK to verify Salesforce connections.
