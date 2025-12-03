@@ -175,8 +175,9 @@ export const checkInstallation = tool({
 /**
  * Initiates OAuth flow for a provider using Vercel AI SDK.
  * @param provider - The provider to authenticate with
- * @param groupRef - Optional group reference
- * @param consumerRef - Optional consumer reference
+ * @param groupRef - The group reference for identifying the group of users
+ * @param consumerRef - The consumer reference for identifying the user
+ * @param providerWorkspaceRef - Optional provider workspace identifier (e.g. Salesforce subdomain)
  * @returns Object containing the OAuth URL for authentication
  */
 export const startOAuth = tool({
@@ -185,15 +186,16 @@ export const startOAuth = tool({
   execute: async (
     params: StartOAuthInputType,
   ): Promise<StartOAuthOutputType> => {
-    const { provider, groupRef, consumerRef } = params;
+    const { provider, groupRef, consumerRef, providerWorkspaceRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || '';
     const apiKey = process.env.AMPERSAND_API_KEY || '';
     const url = await getOAuthURL({
       provider,
-      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+      groupRef,
       consumerRef,
       projectId,
       apiKey,
+      providerWorkspaceRef,
     });
     return { url };
   },
