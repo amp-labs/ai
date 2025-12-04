@@ -1,4 +1,5 @@
 import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
+import { ListInstallationsInstallation } from '@amp-labs/sdk-node-platform/src/models/operations/listinstallations';
 import { checkConnectionHelper } from './connection';
 import * as Sentry from '@sentry/node';
 interface CheckInstallationParams {
@@ -50,7 +51,8 @@ export async function checkInstallationHelper({
 
     // @ts-ignore – Filter by provider (Ampersand lower-cases internally)
     const filtered = installations.filter(
-      (inst: any) => inst.connection?.provider === provider.toLowerCase(),
+      (inst: ListInstallationsInstallation) =>
+        inst.connection?.provider === provider.toLowerCase(),
     );
 
     if (filtered.length > 0) {
@@ -81,26 +83,27 @@ export async function createInstallationHelper({
   projectId = process.env.AMPERSAND_PROJECT_ID || '',
   integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '',
 }: CreateInstallationParams): Promise<CreateInstallationResult> {
-  try {
-    const client = new SDKNodePlatform({
-      apiKeyHeader: apiKey,
-    });
-
-    const data = await client.installations.create({
-      projectIdOrName: projectId,
-      integrationId: integrationName,
-      requestBody: {
-        connectionId,
-        groupRef,
-        config: {
-          createdBy: 'ai-sdk:create-installation',
-          content: {
-            provider,
-            proxy: { enabled: true },
-          },
+  const requestBody = {
+    projectIdOrName: projectId,
+    integrationId: integrationName,
+    requestBody: {
+      connectionId,
+      groupRef,
+      config: {
+        createdBy: 'ai-sdk:create-installation',
+        content: {
+          // does not support custom config content yet
+          provider,
+          proxy: { enabled: true },
         },
       },
-    });
+    },
+  };
+
+  try {
+    const client = new SDKNodePlatform({ apiKeyHeader: apiKey });
+
+    const data = await client.installations.create(requestBody);
 
     // @ts-ignore – vary depending on SDK version
     const installationId = data.installation?.id ?? data.id;

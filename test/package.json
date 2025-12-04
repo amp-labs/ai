@@ -9,6 +9,7 @@
     "test:schema": "tsx ai-e2e-schema-validation.ts",
     "test:checkConnection": "tsx tools/checkConnection.test.ts",
     "test:checkInstallation": "tsx tools/checkInstallation.test.ts",
+    "test:createInstallation": "tsx tools/createInstallation.test.ts",
     "test:startOAuth": "tsx tools/startOAuth.test.ts",
     "test:createRecord": "tsx tools/createRecord.test.ts",
     "test:updateRecord": "tsx tools/updateRecord.test.ts",
