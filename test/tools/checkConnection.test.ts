@@ -28,17 +28,22 @@ async function main() {
 
   const runner = new TestRunner();
 
+  const SALESFORCE_PROVIDER = 'salesforce';
+  const INVALID_PROVIDER = 'invalidprovider123';
+
   // Test 1: Check connection exists
   await runner.test(
     'checkConnection: Verify Salesforce connection exists',
     async () => {
+      const prompt = `Use checkConnection to check if there is an active connection for provider "${SALESFORCE_PROVIDER}"`;
+
       log.info('Calling AI to check Salesforce connection...');
 
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkConnection },
         maxSteps: 5,
-        prompt: 'Check if there is an active connection for salesforce',
+        prompt,
       });
 
       log.debug(`AI Response: ${result.text}`);
@@ -77,13 +82,15 @@ async function main() {
   await runner.test(
     'checkConnection: Check non-existent provider returns found=false',
     async () => {
+      const prompt = `Use checkConnection to check if there is an active connection for provider "${INVALID_PROVIDER}"`;
+
       log.info('Calling AI to check non-existent provider...');
 
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkConnection },
         maxSteps: 5,
-        prompt: 'Check if there is an active connection for invalidprovider123',
+        prompt,
       });
 
       const toolCalls = result.steps[0]?.toolCalls;

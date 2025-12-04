@@ -28,17 +28,22 @@ async function main() {
 
   const runner = new TestRunner();
 
+  const SALESFORCE_PROVIDER = 'salesforce';
+  const HUBSPOT_PROVIDER = 'hubspot';
+
   // Test 1: Check installation exists
   await runner.test(
     'checkInstallation: Verify Salesforce installation exists',
     async () => {
+      const prompt = `Use checkInstallation to check if there is an active installation for provider "${SALESFORCE_PROVIDER}"`;
+
       log.info('Calling AI to check Salesforce installation...');
 
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkInstallation },
         maxSteps: 5,
-        prompt: 'Check if there is an active installation for salesforce',
+        prompt,
       });
 
       log.debug(`AI Response: ${result.text}`);
@@ -77,13 +82,15 @@ async function main() {
   await runner.test(
     'checkInstallation: Check HubSpot installation',
     async () => {
+      const prompt = `Use checkInstallation to check if there is an active installation for provider "${HUBSPOT_PROVIDER}"`;
+
       log.info('Calling AI to check HubSpot installation...');
 
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkInstallation },
         maxSteps: 5,
-        prompt: 'Check if there is an active installation for hubspot',
+        prompt,
       });
 
       const toolCalls = result.steps[0]?.toolCalls;
