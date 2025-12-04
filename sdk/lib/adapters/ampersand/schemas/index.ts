@@ -123,11 +123,22 @@ export const checkInstallationOutputSchema = z.object({
 // OAuth tool schemas
 export const startOAuthInputSchema = z.object({
   provider: providerSchema,
-  groupRef: z.string().optional().describe('The group reference for Ampersand'),
+  groupRef: z
+    .string()
+    .describe(
+      'The group reference - the ID that your app uses to identify the group of users',
+    ),
   consumerRef: z
     .string()
+    .describe(
+      'The consumer reference - the ID that your app uses to identify the user',
+    ),
+  providerWorkspaceRef: z
+    .string()
     .optional()
-    .describe('The consumer reference for Ampersand'),
+    .describe(
+      'The identifier for the provider workspace (e.g. Salesforce subdomain like "mycompany" for mycompany.salesforce.com). Required for some providers like Salesforce.',
+    ),
 });
 
 export const startOAuthOutputSchema = z.object({
