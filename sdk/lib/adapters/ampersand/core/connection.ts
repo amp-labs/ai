@@ -23,18 +23,15 @@ export async function checkConnectionHelper({
   projectId = process.env.AMPERSAND_PROJECT_ID || '',
 }: CheckConnectionParams): Promise<CheckConnectionResult> {
   try {
-    const client = new SDKNodePlatform({
-      apiKeyHeader: apiKey,
-    });
+    const client = new SDKNodePlatform({ apiKeyHeader: apiKey });
 
     const connections = await client.connections.list({
       projectIdOrName: projectId,
       provider,
     });
 
-    // @ts-ignore – SDK typing for `connections.list` result is loose
-    if (connections.length > 0) {
-      // @ts-ignore – access first connection object directly
+    if (connections && Array.isArray(connections) && connections.length > 0) {
+      // access first connection object directly
       const connection = connections[0];
       return {
         found: true,
