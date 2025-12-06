@@ -10,7 +10,7 @@
  * for all providers. The test may fail if the provider is not properly configured.
  */
 
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { startOAuth } from '@amp-labs/ai/aisdk';
 import {
@@ -59,7 +59,7 @@ async function main() {
     const result = await generateText({
       model: openai('gpt-4o-mini'),
       tools: { startOAuth },
-      maxSteps: 5,
+      stopWhen: stepCountIs(5),
       prompt,
     });
 

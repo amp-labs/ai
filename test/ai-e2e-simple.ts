@@ -1,4 +1,4 @@
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import {
   checkConnection as checkConnectionTool,
@@ -56,10 +56,12 @@ async function testSimpleToolCall() {
     console.log('Test 1: Checking connection for Salesforce...');
     const checkResult = await generateText({
       model: openai('gpt-4o-mini'),
+
       tools: {
         checkConnection: checkConnectionTool,
       },
-      maxSteps: 5,
+
+      stopWhen: stepCountIs(5),
       prompt: 'Check if there is an active connection for salesforce',
     });
 
@@ -79,10 +81,12 @@ async function testSimpleToolCall() {
     console.log('Test 2: Checking installation for Salesforce...');
     const checkInstallationResult = await generateText({
       model: openai('gpt-4o-mini'),
+
       tools: {
         checkInstallation: checkInstallationTool,
       },
-      maxSteps: 5,
+
+      stopWhen: stepCountIs(5),
       prompt: 'Check if there is an active installation for salesforce',
     });
 

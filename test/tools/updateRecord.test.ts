@@ -8,7 +8,7 @@
  * NOTE: This test modifies real records
  */
 
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { updateRecord } from '@amp-labs/ai/aisdk';
 import {
@@ -50,7 +50,7 @@ The record parameter MUST be an object with id, Email, and Phone fields. Do not 
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { updateRecord },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         prompt,
       });
 

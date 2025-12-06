@@ -8,7 +8,7 @@
  * NOTE: This test creates real records - may need cleanup
  */
 
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { createRecord } from '@amp-labs/ai/aisdk';
 import {
@@ -49,7 +49,7 @@ The record parameter MUST be an object with FirstName, LastName, and Email field
     const result = await generateText({
       model: openai('gpt-4o-mini'),
       tools: { createRecord },
-      maxSteps: 5,
+      stopWhen: stepCountIs(5),
       prompt,
     });
 

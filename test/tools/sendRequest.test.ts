@@ -7,7 +7,7 @@
  * Uses OpenAI: Yes
  */
 
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { sendRequest } from '@amp-labs/ai/aisdk';
 import {
@@ -47,7 +47,7 @@ Do not modify the endpoint path - use it exactly as provided.`;
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { sendRequest },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         prompt,
       });
 

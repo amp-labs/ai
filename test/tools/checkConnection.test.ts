@@ -8,7 +8,7 @@
  * Uses OpenAI: Yes (minimal usage)
  */
 
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { checkConnection } from '@amp-labs/ai/aisdk';
 import {
@@ -42,7 +42,7 @@ async function main() {
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkConnection },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         prompt,
       });
 
@@ -89,7 +89,7 @@ async function main() {
       const result = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkConnection },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         prompt,
       });
 

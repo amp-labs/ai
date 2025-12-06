@@ -8,7 +8,7 @@
  * Uses OpenAI: Yes (minimal usage)
  */
 
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import {
   createInstallation,
@@ -46,7 +46,7 @@ async function main() {
       const checkResult = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkConnection },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         prompt: checkPrompt,
       });
 
@@ -92,7 +92,7 @@ async function main() {
       const checkInstResult = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { checkInstallation },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         prompt: checkInstPrompt,
       });
 
@@ -138,7 +138,7 @@ async function main() {
       const createResult = await generateText({
         model: openai('gpt-4o-mini'),
         tools: { createInstallation },
-        maxSteps: 5,
+        stopWhen: stepCountIs(5),
         prompt: createPrompt,
       });
 
