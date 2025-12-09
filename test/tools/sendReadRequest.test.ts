@@ -28,7 +28,7 @@ async function main() {
   const runner = new TestRunner();
 
   const SALESFORCE_ENDPOINT = `services/data/v56.0/sobjects`;
-  const INSTALLATION_ID = '60e8efe5-aa48-4c3d-8e83-1755dffc24f0'; // should fetch from check installation tool
+  const INSTALLATION_ID = '459021c7-fb49-47d4-b12b-a65dcdb3a4bc'; // should fetch from check installation tool
 
   // Test 1: Read Salesforce objects
   await runner.test(
