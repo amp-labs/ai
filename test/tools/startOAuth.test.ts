@@ -65,23 +65,29 @@ async function main() {
 
     log.debug(`AI Response: ${result.text}`);
 
-    // Verify tool was called
-    const toolCalls = result.steps[0]?.toolCalls;
-    assert(toolCalls && toolCalls.length > 0, 'Tool should have been called');
+    // Verify tool was called (AI SDK v5 structure)
+    const firstStep = result.steps[0];
+    assert(!!firstStep, 'Should have at least one step');
+
+    const content = firstStep.content;
+    assert(content && content.length > 0, 'Step should have content');
+
+    // Find tool-call in content
+    const toolCalls = content.filter((item) => item.type === 'tool-call');
+    assert(toolCalls.length > 0, 'Tool should have been called');
     assert(
       toolCalls[0].toolName === 'startOAuth',
       'Should call startOAuth tool',
     );
 
-    // Verify result structure
-    // Access tool results (AI SDK v4+ structure)
-    const toolResults = result.steps[0]?.toolResults;
+    // Find tool-result in content (AI SDK v5 structure)
+    const toolResults = content.filter((item) => item.type === 'tool-result');
     assert(
       toolResults && toolResults.length > 0,
       'Tool should have returned results',
     );
 
-    const toolResult = toolResults[0].result;
+    const toolResult = toolResults[0].output;
     assert('url' in toolResult, 'Result should have "url" field');
     assert(typeof toolResult.url === 'string', '"url" should be string');
     assert(toolResult.url.startsWith('http'), '"url" should be valid URL');
@@ -94,24 +100,31 @@ async function main() {
   //   log.info('Calling AI to get HubSpot OAuth URL...');
 
   //   const groupRef = process.env.AMPERSAND_GROUP_REF;
+  //   const consumerRef = process.env.AMPERSAND_CONSUMER_REF;
   //   const result = await generateText({
   //     model: openai('gpt-4o-mini'),
   //     tools: { startOAuth },
-  //     maxSteps: 5,
-  //     prompt: `Generate an OAuth URL for hubspot with group reference ${groupRef}`,
+  //     stopWhen: stepCountIs(5),
+  //     prompt: `Get the OAuth URL to connect to HubSpot for group "${groupRef}" and consumer "${consumerRef}".`,
   //   });
 
-  //   const toolCalls = result.steps[0]?.toolCalls;
-  //   assert(toolCalls && toolCalls.length > 0, 'Tool should have been called');
+  //   // Access tool results (AI SDK v5 structure)
+  //   const firstStep = result.steps[0];
+  //   assert(!!firstStep, 'Should have at least one step');
 
-  //   // Access tool results (AI SDK v4+ structure)
-  //   const toolResults = result.steps[0]?.toolResults;
+  //   const content = firstStep.content;
+  //   assert(content && content.length > 0, 'Step should have content');
+
+  //   const toolCalls = content.filter((item) => item.type === 'tool-call');
+  //   assert(toolCalls.length > 0, 'Tool should have been called');
+
+  //   const toolResults = content.filter((item) => item.type === 'tool-result');
   //   assert(
   //     toolResults && toolResults.length > 0,
   //     'Tool should have returned results',
   //   );
 
-  //   const toolResult = toolResults[0].result;
+  //   const toolResult = toolResults[0].output;
   //   assert('url' in toolResult, 'Result should have "url" field');
   //   assert(toolResult.url.startsWith('http'), '"url" should be valid URL');
 
