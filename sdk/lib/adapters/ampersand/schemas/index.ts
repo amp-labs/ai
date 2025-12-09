@@ -58,7 +58,7 @@ export const installationIdSchema = z
 // Base schema for write operations
 export const baseWriteSchema = {
   objectName: z.string().describe('The name of the object to write to'),
-  record: z.record(z.any()).describe('The record data to write'),
+  record: z.record(z.string(), z.any()).describe('The record data to write'),
   associations: associationsSchema,
 };
 
@@ -148,11 +148,14 @@ export const startOAuthOutputSchema = z.object({
 // Proxy call tool schemas
 export const sendRequestInputSchema = z.object({
   provider: providerSchema,
-  body: z.record(z.any()).optional().describe('Body of the request'),
+  body: z
+    .record(z.string(), z.any())
+    .optional()
+    .describe('Body of the request'),
   endpoint: endpointSchema,
   method: z.string().describe('HTTP method to use'),
   headers: z
-    .record(z.string())
+    .record(z.string(), z.string())
     .optional()
     .describe('Headers to send with the request'),
   installationId: installationIdSchema,
@@ -167,7 +170,7 @@ export const sendReadRequestInputSchema = z.object({
   provider: providerSchema,
   endpoint: endpointSchema,
   headers: z
-    .record(z.string())
+    .record(z.string(), z.string())
     .optional()
     .describe('Headers to send with the request'),
   installationId: installationIdSchema,
