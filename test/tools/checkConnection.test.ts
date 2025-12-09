@@ -48,22 +48,29 @@ async function main() {
 
       log.debug(`AI Response: ${result.text}`);
 
-      // Verify tool was called
-      const toolCalls = result.steps[0]?.toolCalls;
-      assert(toolCalls && toolCalls.length > 0, 'Tool should have been called');
+      // Verify tool was called (AI SDK v5 structure)
+      const firstStep = result.steps[0];
+      assert(!!firstStep, 'Should have at least one step');
+
+      const content = firstStep.content;
+      assert(content && content.length > 0, 'Step should have content');
+
+      // Find tool-call in content
+      const toolCalls = content.filter((item) => item.type === 'tool-call');
+      assert(toolCalls.length > 0, 'Tool should have been called');
       assert(
         toolCalls[0].toolName === 'checkConnection',
         'Should call checkConnection tool',
       );
 
-      // Access tool results (AI SDK v4+ structure)
-      const toolResults = result.steps[0]?.toolResults;
+      // Find tool-result in content (AI SDK v5 structure)
+      const toolResults = content.filter((item) => item.type === 'tool-result');
       assert(
         toolResults && toolResults.length > 0,
         'Tool should have returned results',
       );
 
-      const toolResult = toolResults[0].result;
+      const toolResult = toolResults[0].output;
       assert('found' in toolResult, 'Result should have "found" field');
       assert(
         typeof toolResult.found === 'boolean',
@@ -93,17 +100,23 @@ async function main() {
         prompt,
       });
 
-      const toolCalls = result.steps[0]?.toolCalls;
-      assert(toolCalls && toolCalls.length > 0, 'Tool should have been called');
+      // Access tool results (AI SDK v5 structure)
+      const firstStep = result.steps[0];
+      assert(firstStep, 'Should have at least one step');
 
-      // Access tool results (AI SDK v4+ structure)
-      const toolResults = result.steps[0]?.toolResults;
+      const content = firstStep.content;
+      assert(content && content.length > 0, 'Step should have content');
+
+      const toolCalls = content.filter((item) => item.type === 'tool-call');
+      assert(toolCalls.length > 0, 'Tool should have been called');
+
+      const toolResults = content.filter((item) => item.type === 'tool-result');
       assert(
         toolResults && toolResults.length > 0,
         'Tool should have returned results',
       );
 
-      const toolResult = toolResults[0].result;
+      const toolResult = toolResults[0].output;
       assert('found' in toolResult, 'Result should have "found" field');
 
       // May or may not be found depending on setup
