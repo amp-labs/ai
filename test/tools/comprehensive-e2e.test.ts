@@ -147,6 +147,11 @@ async function main() {
         GROUP_REF,
       );
 
+      console.log(
+        '[Ampersand] Create result:',
+        JSON.stringify(createResult, null, 2),
+      );
+
       assert('status' in createResult, 'Create result should have status');
       assert('recordId' in createResult, 'Create result should have recordId');
 

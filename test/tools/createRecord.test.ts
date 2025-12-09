@@ -72,6 +72,10 @@ The record parameter MUST be an object with FirstName, LastName, and Email field
 
     // Find tool-result in content (AI SDK v5 structure)
     const toolResults = content.filter((item) => item.type === 'tool-result');
+    console.log(
+      '[Ampersand] Tool results:',
+      JSON.stringify(toolResults, null, 2),
+    );
     assert(
       toolResults && toolResults.length > 0,
       'Tool should have returned results',

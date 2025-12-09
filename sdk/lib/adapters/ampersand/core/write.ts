@@ -1,8 +1,3 @@
-import { Ampersand } from '@amp-labs/sdk-node-write';
-import {
-  WriteRecordsResponse,
-  WriteRecordsSyncWriteResponseSuccess,
-} from '@amp-labs/sdk-node-write/models/operations';
 import { WriteResponse } from '../types';
 import * as Sentry from '@sentry/node';
 interface WriteParams {
@@ -33,34 +28,68 @@ export async function executeAmpersandWrite({
   integrationName = process.env.AMPERSAND_INTEGRATION_NAME || '',
 }: WriteParams): Promise<WriteResponse> {
   try {
-    const writeSDK = new Ampersand({
-      apiKeyHeader: apiKey,
-    });
-
-    const writeData = {
-      projectIdOrName: projectId,
-      integrationId: integrationName,
-      objectName,
-      requestBody: {
-        groupRef,
-        type,
-        record,
-        ...(associations && { associations }),
-      },
+    const requestBody = {
+      groupRef,
+      type,
+      record,
+      ...(associations && { associations }),
     };
 
-    const data: WriteRecordsResponse = await writeSDK.write.records(writeData);
+    /**
+     * @remarks This function is used to write to Ampersand API, uses fetch instead of @amp-labs/sdk-node-write
+     * to avoid issues with zod validation errors when migrating to AI SDK v5
+     *
+     * temporary solution until we migrate the @amp-labs/sdk-node-write package
+     */
+
+    const url = `https://write.withampersand.com/v1/projects/${projectId}/integrations/${integrationName}/objects/${objectName}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': apiKey,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorDetails = errorText;
+      let errorMessage = `Write operation failed: ${response.status} ${response.statusText}`;
+
+      try {
+        const errorJson = JSON.parse(errorText);
+        errorDetails = JSON.stringify(errorJson, null, 2);
+        if (errorJson.message) {
+          errorMessage = errorJson.message;
+        } else if (errorJson.error) {
+          errorMessage = errorJson.error;
+        }
+      } catch {
+        // If not JSON, use the text as-is
+        if (errorText) {
+          errorMessage = errorText;
+        }
+      }
+
+      console.error('[Ampersand] Error response:', errorDetails);
+
+      throw new Error(`${errorMessage}\n\nFull API Response: ${errorDetails}`);
+    }
+
+    const data = await response.json();
+    console.log('[Ampersand] Response:', JSON.stringify(data, null, 2));
 
     return {
       success: true,
       status: 'success',
-      recordId:
-        (data as WriteRecordsSyncWriteResponseSuccess)?.result?.recordId || '',
+      recordId: data?.result?.recordId || '',
       response: data,
     };
   } catch (error) {
     Sentry.captureException(error);
-    console.error('Error in write operation:', error);
+    console.error('[Ampersand] Error in write operation:', error);
     return {
       success: false,
       status: 'error',
