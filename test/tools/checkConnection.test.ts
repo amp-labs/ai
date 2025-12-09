@@ -102,7 +102,7 @@ async function main() {
 
       // Access tool results (AI SDK v5 structure)
       const firstStep = result.steps[0];
-      assert(firstStep, 'Should have at least one step');
+      assert(!!firstStep, 'Should have at least one step');
 
       const content = firstStep.content;
       assert(content && content.length > 0, 'Step should have content');
