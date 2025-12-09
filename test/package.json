@@ -15,6 +15,7 @@
     "test:updateRecord": "tsx tools/updateRecord.test.ts",
     "test:sendRequest": "tsx tools/sendRequest.test.ts",
     "test:sendReadRequest": "tsx tools/sendReadRequest.test.ts",
+    "test:comprehensive": "tsx tools/comprehensive-e2e.test.ts",
     "test:all-tools": "pnpm test:checkConnection && pnpm test:checkInstallation && pnpm test:startOAuth"
   },
   "dependencies": {
