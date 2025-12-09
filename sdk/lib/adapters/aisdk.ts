@@ -213,7 +213,7 @@ export const startOAuth = tool({
  */
 export const sendRequest = tool({
   description: sendRequestToolDescription,
-  inputSchema: sendRequestInputSchema as any,
+  inputSchema: sendRequestInputSchema,
   execute: async (
     params: SendRequestInputType,
   ): Promise<SendRequestOutputType> => {
@@ -252,7 +252,7 @@ export const sendRequest = tool({
  */
 export const sendReadRequest = tool({
   description: sendReadRequestToolDescription,
-  inputSchema: sendReadRequestInputSchema as any,
+  inputSchema: sendReadRequestInputSchema,
   execute: async (
     params: SendReadRequestInputType,
   ): Promise<SendRequestOutputType> => {
