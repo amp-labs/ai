@@ -50,13 +50,25 @@ async function main() {
         prompt: checkPrompt,
       });
 
-      const checkToolResults = checkResult.steps[0]?.toolResults;
+      // Access tool results (AI SDK v5 structure)
+      const checkFirstStep = checkResult.steps[0];
+      assert(!!checkFirstStep, 'Should have at least one step');
+
+      const checkContent = checkFirstStep.content;
+      assert(
+        checkContent && checkContent.length > 0,
+        'Step should have content',
+      );
+
+      const checkToolResults = checkContent.filter(
+        (item) => item.type === 'tool-result',
+      );
       assert(
         checkToolResults && checkToolResults.length > 0,
         'Check connection should have returned results',
       );
 
-      const connectionData = checkToolResults[0].result;
+      const connectionData = checkToolResults[0].output;
 
       // If no connection exists, provide helpful instructions
       if (!connectionData.found) {
@@ -96,13 +108,25 @@ async function main() {
         prompt: checkInstPrompt,
       });
 
-      const checkInstToolResults = checkInstResult.steps[0]?.toolResults;
+      // Access tool results (AI SDK v5 structure)
+      const checkInstFirstStep = checkInstResult.steps[0];
+      assert(!!checkInstFirstStep, 'Should have at least one step');
+
+      const checkInstContent = checkInstFirstStep.content;
+      assert(
+        checkInstContent && checkInstContent.length > 0,
+        'Step should have content',
+      );
+
+      const checkInstToolResults = checkInstContent.filter(
+        (item) => item.type === 'tool-result',
+      );
       assert(
         checkInstToolResults && checkInstToolResults.length > 0,
         'Check installation should have returned results',
       );
 
-      const installationData = checkInstToolResults[0].result;
+      const installationData = checkInstToolResults[0].output;
 
       if (installationData.found) {
         log.warn('Installation already exists - skipping creation');
@@ -144,22 +168,35 @@ async function main() {
 
       log.debug(`AI Response: ${createResult.text}`);
 
-      // Verify tool was called
-      const toolCalls = createResult.steps[0]?.toolCalls;
-      assert(toolCalls && toolCalls.length > 0, 'Tool should have been called');
+      // Verify tool was called (AI SDK v5 structure)
+      const createFirstStep = createResult.steps[0];
+      assert(!!createFirstStep, 'Should have at least one step');
+
+      const createContent = createFirstStep.content;
+      assert(
+        createContent && createContent.length > 0,
+        'Step should have content',
+      );
+
+      const toolCalls = createContent.filter(
+        (item) => item.type === 'tool-call',
+      );
+      assert(toolCalls.length > 0, 'Tool should have been called');
       assert(
         toolCalls[0].toolName === 'createInstallation',
         'Should call createInstallation tool',
       );
 
-      // Verify result structure
-      const toolResults = createResult.steps[0]?.toolResults;
+      // Find tool-result in content (AI SDK v5 structure)
+      const toolResults = createContent.filter(
+        (item) => item.type === 'tool-result',
+      );
       assert(
         toolResults && toolResults.length > 0,
         'Tool should have returned results',
       );
 
-      const toolResult = toolResults[0].result;
+      const toolResult = toolResults[0].output;
       assert('created' in toolResult, 'Result should have "created" field');
       assert(
         typeof toolResult.created === 'boolean',
