@@ -34,7 +34,12 @@ async function main() {
   await runner.test(
     'sendReadRequest: Fetch Salesforce object metadata',
     async () => {
-      const prompt = `Use sendReadRequest to fetch the list of available objects from Salesforce API endpoint ${SALESFORCE_ENDPOINT} and installation ID ${INSTALLATION_ID}`;
+      const prompt = `Use sendReadRequest with these exact parameters:
+- provider: "salesforce"
+- endpoint: "${SALESFORCE_ENDPOINT}"
+- installationId: "${INSTALLATION_ID}"
+
+Do not modify the endpoint path - use it exactly as provided.`;
 
       log.info('Calling AI to fetch Salesforce object metadata...');
 
