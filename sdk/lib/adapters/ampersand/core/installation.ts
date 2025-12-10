@@ -1,5 +1,4 @@
 import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
-import { ListInstallationsInstallation } from '@amp-labs/sdk-node-platform/src/models/operations/listinstallations';
 import { checkConnectionHelper } from './connection';
 import * as Sentry from '@sentry/node';
 interface CheckInstallationParams {
@@ -50,9 +49,9 @@ export async function checkInstallationHelper({
     });
 
     // @ts-ignore – Filter by provider (Ampersand lower-cases internally)
+    // Using `any` type to avoid Zod v3/v4 compatibility issues with sdk-node-platform
     const filtered = installations.filter(
-      (inst: ListInstallationsInstallation) =>
-        inst.connection?.provider === provider.toLowerCase(),
+      (inst: any) => inst.connection?.provider === provider.toLowerCase(),
     );
 
     if (filtered.length > 0) {
