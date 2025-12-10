@@ -15,6 +15,7 @@ import {
   sendReadRequest,
   createRecord,
   updateRecord,
+  startOAuth,
 } from '@amp-labs/ai/aisdk';
 import { assert } from './test-utils';
 
@@ -206,4 +207,36 @@ The record parameter MUST be an object. Do not parse or interpret the data - pas
   });
 
   return extractToolResult(result, 'updateRecord');
+}
+
+/**
+ * Start OAuth flow for a provider
+ */
+export async function startOAuthHelper(
+  provider: string,
+  groupRef?: string,
+  consumerRef?: string,
+  providerWorkspaceRef?: string,
+) {
+  let prompt = `Get the OAuth URL to connect to ${provider}`;
+
+  if (groupRef) {
+    prompt += ` for group "${groupRef}"`;
+  }
+  if (consumerRef) {
+    prompt += ` and consumer "${consumerRef}"`;
+  }
+  if (providerWorkspaceRef) {
+    prompt += `. Use providerWorkspaceRef "${providerWorkspaceRef}"`;
+  }
+  prompt += '.';
+
+  const result = await generateText({
+    model: openai('gpt-4o-mini'),
+    tools: { startOAuth },
+    stopWhen: stepCountIs(5),
+    prompt,
+  });
+
+  return extractToolResult(result, 'startOAuth');
 }

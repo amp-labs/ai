@@ -10,15 +10,13 @@
  * for all providers. The test may fail if the provider is not properly configured.
  */
 
-import { generateText, stepCountIs } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { startOAuth } from '@amp-labs/ai/aisdk';
 import {
   TestRunner,
   checkEnvironmentVariables,
   assert,
   log,
 } from '../helpers/test-utils';
+import { startOAuthHelper } from '../helpers/ampersand-tools';
 
 async function main() {
   console.log('='.repeat(60));
@@ -30,16 +28,13 @@ async function main() {
 
   const runner = new TestRunner();
 
+  const groupRef = process.env.AMPERSAND_GROUP_REF;
+  const consumerRef = process.env.AMPERSAND_CONSUMER_REF;
+  const salesforceSubdomain = process.env.SALESFORCE_SUBDOMAIN;
+
   // Test 1: Get OAuth URL for Salesforce
   await runner.test('startOAuth: Get OAuth URL for Salesforce', async () => {
-    log.info('Calling AI to get Salesforce OAuth URL...');
-
-    const groupRef = process.env.AMPERSAND_GROUP_REF;
-    // const today = new Date().toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
-    const consumerRef = process.env.AMPERSAND_CONSUMER_REF;
-    // Note: Salesforce requires providerWorkspaceRef (subdomain)
-    // This should be set in .env as SALESFORCE_SUBDOMAIN
-    const salesforceSubdomain = process.env.SALESFORCE_SUBDOMAIN;
+    log.info('Getting Salesforce OAuth URL...');
 
     if (!salesforceSubdomain) {
       log.warn('SALESFORCE_SUBDOMAIN not set in environment variables');
@@ -48,87 +43,41 @@ async function main() {
       );
     }
 
-    const prompt = salesforceSubdomain
-      ? `Get the OAuth URL to connect to Salesforce for group "${groupRef}" and consumer "${consumerRef}". Use providerWorkspaceRef "${salesforceSubdomain}" (the Salesforce subdomain).`
-      : `Get the OAuth URL to connect to Salesforce for group "${groupRef}" and consumer "${consumerRef}".`;
-
     log.info(
       `Using groupRef: ${groupRef}, consumerRef: ${consumerRef}, subdomain: ${salesforceSubdomain || 'none'}`,
     );
 
-    const result = await generateText({
-      model: openai('gpt-4o-mini'),
-      tools: { startOAuth },
-      stopWhen: stepCountIs(5),
-      prompt,
-    });
-
-    log.debug(`AI Response: ${result.text}`);
-
-    // Verify tool was called (AI SDK v5 structure)
-    const firstStep = result.steps[0];
-    assert(!!firstStep, 'Should have at least one step');
-
-    const content = firstStep.content;
-    assert(content && content.length > 0, 'Step should have content');
-
-    // Find tool-call in content
-    const toolCalls = content.filter((item) => item.type === 'tool-call');
-    assert(toolCalls.length > 0, 'Tool should have been called');
-    assert(
-      toolCalls[0].toolName === 'startOAuth',
-      'Should call startOAuth tool',
+    const result = await startOAuthHelper(
+      'salesforce',
+      groupRef,
+      consumerRef,
+      salesforceSubdomain,
     );
 
-    // Find tool-result in content (AI SDK v5 structure)
-    const toolResults = content.filter((item) => item.type === 'tool-result');
-    assert(
-      toolResults && toolResults.length > 0,
-      'Tool should have returned results',
-    );
+    assert('url' in result, 'Result should have "url" field');
+    assert(typeof result.url === 'string', '"url" should be string');
+    assert(result.url.startsWith('http'), '"url" should be valid URL');
 
-    const toolResult = toolResults[0].output;
-    assert('url' in toolResult, 'Result should have "url" field');
-    assert(typeof toolResult.url === 'string', '"url" should be string');
-    assert(toolResult.url.startsWith('http'), '"url" should be valid URL');
-
-    log.success(`OAuth URL generated: ${toolResult.url.substring(0, 50)}...`);
+    log.success(`OAuth URL generated: ${result.url.substring(0, 50)}...`);
+    log.info('Open this URL in your browser to complete OAuth flow');
   });
 
   // Test 2: Get OAuth URL for HubSpot
+  // NOTE: Commented out by default - uncomment to test HubSpot OAuth
   // await runner.test('startOAuth: Get OAuth URL for HubSpot', async () => {
-  //   log.info('Calling AI to get HubSpot OAuth URL...');
-
-  //   const groupRef = process.env.AMPERSAND_GROUP_REF;
-  //   const consumerRef = process.env.AMPERSAND_CONSUMER_REF;
-  //   const result = await generateText({
-  //     model: openai('gpt-4o-mini'),
-  //     tools: { startOAuth },
-  //     stopWhen: stepCountIs(5),
-  //     prompt: `Get the OAuth URL to connect to HubSpot for group "${groupRef}" and consumer "${consumerRef}".`,
-  //   });
-
-  //   // Access tool results (AI SDK v5 structure)
-  //   const firstStep = result.steps[0];
-  //   assert(!!firstStep, 'Should have at least one step');
-
-  //   const content = firstStep.content;
-  //   assert(content && content.length > 0, 'Step should have content');
-
-  //   const toolCalls = content.filter((item) => item.type === 'tool-call');
-  //   assert(toolCalls.length > 0, 'Tool should have been called');
-
-  //   const toolResults = content.filter((item) => item.type === 'tool-result');
-  //   assert(
-  //     toolResults && toolResults.length > 0,
-  //     'Tool should have returned results',
+  //   log.info('Getting HubSpot OAuth URL...');
+  //
+  //   const result = await startOAuthHelper(
+  //     'hubspot',
+  //     groupRef,
+  //     consumerRef,
   //   );
-
-  //   const toolResult = toolResults[0].output;
-  //   assert('url' in toolResult, 'Result should have "url" field');
-  //   assert(toolResult.url.startsWith('http'), '"url" should be valid URL');
-
-  //   log.success(`HubSpot OAuth URL generated`);
+  //
+  //   assert('url' in result, 'Result should have "url" field');
+  //   assert(result.url.startsWith('http'), '"url" should be valid URL');
+  //
+  //   log.success('HubSpot OAuth URL generated');
+  //   log.info('Open the URL in your browser to complete OAuth flow');
   // });
 
   runner.summarize();

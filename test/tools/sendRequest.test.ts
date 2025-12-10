@@ -7,15 +7,16 @@
  * Uses OpenAI: Yes
  */
 
-import { generateText, stepCountIs } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { sendRequest } from '@amp-labs/ai/aisdk';
 import {
   TestRunner,
   checkEnvironmentVariables,
   assert,
   log,
 } from '../helpers/test-utils';
+import {
+  checkInstallationHelper,
+  sendRequestHelper,
+} from '../helpers/ampersand-tools';
 
 async function main() {
   console.log('='.repeat(60));
@@ -27,67 +28,49 @@ async function main() {
 
   const runner = new TestRunner();
 
-  const SALESFORCE_ENDPOINT = `services/data/v56.0/sobjects`;
-  const INSTALLATION_ID = '459021c7-fb49-47d4-b12b-a65dcdb3a4bc'; // should fetch from check installation tool
+  const PROVIDER = 'salesforce';
+  const SALESFORCE_ENDPOINT = 'services/data/v56.0/sobjects';
 
   // Test 1: GET request to fetch Salesforce objects
   await runner.test(
     'sendRequest: GET request to list Salesforce objects',
     async () => {
-      const prompt = `Use sendRequest to make a GET request using these exact parameters:
-- provider: "salesforce"
-- endpoint: "${SALESFORCE_ENDPOINT}"
-- installationId: "${INSTALLATION_ID}"
-- method: "GET"
+      // Get installation ID dynamically
+      log.info('Checking for existing installation...');
+      const installationData = await checkInstallationHelper(PROVIDER);
 
-Do not modify the endpoint path - use it exactly as provided.`;
-
-      log.info('Calling AI to make GET request to Salesforce...');
-
-      const result = await generateText({
-        model: openai('gpt-4o-mini'),
-        tools: { sendRequest },
-        stopWhen: stepCountIs(5),
-        prompt,
-      });
-
-      log.debug(`AI Response: ${result.text}`);
-
-      // Verify tool was called (AI SDK v5 structure)
-      const firstStep = result.steps[0];
-      assert(!!firstStep, 'Should have at least one step');
-
-      const content = firstStep.content;
-      assert(content && content.length > 0, 'Step should have content');
-
-      // Find tool-call in content
-      const toolCalls = content.filter((item) => item.type === 'tool-call');
-      assert(toolCalls.length > 0, 'Tool should have been called');
-      assert(
-        toolCalls[0].toolName === 'sendRequest',
-        'Should call sendRequest tool',
-      );
-
-      // Find tool-result in content (AI SDK v5 structure)
-      const toolResults = content.filter((item) => item.type === 'tool-result');
-      assert(
-        toolResults && toolResults.length > 0,
-        'Tool should have returned results',
-      );
-
-      const toolResult = toolResults[0].output;
-      assert('status' in toolResult, 'Result should have "status" field');
-      assert('response' in toolResult, 'Result should have "response" field');
-      assert(
-        typeof toolResult.status === 'number',
-        'Status should be a number',
-      );
-
-      log.success(`Request completed with status: ${toolResult.status}`);
-      if (toolResult.status !== 200) {
-        log.warn(
-          `Non-200 status received (likely invalid installation ID in test)`,
+      if (!installationData.found) {
+        log.error('No Salesforce installation found');
+        log.info(
+          'Run the comprehensive test first to create an installation: pnpm test:comprehensive',
         );
+        throw new Error(
+          'A Salesforce installation must exist. Please run test:comprehensive first.',
+        );
+      }
+
+      const installationId = installationData.installationId!;
+      log.success(`Using installation: ${installationId}`);
+
+      log.info('Making GET request to Salesforce...');
+      const result = await sendRequestHelper(
+        PROVIDER,
+        SALESFORCE_ENDPOINT,
+        'GET',
+        installationId,
+      );
+
+      assert('status' in result, 'Result should have "status" field');
+      assert('response' in result, 'Result should have "response" field');
+      assert(typeof result.status === 'number', 'Status should be a number');
+
+      log.success(`Request completed with status: ${result.status}`);
+
+      if (result.status === 200) {
+        const sobjects = result.response?.sobjects;
+        if (sobjects && Array.isArray(sobjects)) {
+          log.info(`Retrieved ${sobjects.length} Salesforce object types`);
+        }
       }
     },
   );
@@ -98,50 +81,36 @@ Do not modify the endpoint path - use it exactly as provided.`;
   // await runner.test(
   //   'sendRequest: POST request to create Salesforce Contact',
   //   async () => {
-  //     const CONTACT_ENDPOINT = `services/data/v56.0/sobjects/Contact`;
+  //     const CONTACT_ENDPOINT = 'services/data/v56.0/sobjects/Contact';
   //     const contactData = {
   //       FirstName: 'API',
   //       LastName: 'Test',
   //     };
   //
-  //     const prompt = `Use sendRequest to make a POST request to Salesforce endpoint ${CONTACT_ENDPOINT} with installation ID ${INSTALLATION_ID} and request body ${JSON.stringify(contactData)} to create a new contact`;
+  //     // Get installation ID dynamically
+  //     const installationData = await checkInstallationHelper(PROVIDER);
+  //     const installationId = installationData.installationId!;
   //
-  //     log.info('Calling AI to make POST request to Salesforce...');
+  //     log.info('Making POST request to Salesforce...');
   //     log.warn('This will create an actual Contact record in Salesforce');
   //
-  //     const result = await generateText({
-  //       model: openai('gpt-4o-mini'),
-  //       tools: { sendRequest },
-  //       stopWhen: stepCountIs(5),
-  //       prompt,
-  //     });
-  //
-  //     // Access tool results (AI SDK v5 structure)
-  //     const firstStep = result.steps[0];
-  //     assert(!!firstStep, 'Should have at least one step');
-  //
-  //     const content = firstStep.content;
-  //     assert(content && content.length > 0, 'Step should have content');
-  //
-  //     const toolCalls = content.filter((item) => item.type === 'tool-call');
-  //     assert(toolCalls.length > 0, 'Tool should have been called');
-  //
-  //     const toolResults = content.filter((item) => item.type === 'tool-result');
-  //     assert(
-  //       toolResults && toolResults.length > 0,
-  //       'Tool should have returned results',
+  //     const result = await sendRequestHelper(
+  //       PROVIDER,
+  //       CONTACT_ENDPOINT,
+  //       'POST',
+  //       installationId,
+  //       contactData,
   //     );
   //
-  //     const toolResult = toolResults[0].output;
-  //     assert('status' in toolResult, 'Result should have "status" field');
+  //     assert('status' in result, 'Result should have "status" field');
   //     assert(
-  //       toolResult.status === 201 || toolResult.status === 200,
+  //       result.status === 201 || result.status === 200,
   //       'POST request should return 200/201 status',
   //     );
   //
-  //     log.success(`Record created via API with status: ${toolResult.status}`);
-  //     if (toolResult.response?.id) {
-  //       log.info(`Created Contact ID: ${toolResult.response.id}`);
+  //     log.success(`Record created via API with status: ${result.status}`);
+  //     if (result.response?.id) {
+  //       log.info(`Created Contact ID: ${result.response.id}`);
   //     }
   //   },
   // );

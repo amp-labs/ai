@@ -43,7 +43,7 @@ async function main() {
   const GROUP_REF = process.env.AMPERSAND_GROUP_REF || '';
 
   await runner.test(
-    'Comprehensive E2E: Complete installation and CRUD workflow',
+    'Comprehensive E2E: Complete installation and CRU workflow (no delete)',
     async () => {
       // Step 1: Check for existing connection
       log.info('Step 1: Checking for existing Salesforce connection...');
@@ -212,6 +212,9 @@ async function main() {
       console.log();
       log.info(
         `Note: Contact record ${recordId} was created in Salesforce and can be deleted manually if needed.`,
+      );
+      log.info(
+        `Note: to delete an installation, you may check the Ampersand Dashboard and delete the installation manually.`,
       );
     },
   );

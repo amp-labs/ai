@@ -8,15 +8,13 @@
  * NOTE: This test creates real records - may need cleanup
  */
 
-import { generateText, stepCountIs } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { createRecord } from '@amp-labs/ai/aisdk';
 import {
   TestRunner,
   checkEnvironmentVariables,
   assert,
   log,
 } from '../helpers/test-utils';
+import { createRecordHelper } from '../helpers/ampersand-tools';
 
 async function main() {
   console.log('='.repeat(60));
@@ -34,59 +32,34 @@ async function main() {
   // NOTE: Commented out by default as it creates actual data in Salesforce
   // Uncomment to test createRecord functionality
   await runner.test('createRecord: Create Contact in Salesforce', async () => {
-    const prompt = `Use the createRecord tool with these EXACT parameters (do not modify or interpret them):
+    const contactRecord = {
+      FirstName: 'Test User',
+      LastName: 'E2E',
+      Email: 'teste2e@example.com',
+    };
 
-objectName: "contact"
-type: "create"
-record: {"FirstName":"Test User","LastName":"E2E","Email":"teste2e@example.com"}
-groupRef: "${GROUP_REF}"
-
-The record parameter MUST be an object with FirstName, LastName, and Email fields. Do not parse or interpret the data - pass it exactly as shown above.`;
-
-    log.info('Calling AI to create a Contact in Salesforce...');
+    log.info('Creating a Contact in Salesforce...');
     log.warn('This will create an actual Contact record in Salesforce');
 
-    const result = await generateText({
-      model: openai('gpt-4o-mini'),
-      tools: { createRecord },
-      stopWhen: stepCountIs(5),
-      prompt,
-    });
-
-    log.debug(`AI Response: ${result.text}`);
-
-    // Verify tool was called (AI SDK v5 structure)
-    const firstStep = result.steps[0];
-    assert(!!firstStep, 'Should have at least one step');
-
-    const content = firstStep.content;
-    assert(content && content.length > 0, 'Step should have content');
-
-    // Find tool-call in content
-    const toolCalls = content.filter((item) => item.type === 'tool-call');
-    assert(toolCalls.length > 0, 'Tool should have been called');
-    assert(
-      toolCalls[0].toolName === 'createRecord',
-      'Should call createRecord tool',
+    const result = await createRecordHelper(
+      'contact',
+      contactRecord,
+      GROUP_REF,
     );
 
-    // Find tool-result in content (AI SDK v5 structure)
-    const toolResults = content.filter((item) => item.type === 'tool-result');
-    console.log(
-      '[Ampersand] Tool results:',
-      JSON.stringify(toolResults, null, 2),
-    );
-    assert(
-      toolResults && toolResults.length > 0,
-      'Tool should have returned results',
-    );
+    console.log('[Ampersand] Create result:', JSON.stringify(result, null, 2));
 
-    const toolResult = toolResults[0].output;
-    assert('status' in toolResult, 'Result should have "status" field');
-    assert('recordId' in toolResult, 'Result should have "recordId" field');
+    assert('status' in result, 'Result should have "status" field');
+    assert('recordId' in result, 'Result should have "recordId" field');
 
-    log.success(`Record created with ID: ${toolResult.recordId}`);
-    log.info(`Status: ${toolResult.status}`);
+    log.success(`Record created with ID: ${result.recordId}`);
+    log.info(`Status: ${result.status}`);
+
+    if (result.recordId) {
+      log.info(
+        `Note: Contact ${result.recordId} was created and can be deleted manually if needed.`,
+      );
+    }
   });
 
   // Test 2: Create a Lead in Salesforce
@@ -99,44 +72,14 @@ The record parameter MUST be an object with FirstName, LastName, and Email field
   //     Email: 'testlead@example.com',
   //   };
   //
-  //   const prompt = `Use createRecord to create a new Lead in Salesforce with these exact parameters:
-  // - objectName: "lead"
-  // - type: "create"
-  // - record: ${JSON.stringify(leadData)}
-  // - groupRef: "${GROUP_REF}"
-  //
-  // Make sure to use the exact field names provided.`;
-  //
-  //   log.info('Calling AI to create a Lead in Salesforce...');
+  //   log.info('Creating a Lead in Salesforce...');
   //   log.warn('This will create an actual Lead record in Salesforce');
   //
-  //   const result = await generateText({
-  //     model: openai('gpt-4o-mini'),
-  //     tools: { createRecord },
-  //     stopWhen: stepCountIs(5),
-  //     prompt,
-  //   });
+  //   const result = await createRecordHelper('lead', leadData, GROUP_REF);
   //
-  //   // Access tool results (AI SDK v5 structure)
-  //   const firstStep = result.steps[0];
-  //   assert(!!firstStep, 'Should have at least one step');
+  //   assert('recordId' in result, 'Result should have recordId');
   //
-  //   const content = firstStep.content;
-  //   assert(content && content.length > 0, 'Step should have content');
-  //
-  //   const toolCalls = content.filter((item) => item.type === 'tool-call');
-  //   assert(toolCalls.length > 0, 'Tool should have been called');
-  //
-  //   const toolResults = content.filter((item) => item.type === 'tool-result');
-  //   assert(
-  //     toolResults && toolResults.length > 0,
-  //     'Tool should have returned results',
-  //   );
-  //
-  //   const toolResult = toolResults[0].output;
-  //   assert('recordId' in toolResult, 'Result should have recordId');
-  //
-  //   log.success(`Lead created with ID: ${toolResult.recordId}`);
+  //   log.success(`Lead created with ID: ${result.recordId}`);
   // });
 
   runner.summarize();
