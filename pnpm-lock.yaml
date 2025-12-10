@@ -77,13 +77,13 @@ importers:
         version: link:../sdk
       '@amp-labs/sdk-node-platform':
         specifier: ^0.2.3
-        version: 0.2.3(@modelcontextprotocol/sdk@1.24.3)(zod@3.25.76)
+        version: 0.2.3(@modelcontextprotocol/sdk@1.24.3)(zod@4.1.13)
       '@amp-labs/sdk-node-write':
         specifier: ^0.2.3
-        version: 0.2.4(@modelcontextprotocol/sdk@1.24.3)(zod@3.25.76)
+        version: 0.2.4(@modelcontextprotocol/sdk@1.24.3)(zod@4.1.13)
       '@modelcontextprotocol/sdk':
         specifier: ^1.6.1
-        version: 1.24.3(zod@3.25.76)
+        version: 1.24.3(zod@4.1.13)
       '@sentry/node':
         specifier: ^9.22.0
         version: 9.47.1
@@ -112,8 +112,8 @@ importers:
         specifier: ^0.0.62
         version: 0.0.62
       zod:
-        specifier: ^3.24.2
-        version: 3.25.76
+        specifier: ^4.1.13
+        version: 4.1.13
     devDependencies:
       '@esbuild-plugins/node-globals-polyfill':
         specifier: ^0.2.3
