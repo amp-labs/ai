@@ -1,5 +1,6 @@
 import { WriteResponse } from '../types';
 import * as Sentry from '@sentry/node';
+import { logger } from '../../../logger';
 interface WriteParams {
   objectName: string;
   type: 'create' | 'update';

@@ -7,6 +7,7 @@ import {
   providerSchema,
 } from './schemas';
 import { ClientSettings } from '.';
+import { logger } from './logger';
 
 export async function createSendRequestTool(
   server: Server,
@@ -131,12 +132,12 @@ async function callAmpersandProxy({
       fetchOptions.body = JSON.stringify(body);
     }
 
-    console.log(
+    logger.info(
       '[SEND-REQUEST] API request to proxy: ',
       endpoint,
       fetchOptions.body,
     );
-    console.log(
+    logger.info(
       '[SEND-REQUEST] Full URL: ',
       `https://proxy.withampersand.com/${endpoint}`,
     );
@@ -146,7 +147,7 @@ async function callAmpersandProxy({
       fetchOptions,
     );
 
-    console.log(
+    logger.info(
       '[SEND-REQUEST] API response status from proxy: ',
       endpoint,
       response.status,
@@ -170,8 +171,8 @@ async function callAmpersandProxy({
       ],
     };
   } catch (error) {
-    console.error(
-      `Error in ${method === 'GET' ? 'sendReadRequest' : 'sendRequest'} tool`,
+    logger.error(
+      `[SEND-REQUEST] Error in ${method === 'GET' ? 'sendReadRequest' : 'sendRequest'} tool`,
       error,
     );
     return {
