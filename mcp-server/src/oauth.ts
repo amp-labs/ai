@@ -3,6 +3,7 @@ import { providerSchema } from './schemas';
 import { ClientSettings } from '.';
 import crypto from 'crypto';
 import { logger } from './logger';
+import { z } from 'zod';
 
 export async function createStartOAuthTool(
   server: Server,
@@ -14,8 +15,18 @@ export async function createStartOAuthTool(
     `Connect to a SaaS tool provider using the Ampersand OAuth flow. The tool will return a clickable link to the OAuth flow for the user to click.`,
     {
       provider: providerSchema,
+      providerWorkspaceRef: z
+        .string()
+        .optional()
+        .describe('Optional workspace reference for multi-workspace providers'),
     },
-    async ({ provider }: { provider: string }) => {
+    async ({
+      provider,
+      providerWorkspaceRef,
+    }: {
+      provider: string;
+      providerWorkspaceRef?: string;
+    }) => {
       let oAuthUrl = '';
       try {
         const consumerRef = crypto.randomUUID();
@@ -28,7 +39,13 @@ export async function createStartOAuthTool(
             'Content-Type': 'application/json',
             'X-Api-Key': apiKey,
           },
-          body: JSON.stringify({ provider, consumerRef, groupRef, projectId }),
+          body: JSON.stringify({
+            provider,
+            consumerRef,
+            groupRef,
+            projectId,
+            ...(providerWorkspaceRef && { providerWorkspaceRef }),
+          }),
         };
         logger.info(
           '[START-OAUTH] API request to oauthConnect: ',

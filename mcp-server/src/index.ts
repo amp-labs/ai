@@ -28,6 +28,7 @@ export const clientSettings = {
   integrationName: integrationName,
   apiKey: process.env.AMPERSAND_API_KEY || '',
   groupRef: groupRef,
+  providerWorkspaceRef: '', // Optional workspace reference for multi-workspace providers
 };
 
 export type ClientSettings = typeof clientSettings;
