@@ -43,6 +43,7 @@ type ClientSettings = {
   integrationName: string;
   apiKey: string;
   groupRef: string;
+  providerWorkspaceRef: string;
 };
 
 /**
@@ -310,13 +311,13 @@ export const createStartOAuthTool = async (
     startOAuthToolDescription,
     startOAuthInputSchema.shape,
     async (params: StartOAuthInputType): Promise<MCPResponse> => {
-      const { provider, groupRef, consumerRef } = params;
+      const { provider, groupRef, consumerRef, providerWorkspaceRef } = params;
       const finalConsumerRef =
         consumerRef || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = settings?.groupRef || groupRef || '';
       const projectId =
         settings?.project || process.env.AMPERSAND_PROJECT_ID || '';
-      let url = '';
+
       try {
         const response = await fetch(
           'https://api.withampersand.com/v1/oauth-connect',
@@ -328,10 +329,11 @@ export const createStartOAuthTool = async (
               consumerRef: finalConsumerRef,
               groupRef: finalGroupRef,
               projectId,
+              providerWorkspaceRef,
             }),
           },
         );
-        url = await response.text();
+        const url = await response.text();
         return {
           content: [
             {
