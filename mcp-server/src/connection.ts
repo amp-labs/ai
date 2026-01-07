@@ -301,18 +301,15 @@ export async function ensureInstallation(
       inst.connection?.id === connectionId,
   );
 
-  logger.info(
-    '[ENSURE-INSTALLATION] existing installation check',
+  logger.info('[ENSURE-INSTALLATION] existing installation check', {
     relevantInstallations,
     installationData,
-  );
+  });
 
   if (relevantInstallations.length === 0) {
     logger.info(
       '[ENSURE-INSTALLATION] No existing installation found, creating one for connection:',
-      connectionId,
-      'group:',
-      groupRef,
+      { connectionId, groupRef },
     );
 
     const requestBody = {
