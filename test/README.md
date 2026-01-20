@@ -40,6 +40,8 @@ This test suite is designed to be:
 AMPERSAND_API_KEY=your_api_key
 AMPERSAND_PROJECT_ID=your_project_id
 AMPERSAND_GROUP_REF=your_group_ref
+AMPERSAND_INTEGRATION_NAME=your_integration_name  # Required for E2E tests
+AMPERSAND_CONSUMER_REF=your_consumer_ref # required for E2E tests
 OPENAI_API_KEY=your_openai_key
 ```
 

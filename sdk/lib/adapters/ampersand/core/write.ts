@@ -79,7 +79,6 @@ export async function executeAmpersandWrite({
     }
 
     const data = await response.json();
-    console.log('[Ampersand] Response:', JSON.stringify(data, null, 2));
 
     return {
       success: true,
