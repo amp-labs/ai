@@ -189,9 +189,11 @@ export const startOAuth = tool({
     const { provider, groupRef, consumerRef, providerWorkspaceRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || '';
     const apiKey = process.env.AMPERSAND_API_KEY || '';
+    const finalGroupRef = groupRef || process.env.AMPERSAND_GROUP_REF || '';
+
     const url = await getOAuthURL({
       provider,
-      groupRef,
+      groupRef: finalGroupRef,
       consumerRef,
       projectId,
       apiKey,
