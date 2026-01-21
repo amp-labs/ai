@@ -3,7 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { Request, Response } from 'express';
 import { detect } from 'detect-port';
-import { logger } from './logger';
+import { logger } from '@amp-labs/ai/mcp';
 
 const DEFAULT_PORT = 3001;
 const SSE_SERVER_VERSION = 'v1';

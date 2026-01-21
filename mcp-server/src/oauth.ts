@@ -1,8 +1,8 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { logger } from '@amp-labs/ai/mcp';
 import { providerSchema } from './schemas';
 import { ClientSettings } from '.';
 import crypto from 'crypto';
-import { logger } from './logger';
 
 export async function createStartOAuthTool(
   server: Server,
