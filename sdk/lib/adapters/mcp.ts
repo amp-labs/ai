@@ -7,6 +7,9 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { z } from 'zod';
 import * as Sentry from '@sentry/node';
 import { logger } from '../logger';
+
+// Re-export logger for use by mcp-server package
+export { logger };
 import {
   providerSchema,
   associationsSchema,
@@ -44,7 +47,7 @@ type ClientSettings = {
   integrationName: string;
   apiKey: string;
   groupRef: string;
-  providerWorkspaceRef: string;
+  providerWorkspaceRef?: string;
 };
 
 /**
@@ -319,6 +322,9 @@ export const createStartOAuthTool = async (
       const projectId =
         settings?.project || process.env.AMPERSAND_PROJECT_ID || '';
 
+      const finalProviderWorkspaceRef =
+        settings?.providerWorkspaceRef || providerWorkspaceRef;
+
       try {
         const response = await fetch(
           'https://api.withampersand.com/v1/oauth-connect',
@@ -330,7 +336,9 @@ export const createStartOAuthTool = async (
               consumerRef: finalConsumerRef,
               groupRef: finalGroupRef,
               projectId,
-              providerWorkspaceRef,
+              ...(finalProviderWorkspaceRef && {
+                providerWorkspaceRef: finalProviderWorkspaceRef,
+              }),
             }),
           },
         );

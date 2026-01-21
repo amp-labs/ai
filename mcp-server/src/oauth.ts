@@ -1,8 +1,8 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { logger } from '@amp-labs/ai/mcp';
 import { providerSchema } from './schemas';
 import { ClientSettings } from '.';
 import crypto from 'crypto';
-import { logger } from './logger';
 import { z } from 'zod';
 
 export async function createStartOAuthTool(
@@ -32,6 +32,8 @@ export async function createStartOAuthTool(
         const consumerRef = crypto.randomUUID();
         const groupRef = settings?.groupRef || process.env.AMPERSAND_GROUP_REF;
         const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID;
+        const finalProviderWorkspaceRef =
+          providerWorkspaceRef || settings?.providerWorkspaceRef;
         const apiKey = settings?.apiKey || '';
         const options: RequestInit = {
           method: 'POST',
@@ -44,7 +46,9 @@ export async function createStartOAuthTool(
             consumerRef,
             groupRef,
             projectId,
-            ...(providerWorkspaceRef && { providerWorkspaceRef }),
+            ...(finalProviderWorkspaceRef && {
+              providerWorkspaceRef: finalProviderWorkspaceRef,
+            }),
           }),
         };
         logger.info(

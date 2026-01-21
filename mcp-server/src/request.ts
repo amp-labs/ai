@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { logger } from '@amp-labs/ai/mcp';
 import { ensureInstallation } from './connection';
 import {
   endpointSchema,
@@ -7,7 +8,6 @@ import {
   providerSchema,
 } from './schemas';
 import { ClientSettings } from '.';
-import { logger } from './logger';
 
 export async function createSendRequestTool(
   server: Server,

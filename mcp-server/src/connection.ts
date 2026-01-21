@@ -1,9 +1,9 @@
 import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
 import { z } from 'zod';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { logger } from '@amp-labs/ai/mcp';
 import { providerSchema } from './schemas';
 import { ClientSettings } from '.';
-import { logger } from './logger';
 
 export async function createConnectionManagerTools(
   server: Server,
