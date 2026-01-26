@@ -90,10 +90,14 @@ export async function callAmpersandProxy({
       'Response headers:',
       JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2),
     );
-    console.error('Response body:', JSON.stringify(responseData, null, 2));
+
     // Only log request body in verbose mode to avoid exposing sensitive data in production logs
-    if (body && process.env.AMPERSAND_VERBOSE_LOGGING === 'true') {
-      console.error('Request body:', JSON.stringify(body, null, 2));
+    if (process.env.AMPERSAND_VERBOSE_LOGGING === 'true') {
+      console.error('Response body:', JSON.stringify(responseData, null, 2));
+
+      if (body) {
+        console.error('Request body:', JSON.stringify(body, null, 2));
+      }
     }
   }
 
