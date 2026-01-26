@@ -46,7 +46,13 @@ export async function callAmpersandProxy({
   }
   const proxyUrl = `https://proxy.withampersand.com/${endpoint}`;
 
+  // Add timeout to prevent hanging requests
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+  fetchOptions.signal = controller.signal;
+
   const response = await fetch(proxyUrl, fetchOptions);
+  clearTimeout(timeoutId);
   const responseText = await response.text();
 
   let responseData;

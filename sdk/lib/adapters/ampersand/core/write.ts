@@ -44,6 +44,10 @@ export async function executeAmpersandWrite({
 
     const url = `https://write.withampersand.com/v1/projects/${projectId}/integrations/${integrationName}/objects/${objectName}`;
 
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -51,7 +55,9 @@ export async function executeAmpersandWrite({
         'X-Api-Key': apiKey,
       },
       body: JSON.stringify(requestBody),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
