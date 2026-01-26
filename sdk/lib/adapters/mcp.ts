@@ -8,8 +8,6 @@ import { z } from 'zod';
 import * as Sentry from '@sentry/node';
 import { logger } from '../logger';
 
-// Re-export logger for use by mcp-server package
-export { logger };
 import {
   providerSchema,
   associationsSchema,
@@ -36,6 +34,9 @@ import {
   StartOAuthInputType,
   ensureInstallationExists,
 } from './common';
+
+// Re-export logger for use by mcp-server package
+export { logger };
 
 type MCPResponse = {
   content: Array<{ type: string; text: string }>;

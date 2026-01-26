@@ -33,7 +33,7 @@ export async function createStartOAuthTool(
         const groupRef = settings?.groupRef || process.env.AMPERSAND_GROUP_REF;
         const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID;
         const finalProviderWorkspaceRef =
-          providerWorkspaceRef || settings?.providerWorkspaceRef;
+          settings?.providerWorkspaceRef || providerWorkspaceRef;
         const apiKey = settings?.apiKey || '';
         const options: RequestInit = {
           method: 'POST',
