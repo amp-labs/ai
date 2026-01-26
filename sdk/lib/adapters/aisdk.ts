@@ -56,7 +56,7 @@ import { callAmpersandProxy } from './ampersand/core/request';
  */
 export const createRecord = tool({
   description: createRecordToolDescription,
-  parameters: createActionSchema,
+  inputSchema: createActionSchema,
   execute: async ({
     objectName,
     type,
@@ -92,7 +92,7 @@ export const createRecord = tool({
  */
 export const updateRecord = tool({
   description: updateRecordToolDescription,
-  parameters: updateActionSchema,
+  inputSchema: updateActionSchema,
   execute: async ({
     objectName,
     type,
@@ -122,7 +122,7 @@ export const updateRecord = tool({
  */
 export const checkConnection = tool({
   description: checkConnectionToolDescription,
-  parameters: checkConnectionInputSchema,
+  inputSchema: checkConnectionInputSchema,
   execute: async (
     params: CheckConnectionInputType,
   ): Promise<CheckConnectionOutputType> => {
@@ -141,7 +141,7 @@ export const checkConnection = tool({
  */
 export const createInstallation = tool({
   description: createInstallationToolDescription,
-  parameters: createInstallationInputSchema,
+  inputSchema: createInstallationInputSchema,
   execute: async (
     params: CreateInstallationInputType,
   ): Promise<CreateInstallationOutputType> => {
@@ -162,7 +162,7 @@ export const createInstallation = tool({
  */
 export const checkInstallation = tool({
   description: checkInstallationToolDescription,
-  parameters: checkInstallationInputSchema,
+  inputSchema: checkInstallationInputSchema,
   execute: async (
     params: CheckInstallationInputType,
   ): Promise<CheckInstallationOutputType> => {
@@ -181,7 +181,7 @@ export const checkInstallation = tool({
  */
 export const startOAuth = tool({
   description: startOAuthToolDescription,
-  parameters: startOAuthInputSchema,
+  inputSchema: startOAuthInputSchema,
   execute: async (
     params: StartOAuthInputType,
   ): Promise<StartOAuthOutputType> => {
@@ -211,7 +211,7 @@ export const startOAuth = tool({
  */
 export const sendRequest = tool({
   description: sendRequestToolDescription,
-  parameters: sendRequestInputSchema,
+  inputSchema: sendRequestInputSchema,
   execute: async (
     params: SendRequestInputType,
   ): Promise<SendRequestOutputType> => {
@@ -250,7 +250,7 @@ export const sendRequest = tool({
  */
 export const sendReadRequest = tool({
   description: sendReadRequestToolDescription,
-  parameters: sendReadRequestInputSchema,
+  inputSchema: sendReadRequestInputSchema,
   execute: async (
     params: SendReadRequestInputType,
   ): Promise<SendRequestOutputType> => {

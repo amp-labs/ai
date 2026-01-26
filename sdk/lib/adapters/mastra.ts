@@ -3,7 +3,7 @@
  * Each tool is designed to work with the Mastra's tool system.
  */
 
-import { createTool } from '@mastra/core';
+import { createTool } from '@mastra/core/tools';
 import {
   createActionSchema,
   updateActionSchema,
@@ -44,7 +44,6 @@ import {
   startOAuthOutputSchema,
   getOAuthURL,
 } from './common';
-import { RuntimeContext } from '@mastra/core/runtime-context';
 import { callAmpersandProxy } from './ampersand/core/request';
 
 /**
@@ -70,26 +69,25 @@ export const createRecord = createTool({
   description: createRecordToolDescription,
   inputSchema: createActionSchema,
   outputSchema: writeOutputSchema,
-  execute: async ({
-    context,
-    runtimeContext,
-  }: {
-    context: CreateActionType;
-    runtimeContext: RuntimeContext;
-  }): Promise<WriteOutputType> => {
-    const { objectName, type, record, groupRef, associations } = context;
+  execute: async (
+    inputData: CreateActionType,
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ): Promise<WriteOutputType> => {
+    const { objectName, type, record, groupRef, associations } = inputData;
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
       groupRef:
-        runtimeContext.get('AMPERSAND_GROUP_REF') ||
+        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
         process.env.AMPERSAND_GROUP_REF ||
         groupRef,
       associations,
-      apiKey: runtimeContext.get('AMPERSAND_API_KEY'),
-      projectId: runtimeContext.get('AMPERSAND_PROJECT_ID'),
-      integrationName: runtimeContext.get('AMPERSAND_INTEGRATION_NAME'),
+      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
+      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
+      integrationName: requestContext
+        ?.get('AMPERSAND_INTEGRATION_NAME')
+        ?.toString(),
     });
     return {
       status: result.status,
@@ -116,26 +114,25 @@ export const updateRecord = createTool({
   description: updateRecordToolDescription,
   inputSchema: updateActionSchema,
   outputSchema: writeOutputSchema,
-  execute: async ({
-    context,
-    runtimeContext,
-  }: {
-    context: UpdateActionType;
-    runtimeContext: RuntimeContext;
-  }): Promise<WriteOutputType> => {
-    const { objectName, type, record, groupRef, associations } = context;
+  execute: async (
+    inputData: UpdateActionType,
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ): Promise<WriteOutputType> => {
+    const { objectName, type, record, groupRef, associations } = inputData;
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
       groupRef:
-        runtimeContext.get('AMPERSAND_GROUP_REF') ||
+        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
         process.env.AMPERSAND_GROUP_REF ||
         groupRef,
       associations,
-      apiKey: runtimeContext.get('AMPERSAND_API_KEY'),
-      projectId: runtimeContext.get('AMPERSAND_PROJECT_ID'),
-      integrationName: runtimeContext.get('AMPERSAND_INTEGRATION_NAME'),
+      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
+      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
+      integrationName: requestContext
+        ?.get('AMPERSAND_INTEGRATION_NAME')
+        ?.toString(),
     });
     return {
       status: result.status,
@@ -158,18 +155,15 @@ export const checkConnection = createTool({
   description: checkConnectionToolDescription,
   inputSchema: checkConnectionInputSchema,
   outputSchema: checkConnectionOutputSchema,
-  execute: async ({
-    context,
-    runtimeContext,
-  }: {
-    context: CheckConnectionInputType;
-    runtimeContext: RuntimeContext;
-  }): Promise<CheckConnectionOutputType> => {
-    const { provider } = context;
+  execute: async (
+    inputData: CheckConnectionInputType,
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ): Promise<CheckConnectionOutputType> => {
+    const { provider } = inputData;
     const result = await checkConnectionHelper({
       provider,
-      apiKey: runtimeContext.get('AMPERSAND_API_KEY'),
-      projectId: runtimeContext.get('AMPERSAND_PROJECT_ID'),
+      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
+      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
     });
     return result;
   },
@@ -190,24 +184,23 @@ export const createInstallation = createTool({
   description: createInstallationToolDescription,
   inputSchema: createInstallationInputSchema,
   outputSchema: createInstallationOutputSchema,
-  execute: async ({
-    context,
-    runtimeContext,
-  }: {
-    context: CreateInstallationInputType;
-    runtimeContext: RuntimeContext;
-  }): Promise<CreateInstallationOutputType> => {
-    const { provider, connectionId, groupRef } = context;
+  execute: async (
+    inputData: CreateInstallationInputType,
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ): Promise<CreateInstallationOutputType> => {
+    const { provider, connectionId, groupRef } = inputData;
     const res = await createInstallationHelper({
       provider,
       connectionId,
       groupRef:
-        runtimeContext.get('AMPERSAND_GROUP_REF') ||
+        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
         process.env.AMPERSAND_GROUP_REF ||
         groupRef,
-      apiKey: runtimeContext.get('AMPERSAND_API_KEY'),
-      projectId: runtimeContext.get('AMPERSAND_PROJECT_ID'),
-      integrationName: runtimeContext.get('AMPERSAND_INTEGRATION_NAME'),
+      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
+      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
+      integrationName: requestContext
+        ?.get('AMPERSAND_INTEGRATION_NAME')
+        ?.toString(),
     });
     return res;
   },
@@ -226,19 +219,18 @@ export const checkInstallation = createTool({
   description: checkInstallationToolDescription,
   inputSchema: checkInstallationInputSchema,
   outputSchema: checkInstallationOutputSchema,
-  execute: async ({
-    context,
-    runtimeContext,
-  }: {
-    context: CheckInstallationInputType;
-    runtimeContext: RuntimeContext;
-  }): Promise<CheckInstallationOutputType> => {
-    const { provider } = context;
+  execute: async (
+    inputData: CheckInstallationInputType,
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ): Promise<CheckInstallationOutputType> => {
+    const { provider } = inputData;
     const res = await checkInstallationHelper({
       provider,
-      apiKey: runtimeContext.get('AMPERSAND_API_KEY'),
-      projectId: runtimeContext.get('AMPERSAND_PROJECT_ID'),
-      integrationName: runtimeContext.get('AMPERSAND_INTEGRATION_NAME'),
+      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
+      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
+      integrationName: requestContext
+        ?.get('AMPERSAND_INTEGRATION_NAME')
+        ?.toString(),
     });
     return res;
   },
@@ -259,14 +251,23 @@ export const startOAuth = createTool({
   description: startOAuthToolDescription,
   inputSchema: startOAuthInputSchema,
   outputSchema: startOAuthOutputSchema,
-  execute: async ({ context, runtimeContext }) => {
-    const { provider, groupRef, consumerRef } = context;
-    const projectId = process.env.AMPERSAND_PROJECT_ID || '';
-    const apiKey = process.env.AMPERSAND_API_KEY || '';
+  execute: async (
+    inputData: { provider: string; groupRef?: string; consumerRef?: string },
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ) => {
+    const { provider, groupRef, consumerRef } = inputData;
+    const projectId =
+      requestContext?.get('AMPERSAND_PROJECT_ID')?.toString() ||
+      process.env.AMPERSAND_PROJECT_ID ||
+      '';
+    const apiKey =
+      requestContext?.get('AMPERSAND_API_KEY')?.toString() ||
+      process.env.AMPERSAND_API_KEY ||
+      '';
     const url = await getOAuthURL({
       provider,
       groupRef:
-        runtimeContext.get('AMPERSAND_GROUP_REF') ||
+        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
         process.env.AMPERSAND_GROUP_REF ||
         groupRef,
       consumerRef,
@@ -295,13 +296,10 @@ export const sendRequest = createTool({
   description: sendRequestToolDescription,
   inputSchema: sendRequestInputSchema,
   outputSchema: sendRequestOutputSchema,
-  execute: async ({
-    context,
-    runtimeContext,
-  }: {
-    context: SendRequestInputType;
-    runtimeContext: RuntimeContext;
-  }): Promise<SendRequestOutputType> => {
+  execute: async (
+    inputData: SendRequestInputType,
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ): Promise<SendRequestOutputType> => {
     const {
       provider,
       body,
@@ -309,18 +307,18 @@ export const sendRequest = createTool({
       method,
       headers = {},
       installationId,
-    } = context;
+    } = inputData;
     const apiKey =
-      String(runtimeContext.get('AMPERSAND_API_KEY')) ||
-      String(process.env.AMPERSAND_API_KEY) ||
+      requestContext?.get('AMPERSAND_API_KEY')?.toString() ||
+      process.env.AMPERSAND_API_KEY ||
       '';
     const projectId =
-      String(runtimeContext.get('AMPERSAND_PROJECT_ID')) ||
-      String(process.env.AMPERSAND_PROJECT_ID) ||
+      requestContext?.get('AMPERSAND_PROJECT_ID')?.toString() ||
+      process.env.AMPERSAND_PROJECT_ID ||
       '';
     const integrationName =
-      String(runtimeContext.get('AMPERSAND_INTEGRATION_NAME')) ||
-      String(process.env.AMPERSAND_INTEGRATION_NAME) ||
+      requestContext?.get('AMPERSAND_INTEGRATION_NAME')?.toString() ||
+      process.env.AMPERSAND_INTEGRATION_NAME ||
       '';
     return callAmpersandProxy({
       provider,
@@ -349,22 +347,28 @@ export const sendReadRequest = createTool({
   description: sendReadRequestToolDescription,
   inputSchema: sendReadRequestInputSchema,
   outputSchema: sendRequestOutputSchema,
-  execute: async ({ context, runtimeContext }) => {
-    const { provider, endpoint, headers = {}, installationId } = context;
+  execute: async (
+    inputData: {
+      provider: string;
+      endpoint: string;
+      headers?: Record<string, string>;
+      installationId?: string;
+    },
+    { requestContext }: { requestContext?: Map<string, unknown> },
+  ) => {
+    const { provider, endpoint, headers = {}, installationId } = inputData;
     const apiKey =
-      (
-        runtimeContext.get('AMPERSAND_API_KEY') ?? process.env.AMPERSAND_API_KEY
-      )?.toString() || '';
+      requestContext?.get('AMPERSAND_API_KEY')?.toString() ||
+      process.env.AMPERSAND_API_KEY ||
+      '';
     const projectId =
-      (
-        runtimeContext.get('AMPERSAND_PROJECT_ID') ??
-        process.env.AMPERSAND_PROJECT_ID
-      )?.toString() || '';
+      requestContext?.get('AMPERSAND_PROJECT_ID')?.toString() ||
+      process.env.AMPERSAND_PROJECT_ID ||
+      '';
     const integrationName =
-      (
-        runtimeContext.get('AMPERSAND_INTEGRATION_NAME') ??
-        process.env.AMPERSAND_INTEGRATION_NAME
-      )?.toString() || '';
+      requestContext?.get('AMPERSAND_INTEGRATION_NAME')?.toString() ||
+      process.env.AMPERSAND_INTEGRATION_NAME ||
+      '';
     return callAmpersandProxy({
       provider,
       endpoint,

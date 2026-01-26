@@ -8,7 +8,8 @@ import {
 import { createRecord, updateRecord } from '@amp-labs/ai/mastra';
 
 // Mastra Agent with AI SDK tools
-export const aiSDKToolsAgent: Agent = new Agent({
+export const aiSDKToolsAgent = new Agent({
+  id: 'ai-sdk-tools-agent',
   name: 'AI SDK Tools Agent',
   instructions: 'You can use tools defined in AI SDK.',
   model: openai('gpt-4o-mini'),
@@ -19,7 +20,8 @@ export const aiSDKToolsAgent: Agent = new Agent({
 });
 
 // Mastra Agent with Mastra tools
-export const mastraToolsAgent: Agent = new Agent({
+export const mastraToolsAgent = new Agent({
+  id: 'mastra-tools-agent',
   name: 'Mastra Tools Agent',
   instructions: 'You can use tools defined in Mastra.',
   model: openai('gpt-4o-mini'),
@@ -32,7 +34,7 @@ export const mastraToolsAgent: Agent = new Agent({
 // MCPClient with Ampersand MCP
 export const mcp = new MCPClient({
   servers: {
-    filesystem: {
+    ampersand: {
       command: 'npx',
       args: [
         '-y',
@@ -53,10 +55,15 @@ export const mcp = new MCPClient({
   },
 });
 
-// Mastra Agent with Ampersand MCP tools
-export const mcpToolsAgent: Agent = new Agent({
-  name: 'MCP Tools Agent',
-  instructions: 'You can use tools defined in MCP.',
-  model: openai('gpt-4o-mini'),
-  tools: await mcp.getTools(),
-});
+// Example of creating an agent with MCP tools
+// In Mastra v1, use mcp.listTools() to get all tools from all servers
+export async function createMcpAgent() {
+  const tools = await mcp.listTools();
+  return new Agent({
+    id: 'mcp-tools-agent',
+    name: 'MCP Tools Agent',
+    instructions: 'You can use tools defined in MCP.',
+    model: openai('gpt-4o-mini'),
+    tools,
+  });
+}
