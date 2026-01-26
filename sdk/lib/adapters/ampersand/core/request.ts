@@ -105,6 +105,10 @@ export async function callAmpersandProxy({
         console.error('Request body:', JSON.stringify(body, null, 2));
       }
     }
+
+    throw new Error(
+      `Ampersand proxy request failed: ${response.status} ${response.statusText}`,
+    );
   }
 
   return {
