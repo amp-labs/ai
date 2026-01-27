@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { logger } from '@amp-labs/ai/mcp';
 import { ensureInstallation } from './connection';
 import {
   endpointSchema,
@@ -131,12 +132,11 @@ async function callAmpersandProxy({
       fetchOptions.body = JSON.stringify(body);
     }
 
-    console.log(
-      '[SEND-REQUEST] API request to proxy: ',
+    logger.info('[SEND-REQUEST] API request to proxy: ', {
       endpoint,
-      fetchOptions.body,
-    );
-    console.log(
+      body: fetchOptions.body,
+    });
+    logger.info(
       '[SEND-REQUEST] Full URL: ',
       `https://proxy.withampersand.com/${endpoint}`,
     );
@@ -146,11 +146,10 @@ async function callAmpersandProxy({
       fetchOptions,
     );
 
-    console.log(
-      '[SEND-REQUEST] API response status from proxy: ',
+    logger.info('[SEND-REQUEST] API response status from proxy: ', {
       endpoint,
-      response.status,
-    );
+      status: response.status,
+    });
 
     const data = await response.text();
     return {
@@ -170,8 +169,8 @@ async function callAmpersandProxy({
       ],
     };
   } catch (error) {
-    console.error(
-      `Error in ${method === 'GET' ? 'sendReadRequest' : 'sendRequest'} tool`,
+    logger.error(
+      `[SEND-REQUEST] Error in ${method === 'GET' ? 'sendReadRequest' : 'sendRequest'} tool`,
       error,
     );
     return {
