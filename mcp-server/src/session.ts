@@ -3,7 +3,6 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { Request, Response } from 'express';
 import { detect } from 'detect-port';
-import { logger } from '@amp-labs/ai/mcp';
 
 const DEFAULT_PORT = 3001;
 const SSE_SERVER_VERSION = 'v1';
@@ -51,7 +50,7 @@ export async function connectServer(
   settings: any,
 ): Promise<express.Application | undefined> {
   if (useStdioTransport) {
-    logger.info('Connecting to MCP server over stdio');
+    console.log('Connecting to MCP server over stdio');
     const transport = new StdioServerTransport();
     await server.connect(transport);
     return;
@@ -86,7 +85,7 @@ export async function connectServer(
       // VS code supports it for example like this: https://github.com/microsoft/vscode-docs/blob/74c4fd5aa3180b218fc389184659b621f05460ca/docs/copilot/chat/mcp-servers.md#configuration-example
       settings.apiKey = req.headers['x-api-key'];
     }
-    logger.info('[SESSION] Settings: ', settings);
+    console.log('[SESSION] Settings: ', settings);
     currentTransport = new SSEServerTransport('/messages', res);
     transportManager.addTransport(currentTransport, res);
     await server.connect(currentTransport);
@@ -95,7 +94,7 @@ export async function connectServer(
   app.post('/messages', async (req: Request, res: Response) => {
     const sessionId = req.query.sessionId as string;
 
-    logger.info('[SESSION] Session ID', sessionId);
+    console.log('[SESSION] Session ID', sessionId);
     if (!sessionId) {
       res.status(400).json({ error: 'Missing session ID param' });
       return;
