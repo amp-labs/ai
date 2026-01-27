@@ -56,7 +56,7 @@ import { callAmpersandProxy } from './ampersand/core/request';
  */
 export const createRecord = tool({
   description: createRecordToolDescription,
-  parameters: createActionSchema,
+  inputSchema: createActionSchema as any,
   execute: async ({
     objectName,
     type,
@@ -92,7 +92,7 @@ export const createRecord = tool({
  */
 export const updateRecord = tool({
   description: updateRecordToolDescription,
-  parameters: updateActionSchema,
+  inputSchema: updateActionSchema as any,
   execute: async ({
     objectName,
     type,
@@ -122,7 +122,7 @@ export const updateRecord = tool({
  */
 export const checkConnection = tool({
   description: checkConnectionToolDescription,
-  parameters: checkConnectionInputSchema,
+  inputSchema: checkConnectionInputSchema,
   execute: async (
     params: CheckConnectionInputType,
   ): Promise<CheckConnectionOutputType> => {
@@ -141,7 +141,7 @@ export const checkConnection = tool({
  */
 export const createInstallation = tool({
   description: createInstallationToolDescription,
-  parameters: createInstallationInputSchema,
+  inputSchema: createInstallationInputSchema as any,
   execute: async (
     params: CreateInstallationInputType,
   ): Promise<CreateInstallationOutputType> => {
@@ -162,7 +162,7 @@ export const createInstallation = tool({
  */
 export const checkInstallation = tool({
   description: checkInstallationToolDescription,
-  parameters: checkInstallationInputSchema,
+  inputSchema: checkInstallationInputSchema as any,
   execute: async (
     params: CheckInstallationInputType,
   ): Promise<CheckInstallationOutputType> => {
@@ -175,25 +175,28 @@ export const checkInstallation = tool({
 /**
  * Initiates OAuth flow for a provider using Vercel AI SDK.
  * @param provider - The provider to authenticate with
- * @param groupRef - Optional group reference
- * @param consumerRef - Optional consumer reference
+ * @param groupRef - The group reference for identifying the group of users
+ * @param consumerRef - The consumer reference for identifying the user
+ * @param providerWorkspaceRef - Optional provider workspace identifier (e.g. Salesforce subdomain)
  * @returns Object containing the OAuth URL for authentication
  */
 export const startOAuth = tool({
   description: startOAuthToolDescription,
-  parameters: startOAuthInputSchema,
+  inputSchema: startOAuthInputSchema as any,
   execute: async (
     params: StartOAuthInputType,
   ): Promise<StartOAuthOutputType> => {
-    const { provider, groupRef, consumerRef } = params;
+    const { provider, groupRef, consumerRef, providerWorkspaceRef } = params;
     const projectId = process.env.AMPERSAND_PROJECT_ID || '';
     const apiKey = process.env.AMPERSAND_API_KEY || '';
+
     const url = await getOAuthURL({
       provider,
-      groupRef: process.env.AMPERSAND_GROUP_REF || groupRef,
+      groupRef,
       consumerRef,
       projectId,
       apiKey,
+      providerWorkspaceRef,
     });
     return { url };
   },
@@ -211,7 +214,7 @@ export const startOAuth = tool({
  */
 export const sendRequest = tool({
   description: sendRequestToolDescription,
-  parameters: sendRequestInputSchema,
+  inputSchema: sendRequestInputSchema,
   execute: async (
     params: SendRequestInputType,
   ): Promise<SendRequestOutputType> => {
@@ -250,7 +253,7 @@ export const sendRequest = tool({
  */
 export const sendReadRequest = tool({
   description: sendReadRequestToolDescription,
-  parameters: sendReadRequestInputSchema,
+  inputSchema: sendReadRequestInputSchema,
   execute: async (
     params: SendReadRequestInputType,
   ): Promise<SendRequestOutputType> => {
@@ -270,3 +273,25 @@ export const sendReadRequest = tool({
     });
   },
 });
+
+// Re-export schemas for testing and validation
+export {
+  createActionSchema,
+  updateActionSchema,
+  checkConnectionInputSchema,
+  checkConnectionOutputSchema,
+  createInstallationInputSchema,
+  createInstallationOutputSchema,
+  checkInstallationInputSchema,
+  checkInstallationOutputSchema,
+  startOAuthInputSchema,
+  startOAuthOutputSchema,
+  sendRequestInputSchema,
+  sendRequestOutputSchema,
+  sendReadRequestInputSchema,
+  associationsSchema,
+  providerSchema,
+  endpointSchema,
+  installationIdSchema,
+  writeOutputSchema,
+} from './ampersand/schemas';
