@@ -43,7 +43,7 @@ type ClientSettings = {
   integrationName: string;
   apiKey: string;
   groupRef: string;
-  providerWorkspaceRef: string;
+  providerWorkspaceRef?: string;
 };
 
 /**
@@ -317,6 +317,8 @@ export const createStartOAuthTool = async (
       const finalGroupRef = settings?.groupRef || groupRef || '';
       const projectId =
         settings?.project || process.env.AMPERSAND_PROJECT_ID || '';
+      const finalProviderWorkspaceRef =
+        settings?.providerWorkspaceRef || providerWorkspaceRef;
 
       try {
         const response = await fetch(
@@ -329,7 +331,9 @@ export const createStartOAuthTool = async (
               consumerRef: finalConsumerRef,
               groupRef: finalGroupRef,
               projectId,
-              providerWorkspaceRef,
+              ...(finalProviderWorkspaceRef && {
+                providerWorkspaceRef: finalProviderWorkspaceRef,
+              }),
             }),
           },
         );

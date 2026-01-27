@@ -31,6 +31,8 @@ export async function createStartOAuthTool(
         const consumerRef = crypto.randomUUID();
         const groupRef = settings?.groupRef || process.env.AMPERSAND_GROUP_REF;
         const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID;
+        const finalProviderWorkspaceRef =
+          settings?.providerWorkspaceRef || providerWorkspaceRef;
         const apiKey = settings?.apiKey || '';
         const options: RequestInit = {
           method: 'POST',
@@ -43,7 +45,9 @@ export async function createStartOAuthTool(
             consumerRef,
             groupRef,
             projectId,
-            ...(providerWorkspaceRef && { providerWorkspaceRef }),
+            ...(finalProviderWorkspaceRef && {
+              providerWorkspaceRef: finalProviderWorkspaceRef,
+            }),
           }),
         };
         console.log(
