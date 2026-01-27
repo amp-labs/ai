@@ -12,7 +12,17 @@ function formatLog(level: LogLevel, message: string, data?: any): string {
 
   if (data !== undefined) {
     if (typeof data === 'object') {
-      return `${baseMessage} ${JSON.stringify(data)}`;
+      // Handle Error objects to preserve stack traces
+      if (data instanceof Error) {
+        return `${baseMessage} ${data.stack || data.message}`;
+      }
+      // Wrap JSON.stringify in try-catch to handle circular references
+      try {
+        return `${baseMessage} ${JSON.stringify(data)}`;
+      } catch (error) {
+        // Fallback for circular references or other stringify errors
+        return `${baseMessage} [Object with circular reference or unserializable content]`;
+      }
     }
     return `${baseMessage} ${data}`;
   }
