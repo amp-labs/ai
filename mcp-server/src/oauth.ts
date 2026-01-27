@@ -1,4 +1,5 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { logger } from '@amp-labs/ai/mcp';
 import { providerSchema } from './schemas';
 import { ClientSettings } from '.';
 import crypto from 'crypto';
@@ -50,7 +51,7 @@ export async function createStartOAuthTool(
             }),
           }),
         };
-        console.log(
+        logger.info(
           '[START-OAUTH] API request to oauthConnect: ',
           options.body,
         );
@@ -60,10 +61,10 @@ export async function createStartOAuthTool(
           options,
         );
         const data = await response.text();
-        console.log('[START-OAUTH] API response from oauthConnect: ', data);
+        logger.info('[START-OAUTH] API response from oauthConnect: ', data);
         oAuthUrl = data;
       } catch (err) {
-        console.error(err);
+        logger.error('[START-OAUTH] Error in oauthConnect', err);
       }
 
       return {

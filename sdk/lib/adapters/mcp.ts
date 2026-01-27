@@ -6,6 +6,7 @@ import './ampersand/core/instrument';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { z } from 'zod';
 import * as Sentry from '@sentry/node';
+import { logger } from '../logger';
 import {
   providerSchema,
   associationsSchema,
@@ -32,6 +33,9 @@ import {
   StartOAuthInputType,
   ensureInstallationExists,
 } from './common';
+
+// Re-export logger for use by mcp-server package
+export { logger };
 
 type MCPResponse = {
   content: Array<{ type: string; text: string }>;
@@ -84,7 +88,7 @@ export const createWriteActionTool = async (
     ): Promise<MCPResponse> => {
       const { objectName, type, record, groupRef, associations } = params;
 
-      console.log(`[WRITE] about to perform ${type} operation`, params);
+      logger.info(`[WRITE] about to perform ${type} operation`, params);
 
       const result = await executeAmpersandWrite({
         objectName,
@@ -101,7 +105,7 @@ export const createWriteActionTool = async (
       });
 
       if (result.success) {
-        console.log(
+        logger.info(
           `[WRITE] ${type} operation on provider succeeded:`,
           result.response,
         );
