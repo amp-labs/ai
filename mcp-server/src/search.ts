@@ -1,6 +1,7 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { TrieveSDK, ChunkMetadata } from 'trieve-ts-sdk';
 import { z } from 'zod';
+import { logger } from '@amp-labs/ai/mcp';
 
 export const SUBDOMAIN: string = 'ampersand-24eb5c1a';
 export const SERVER_URL: string = 'https://leaves.mintlify.com';
@@ -96,7 +97,7 @@ export async function createSearchTool(server: Server): Promise<void> {
         query: z.string(),
       },
       async ({ query }: { query: string }) => {
-        console.log('[SEARCH] call: ', query);
+        logger.info('[SEARCH] call: ', query);
         const results = await search(query, config);
         const content = results.map((result) => {
           const { title, content, link } = result;
@@ -113,6 +114,6 @@ export async function createSearchTool(server: Server): Promise<void> {
       },
     );
   } catch (error) {
-    console.warn('Error in registering search tool:', error);
+    logger.warn('[SEARCH] Error in registering search tool:', error);
   }
 }

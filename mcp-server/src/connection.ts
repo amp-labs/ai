@@ -1,6 +1,7 @@
 import { SDKNodePlatform } from '@amp-labs/sdk-node-platform';
 import { z } from 'zod';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { logger } from '@amp-labs/ai/mcp';
 import { providerSchema } from './schemas';
 import { ClientSettings } from '.';
 
@@ -27,13 +28,13 @@ export async function createConnectionManagerTools(
           provider: provider,
         };
         const data = await ampersandClient.connections.list(body);
-        console.log('[CHECK-CONNECTION] API call to listConnections: ', body);
+        logger.info('[CHECK-CONNECTION] API call to listConnections: ', body);
 
         // @ts-ignore
         if (data.length > 0) {
           // @ts-ignore
           const connection = data[0];
-          console.log(
+          logger.info(
             '[CHECK-CONNECTION] API response from listConnections:',
             connection,
           );
@@ -56,7 +57,7 @@ export async function createConnectionManagerTools(
           };
         }
       } catch (err) {
-        console.error('Error checking connection:', err);
+        logger.error('[CHECK-CONNECTION] Error checking connection:', err);
         return {
           content: [
             {
@@ -90,13 +91,13 @@ export async function createConnectionManagerTools(
             process.env.AMPERSAND_INTEGRATION_NAME ||
             '',
         };
-        console.log(
+        logger.info(
           '[CHECK-INSTALLATION] API call to listInstallations: ',
           body,
         );
         const data = await ampersandClient.installations.list(body);
 
-        console.log(
+        logger.info(
           '[CHECK-INSTALLATION] API response from listInstallations: ',
           data,
         );
@@ -105,7 +106,7 @@ export async function createConnectionManagerTools(
           // @ts-ignore
           (inst) => inst.connection?.provider === provider.toLowerCase(),
         );
-        console.log(
+        logger.info(
           '[CHECK-INSTALLATION] filtered installations: ',
           relevantInstallations,
         );
@@ -135,7 +136,7 @@ export async function createConnectionManagerTools(
           };
         }
       } catch (err) {
-        console.error('Error checking installation:', err);
+        logger.error('[CHECK-INSTALLATION] Error checking installation:', err);
         return {
           content: [
             {
@@ -182,7 +183,7 @@ export async function createConnectionManagerTools(
             },
           },
         };
-        console.log(
+        logger.info(
           '[CREATE-INSTALLATION] API call to createInstallation: ',
           requestBody,
         );
@@ -197,7 +198,7 @@ export async function createConnectionManagerTools(
           requestBody,
         });
 
-        console.log(
+        logger.info(
           '[CREATE-INSTALLATION] API response from createInstallation: ',
           data,
         );
@@ -222,7 +223,7 @@ export async function createConnectionManagerTools(
           ],
         };
       } catch (err) {
-        console.error('Error creating installation:', err);
+        logger.error('[CREATE-INSTALLATION] Error creating installation:', err);
         return {
           content: [
             {
@@ -257,11 +258,11 @@ export async function ensureInstallation(
       settings?.project || process.env.AMPERSAND_PROJECT_ID || '',
     provider: provider,
   };
-  console.log('[ENSURE-INSTALLATION] API call to listConnections: ', body);
+  logger.info('[ENSURE-INSTALLATION] API call to listConnections: ', body);
 
   const connectionData = await ampersandClient.connections.list(body);
 
-  console.log(
+  logger.info(
     '[ENSURE-INSTALLATION] API response from listConnections: ',
     connectionData,
   );
@@ -300,18 +301,15 @@ export async function ensureInstallation(
       inst.connection?.id === connectionId,
   );
 
-  console.log(
-    '[ENSURE-INSTALLATION] existing installation check',
+  logger.info('[ENSURE-INSTALLATION] existing installation check', {
     relevantInstallations,
     installationData,
-  );
+  });
 
   if (relevantInstallations.length === 0) {
-    console.log(
+    logger.info(
       '[ENSURE-INSTALLATION] No existing installation found, creating one for connection:',
-      connectionId,
-      'group:',
-      groupRef,
+      { connectionId, groupRef },
     );
 
     const requestBody = {
@@ -326,7 +324,7 @@ export async function ensureInstallation(
       },
     };
 
-    console.log(
+    logger.info(
       '[ENSURE-INSTALLATION] API request to createInstallation',
       requestBody,
     );
@@ -340,7 +338,7 @@ export async function ensureInstallation(
       requestBody,
     });
 
-    console.log(
+    logger.info(
       '[ENSURE-INSTALLATION] API response from createInstallation',
       createData,
     );
@@ -348,7 +346,7 @@ export async function ensureInstallation(
     // @ts-ignore
     const installationId = createData.installation?.id;
     if (installationId) {
-      console.log(
+      logger.info(
         `[ENSURE-INSTALLATION]Installation created for ${provider}, Installation ID: ${installationId}`,
       );
       return installationId;
@@ -358,7 +356,7 @@ export async function ensureInstallation(
       );
     }
   } else {
-    console.log(
+    logger.info(
       `[ENSURE-INSTALLATION]Installation already exists for ${provider} with ID: ${relevantInstallations[0].id}`,
     );
     return relevantInstallations[0].id;

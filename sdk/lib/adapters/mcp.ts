@@ -6,6 +6,8 @@ import './ampersand/core/instrument';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { z } from 'zod';
 import * as Sentry from '@sentry/node';
+import { logger } from '../logger';
+
 import {
   providerSchema,
   associationsSchema,
@@ -33,6 +35,9 @@ import {
   ensureInstallationExists,
 } from './common';
 
+// Re-export logger for use by mcp-server package
+export { logger };
+
 type MCPResponse = {
   content: Array<{ type: string; text: string }>;
   isError?: boolean;
@@ -43,6 +48,7 @@ type ClientSettings = {
   integrationName: string;
   apiKey: string;
   groupRef: string;
+  providerWorkspaceRef?: string;
 };
 
 /**
@@ -83,7 +89,7 @@ export const createWriteActionTool = async (
     ): Promise<MCPResponse> => {
       const { objectName, type, record, groupRef, associations } = params;
 
-      console.log(`[WRITE] about to perform ${type} operation`, params);
+      logger.info(`[WRITE] about to perform ${type} operation`, params);
 
       const result = await executeAmpersandWrite({
         objectName,
@@ -100,7 +106,7 @@ export const createWriteActionTool = async (
       });
 
       if (result.success) {
-        console.log(
+        logger.info(
           `[WRITE] ${type} operation on provider succeeded:`,
           result.response,
         );
@@ -310,13 +316,16 @@ export const createStartOAuthTool = async (
     startOAuthToolDescription,
     startOAuthInputSchema.shape,
     async (params: StartOAuthInputType): Promise<MCPResponse> => {
-      const { provider, groupRef, consumerRef } = params;
+      const { provider, groupRef, consumerRef, providerWorkspaceRef } = params;
       const finalConsumerRef =
         consumerRef || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = settings?.groupRef || groupRef || '';
       const projectId =
         settings?.project || process.env.AMPERSAND_PROJECT_ID || '';
-      let url = '';
+
+      const finalProviderWorkspaceRef =
+        settings?.providerWorkspaceRef || providerWorkspaceRef;
+
       try {
         const response = await fetch(
           'https://api.withampersand.com/v1/oauth-connect',
@@ -328,10 +337,13 @@ export const createStartOAuthTool = async (
               consumerRef: finalConsumerRef,
               groupRef: finalGroupRef,
               projectId,
+              ...(finalProviderWorkspaceRef && {
+                providerWorkspaceRef: finalProviderWorkspaceRef,
+              }),
             }),
           },
         );
-        url = await response.text();
+        const url = await response.text();
         return {
           content: [
             {
