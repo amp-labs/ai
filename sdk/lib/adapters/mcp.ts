@@ -43,6 +43,7 @@ type ClientSettings = {
   integrationName: string;
   apiKey: string;
   groupRef: string;
+  providerWorkspaceRef?: string;
 };
 
 /**
@@ -68,7 +69,9 @@ export const createWriteActionTool = async (
       provider: providerSchema,
       objectName: z.string().describe('The name of the object to write to'),
       type: z.enum([type]).describe('The type of write operation'),
-      record: z.record(z.any()).describe('The record data to write'),
+      record: z
+        .record(z.string(), z.any())
+        .describe('The record data to write'),
       groupRef: z
         .string()
         .describe(
@@ -308,13 +311,15 @@ export const createStartOAuthTool = async (
     startOAuthToolDescription,
     startOAuthInputSchema.shape,
     async (params: StartOAuthInputType): Promise<MCPResponse> => {
-      const { provider, groupRef, consumerRef } = params;
+      const { provider, groupRef, consumerRef, providerWorkspaceRef } = params;
       const finalConsumerRef =
         consumerRef || Math.random().toString(36).substring(2, 15);
       const finalGroupRef = settings?.groupRef || groupRef || '';
       const projectId =
         settings?.project || process.env.AMPERSAND_PROJECT_ID || '';
-      let url = '';
+      const finalProviderWorkspaceRef =
+        settings?.providerWorkspaceRef || providerWorkspaceRef;
+
       try {
         const response = await fetch(
           'https://api.withampersand.com/v1/oauth-connect',
@@ -326,10 +331,13 @@ export const createStartOAuthTool = async (
               consumerRef: finalConsumerRef,
               groupRef: finalGroupRef,
               projectId,
+              ...(finalProviderWorkspaceRef && {
+                providerWorkspaceRef: finalProviderWorkspaceRef,
+              }),
             }),
           },
         );
-        url = await response.text();
+        const url = await response.text();
         return {
           content: [
             {

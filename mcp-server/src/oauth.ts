@@ -2,6 +2,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { providerSchema } from './schemas';
 import { ClientSettings } from '.';
 import crypto from 'crypto';
+import { z } from 'zod';
 
 export async function createStartOAuthTool(
   server: Server,
@@ -13,13 +14,25 @@ export async function createStartOAuthTool(
     `Connect to a SaaS tool provider using the Ampersand OAuth flow. The tool will return a clickable link to the OAuth flow for the user to click.`,
     {
       provider: providerSchema,
+      providerWorkspaceRef: z
+        .string()
+        .optional()
+        .describe('Optional workspace reference for multi-workspace providers'),
     },
-    async ({ provider }: { provider: string }) => {
+    async ({
+      provider,
+      providerWorkspaceRef,
+    }: {
+      provider: string;
+      providerWorkspaceRef?: string;
+    }) => {
       let oAuthUrl = '';
       try {
         const consumerRef = crypto.randomUUID();
         const groupRef = settings?.groupRef || process.env.AMPERSAND_GROUP_REF;
         const projectId = settings?.project || process.env.AMPERSAND_PROJECT_ID;
+        const finalProviderWorkspaceRef =
+          settings?.providerWorkspaceRef || providerWorkspaceRef;
         const apiKey = settings?.apiKey || '';
         const options: RequestInit = {
           method: 'POST',
@@ -27,7 +40,15 @@ export async function createStartOAuthTool(
             'Content-Type': 'application/json',
             'X-Api-Key': apiKey,
           },
-          body: JSON.stringify({ provider, consumerRef, groupRef, projectId }),
+          body: JSON.stringify({
+            provider,
+            consumerRef,
+            groupRef,
+            projectId,
+            ...(finalProviderWorkspaceRef && {
+              providerWorkspaceRef: finalProviderWorkspaceRef,
+            }),
+          }),
         };
         console.log(
           '[START-OAUTH] API request to oauthConnect: ',

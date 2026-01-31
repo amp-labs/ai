@@ -1,0 +1,34 @@
+{
+  "name": "ai-e2e-test",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E2E tests for Vercel AI SDK with Ampersand AI tools",
+  "scripts": {
+    "test": "tsx ai-e2e-simple.ts",
+    "test:simple": "tsx ai-e2e-simple.ts",
+    "test:schema": "tsx ai-e2e-schema-validation.ts",
+    "test:checkConnection": "tsx tools/checkConnection.test.ts",
+    "test:checkInstallation": "tsx tools/checkInstallation.test.ts",
+    "test:createInstallation": "tsx tools/createInstallation.test.ts",
+    "test:startOAuth": "tsx tools/startOAuth.test.ts",
+    "test:createRecord": "tsx tools/createRecord.test.ts",
+    "test:updateRecord": "tsx tools/updateRecord.test.ts",
+    "test:sendRequest": "tsx tools/sendRequest.test.ts",
+    "test:sendReadRequest": "tsx tools/sendReadRequest.test.ts",
+    "test:comprehensive": "tsx tools/comprehensive-e2e.test.ts",
+    "test:all-tools": "pnpm test:checkConnection && pnpm test:checkInstallation && pnpm test:startOAuth"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^2.0.0",
+    "@amp-labs/ai": "workspace:*",
+    "ai": "^5.0.0",
+    "dotenv": "^16.4.7",
+    "zod": "^4.1.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

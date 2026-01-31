@@ -52,7 +52,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "trieve-ts-sdk": "^0.0.62",
-    "zod": "^3.25.0"
+    "zod": "^4.1.8"
   },
   "peerDependencies": {
     "@mastra/core": "^1.0.0",
