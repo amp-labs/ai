@@ -2,5 +2,8 @@
     "*.ts": [
         "eslint --fix",
         "prettier --write"
+    ],
+    "sdk/test/**/*.ts": [
+        "bun test --bail"
     ]
 }
