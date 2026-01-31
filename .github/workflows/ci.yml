@@ -27,4 +27,6 @@ jobs:
       - run: pnpm turbo run format:check
       - run: pnpm turbo run lint
       - run: pnpm turbo run type-check
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
       - run: pnpm turbo run build
