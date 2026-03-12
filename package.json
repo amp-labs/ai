@@ -24,5 +24,10 @@
   "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=16.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "zod": "^4.1.8"
+    }
   }
 }
