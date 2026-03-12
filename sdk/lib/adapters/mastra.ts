@@ -71,7 +71,7 @@ export const createRecord = createTool({
   outputSchema: writeOutputSchema,
   execute: async (
     inputData: CreateActionType,
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ): Promise<WriteOutputType> => {
     const { objectName, type, record, groupRef, associations } = inputData;
     const result = await executeAmpersandWrite({
@@ -116,7 +116,7 @@ export const updateRecord = createTool({
   outputSchema: writeOutputSchema,
   execute: async (
     inputData: UpdateActionType,
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ): Promise<WriteOutputType> => {
     const { objectName, type, record, groupRef, associations } = inputData;
     const result = await executeAmpersandWrite({
@@ -157,7 +157,7 @@ export const checkConnection = createTool({
   outputSchema: checkConnectionOutputSchema,
   execute: async (
     inputData: CheckConnectionInputType,
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ): Promise<CheckConnectionOutputType> => {
     const { provider } = inputData;
     const result = await checkConnectionHelper({
@@ -186,7 +186,7 @@ export const createInstallation = createTool({
   outputSchema: createInstallationOutputSchema,
   execute: async (
     inputData: CreateInstallationInputType,
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = inputData;
     const res = await createInstallationHelper({
@@ -221,7 +221,7 @@ export const checkInstallation = createTool({
   outputSchema: checkInstallationOutputSchema,
   execute: async (
     inputData: CheckInstallationInputType,
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ): Promise<CheckInstallationOutputType> => {
     const { provider } = inputData;
     const res = await checkInstallationHelper({
@@ -253,7 +253,7 @@ export const startOAuth = createTool({
   outputSchema: startOAuthOutputSchema,
   execute: async (
     inputData: { provider: string; groupRef?: string; consumerRef?: string },
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ) => {
     const { provider, groupRef, consumerRef } = inputData;
     const projectId =
@@ -298,7 +298,7 @@ export const sendRequest = createTool({
   outputSchema: sendRequestOutputSchema,
   execute: async (
     inputData: SendRequestInputType,
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ): Promise<SendRequestOutputType> => {
     const {
       provider,
@@ -354,7 +354,7 @@ export const sendReadRequest = createTool({
       headers?: Record<string, string>;
       installationId?: string;
     },
-    { requestContext }: { requestContext?: Map<string, unknown> },
+    { requestContext },
   ) => {
     const { provider, endpoint, headers = {}, installationId } = inputData;
     const apiKey =
