@@ -122,7 +122,7 @@ export const updateRecord = tool({
  */
 export const checkConnection = tool({
   description: checkConnectionToolDescription,
-  inputSchema: checkConnectionInputSchema,
+  inputSchema: checkConnectionInputSchema as any,
   execute: async (
     params: CheckConnectionInputType,
   ): Promise<CheckConnectionOutputType> => {
@@ -214,7 +214,7 @@ export const startOAuth = tool({
  */
 export const sendRequest = tool({
   description: sendRequestToolDescription,
-  inputSchema: sendRequestInputSchema,
+  inputSchema: sendRequestInputSchema as any,
   execute: async (
     params: SendRequestInputType,
   ): Promise<SendRequestOutputType> => {
@@ -253,7 +253,7 @@ export const sendRequest = tool({
  */
 export const sendReadRequest = tool({
   description: sendReadRequestToolDescription,
-  inputSchema: sendReadRequestInputSchema,
+  inputSchema: sendReadRequestInputSchema as any,
   execute: async (
     params: SendReadRequestInputType,
   ): Promise<SendRequestOutputType> => {
