@@ -7,9 +7,7 @@
  * - Schema validation
  */
 
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'bun:test';
-import { setupServer } from 'msw/node';
-import { http, HttpResponse } from 'msw';
+import { describe, it, expect } from 'bun:test';
 
 // Import tools from Mastra adapter
 import {
@@ -40,25 +38,9 @@ import {
   sendReadRequestInputSchema,
 } from '../../lib/adapters/common';
 
-// Setup MSW server for HTTP mocking
-const handlers = [
-  // OAuth endpoint
-  http.post('https://api.withampersand.com/v1/oauth-connect', () => {
-    return HttpResponse.text(
-      'https://oauth.withampersand.com/authorize?test=mastra',
-    );
-  }),
-
-  // Proxy endpoint
-  http.all('https://proxy.withampersand.com/*', () => {
-    return HttpResponse.json({
-      data: { id: 'mastra-mock-id', name: 'Mastra Mock Record' },
-      success: true,
-    });
-  }),
-];
-
-const server = setupServer(...handlers);
+// Shared MSW server setup
+import { setupMocks } from '../setup';
+setupMocks();
 
 describe('Mastra Adapter - Tool Definitions', () => {
   it('createRecord has correct Mastra structure', () => {
@@ -194,18 +176,6 @@ describe('Mastra Adapter - Output Schemas', () => {
 });
 
 describe('Mastra Adapter - startOAuth with MSW', () => {
-  beforeAll(() => {
-    server.listen({ onUnhandledRequest: 'warn' });
-  });
-
-  afterEach(() => {
-    server.resetHandlers();
-  });
-
-  afterAll(() => {
-    server.close();
-  });
-
   it('startOAuth returns OAuth URL', async () => {
     const originalProjectId = process.env.AMPERSAND_PROJECT_ID;
     const originalApiKey = process.env.AMPERSAND_API_KEY;

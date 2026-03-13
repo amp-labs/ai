@@ -7,8 +7,7 @@
  * - MCPResponse format
  */
 
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'bun:test';
-import { setupServer } from 'msw/node';
+import { describe, it, expect } from 'bun:test';
 import { http, HttpResponse } from 'msw';
 
 // Import MCP tool factory functions
@@ -21,25 +20,9 @@ import {
   createSendRequestTool,
 } from '../../lib/adapters/mcp';
 
-// Setup MSW server for HTTP mocking
-const handlers = [
-  // OAuth endpoint
-  http.post('https://api.withampersand.com/v1/oauth-connect', () => {
-    return HttpResponse.text(
-      'https://oauth.withampersand.com/authorize?mcp=true',
-    );
-  }),
-
-  // Proxy endpoint
-  http.all('https://proxy.withampersand.com/*', () => {
-    return HttpResponse.json({
-      data: { id: 'mcp-mock-id' },
-      success: true,
-    });
-  }),
-];
-
-const server = setupServer(...handlers);
+// Shared MSW server setup
+import { setupMocks, mockServer as mswServer } from '../setup';
+setupMocks();
 
 // Types for mock MCP server
 interface MCPContent {
@@ -223,18 +206,6 @@ describe('MCP Adapter - Tool Registration', () => {
 });
 
 describe('MCP Adapter - startOAuth handler with MSW', () => {
-  beforeAll(() => {
-    server.listen({ onUnhandledRequest: 'warn' });
-  });
-
-  afterEach(() => {
-    server.resetHandlers();
-  });
-
-  afterAll(() => {
-    server.close();
-  });
-
   it('startOAuth handler returns MCPResponse format', async () => {
     const mockServer = new MockMCPServer();
     const testSettings = {
@@ -323,21 +294,9 @@ describe('MCP Adapter - startOAuth handler with MSW', () => {
 });
 
 describe('MCP Adapter - MCPResponse error format', () => {
-  beforeAll(() => {
-    server.listen({ onUnhandledRequest: 'warn' });
-  });
-
-  afterEach(() => {
-    server.resetHandlers();
-  });
-
-  afterAll(() => {
-    server.close();
-  });
-
   it('error responses from network failures include isError flag', async () => {
     // Override the handler to throw a network error
-    server.use(
+    mswServer.use(
       http.post('https://api.withampersand.com/v1/oauth-connect', () => {
         return HttpResponse.error();
       }),

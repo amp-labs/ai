@@ -7,9 +7,7 @@
  * - Tool execute functions (with mocked HTTP where possible)
  */
 
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'bun:test';
-import { setupServer } from 'msw/node';
-import { http, HttpResponse } from 'msw';
+import { describe, it, expect } from 'bun:test';
 
 // Import tools from the built SDK
 import {
@@ -34,25 +32,9 @@ import {
   sendReadRequestInputSchema,
 } from '../../lib/adapters/common';
 
-// Setup MSW server for HTTP mocking
-const handlers = [
-  // OAuth endpoint (uses fetch directly)
-  http.post('https://api.withampersand.com/v1/oauth-connect', () => {
-    return HttpResponse.text(
-      'https://oauth.withampersand.com/authorize?test=true',
-    );
-  }),
-
-  // Proxy endpoint (uses fetch directly)
-  http.all('https://proxy.withampersand.com/*', () => {
-    return HttpResponse.json({
-      data: { id: 'mock-id', name: 'Mock Record' },
-      success: true,
-    });
-  }),
-];
-
-const server = setupServer(...handlers);
+// Shared MSW server setup
+import { setupMocks } from '../setup';
+setupMocks();
 
 describe('AI SDK Adapter - Tool Definitions', () => {
   it('createRecord has correct structure', () => {
@@ -200,18 +182,6 @@ describe('AI SDK Adapter - Schema Validation via Tools', () => {
 });
 
 describe('AI SDK Adapter - startOAuth with MSW', () => {
-  beforeAll(() => {
-    server.listen({ onUnhandledRequest: 'warn' });
-  });
-
-  afterEach(() => {
-    server.resetHandlers();
-  });
-
-  afterAll(() => {
-    server.close();
-  });
-
   it('startOAuth returns OAuth URL', async () => {
     // Set required env vars for the test
     const originalProjectId = process.env.AMPERSAND_PROJECT_ID;
