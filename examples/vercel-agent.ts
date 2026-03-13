@@ -40,7 +40,10 @@ export async function handleCustomerQuery(query: string) {
     3. Brief reasoning for classification`,
   });
 
-  const classification = toolCalls[0]?.args as {
+  const firstCall = toolCalls[0];
+  if (!firstCall) throw new Error('No classification returned');
+
+  const classification = firstCall.input as {
     reasoning: string;
     type: 'general' | 'refund' | 'technical';
     complexity: 'simple' | 'complex';

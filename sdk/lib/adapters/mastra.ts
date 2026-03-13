@@ -53,6 +53,33 @@ import { callAmpersandProxy } from './ampersand/core/request';
  */
 
 /**
+ * Resolves Ampersand credentials from requestContext (preferred) with
+ * process.env fallback.
+ */
+function resolveCredentials(
+  requestContext?: { get(key: string): unknown } | undefined,
+) {
+  return {
+    apiKey:
+      requestContext?.get('AMPERSAND_API_KEY')?.toString() ||
+      process.env.AMPERSAND_API_KEY ||
+      '',
+    projectId:
+      requestContext?.get('AMPERSAND_PROJECT_ID')?.toString() ||
+      process.env.AMPERSAND_PROJECT_ID ||
+      '',
+    integrationName:
+      requestContext?.get('AMPERSAND_INTEGRATION_NAME')?.toString() ||
+      process.env.AMPERSAND_INTEGRATION_NAME ||
+      '',
+    groupRef:
+      requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
+      process.env.AMPERSAND_GROUP_REF ||
+      '',
+  };
+}
+
+/**
  * Creates a new record in the Ampersand system using Mastra.
  * @remarks
  * Uses the common executeAmpersandWrite function to perform the operation.
@@ -74,20 +101,16 @@ export const createRecord = createTool({
     { requestContext },
   ): Promise<WriteOutputType> => {
     const { objectName, type, record, groupRef, associations } = inputData;
+    const creds = resolveCredentials(requestContext);
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
-      groupRef:
-        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
-        process.env.AMPERSAND_GROUP_REF ||
-        groupRef,
+      groupRef: creds.groupRef || groupRef,
       associations,
-      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
-      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
-      integrationName: requestContext
-        ?.get('AMPERSAND_INTEGRATION_NAME')
-        ?.toString(),
+      apiKey: creds.apiKey,
+      projectId: creds.projectId,
+      integrationName: creds.integrationName,
     });
     return {
       status: result.status,
@@ -119,20 +142,16 @@ export const updateRecord = createTool({
     { requestContext },
   ): Promise<WriteOutputType> => {
     const { objectName, type, record, groupRef, associations } = inputData;
+    const creds = resolveCredentials(requestContext);
     const result = await executeAmpersandWrite({
       objectName,
       type,
       record,
-      groupRef:
-        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
-        process.env.AMPERSAND_GROUP_REF ||
-        groupRef,
+      groupRef: creds.groupRef || groupRef,
       associations,
-      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
-      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
-      integrationName: requestContext
-        ?.get('AMPERSAND_INTEGRATION_NAME')
-        ?.toString(),
+      apiKey: creds.apiKey,
+      projectId: creds.projectId,
+      integrationName: creds.integrationName,
     });
     return {
       status: result.status,
@@ -160,10 +179,11 @@ export const checkConnection = createTool({
     { requestContext },
   ): Promise<CheckConnectionOutputType> => {
     const { provider } = inputData;
+    const creds = resolveCredentials(requestContext);
     const result = await checkConnectionHelper({
       provider,
-      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
-      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
+      apiKey: creds.apiKey,
+      projectId: creds.projectId,
     });
     return result;
   },
@@ -189,18 +209,14 @@ export const createInstallation = createTool({
     { requestContext },
   ): Promise<CreateInstallationOutputType> => {
     const { provider, connectionId, groupRef } = inputData;
+    const creds = resolveCredentials(requestContext);
     const res = await createInstallationHelper({
       provider,
       connectionId,
-      groupRef:
-        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
-        process.env.AMPERSAND_GROUP_REF ||
-        groupRef,
-      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
-      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
-      integrationName: requestContext
-        ?.get('AMPERSAND_INTEGRATION_NAME')
-        ?.toString(),
+      groupRef: creds.groupRef || groupRef,
+      apiKey: creds.apiKey,
+      projectId: creds.projectId,
+      integrationName: creds.integrationName,
     });
     return res;
   },
@@ -224,13 +240,12 @@ export const checkInstallation = createTool({
     { requestContext },
   ): Promise<CheckInstallationOutputType> => {
     const { provider } = inputData;
+    const creds = resolveCredentials(requestContext);
     const res = await checkInstallationHelper({
       provider,
-      apiKey: requestContext?.get('AMPERSAND_API_KEY')?.toString(),
-      projectId: requestContext?.get('AMPERSAND_PROJECT_ID')?.toString(),
-      integrationName: requestContext
-        ?.get('AMPERSAND_INTEGRATION_NAME')
-        ?.toString(),
+      apiKey: creds.apiKey,
+      projectId: creds.projectId,
+      integrationName: creds.integrationName,
     });
     return res;
   },
@@ -252,27 +267,23 @@ export const startOAuth = createTool({
   inputSchema: startOAuthInputSchema,
   outputSchema: startOAuthOutputSchema,
   execute: async (
-    inputData: { provider: string; groupRef?: string; consumerRef?: string },
+    inputData: {
+      provider: string;
+      groupRef?: string;
+      consumerRef?: string;
+      providerWorkspaceRef?: string;
+    },
     { requestContext },
   ) => {
-    const { provider, groupRef, consumerRef } = inputData;
-    const projectId =
-      requestContext?.get('AMPERSAND_PROJECT_ID')?.toString() ||
-      process.env.AMPERSAND_PROJECT_ID ||
-      '';
-    const apiKey =
-      requestContext?.get('AMPERSAND_API_KEY')?.toString() ||
-      process.env.AMPERSAND_API_KEY ||
-      '';
+    const { provider, groupRef, consumerRef, providerWorkspaceRef } = inputData;
+    const creds = resolveCredentials(requestContext);
     const url = await getOAuthURL({
       provider,
-      groupRef:
-        requestContext?.get('AMPERSAND_GROUP_REF')?.toString() ||
-        process.env.AMPERSAND_GROUP_REF ||
-        groupRef,
+      groupRef: creds.groupRef || groupRef,
       consumerRef,
-      projectId,
-      apiKey,
+      projectId: creds.projectId,
+      apiKey: creds.apiKey,
+      providerWorkspaceRef,
     });
     return { url };
   },
@@ -308,27 +319,16 @@ export const sendRequest = createTool({
       headers = {},
       installationId,
     } = inputData;
-    const apiKey =
-      requestContext?.get('AMPERSAND_API_KEY')?.toString() ||
-      process.env.AMPERSAND_API_KEY ||
-      '';
-    const projectId =
-      requestContext?.get('AMPERSAND_PROJECT_ID')?.toString() ||
-      process.env.AMPERSAND_PROJECT_ID ||
-      '';
-    const integrationName =
-      requestContext?.get('AMPERSAND_INTEGRATION_NAME')?.toString() ||
-      process.env.AMPERSAND_INTEGRATION_NAME ||
-      '';
+    const creds = resolveCredentials(requestContext);
     return callAmpersandProxy({
       provider,
       endpoint,
       method,
       headers,
       installationId,
-      apiKey,
-      projectId,
-      integrationName,
+      apiKey: creds.apiKey,
+      projectId: creds.projectId,
+      integrationName: creds.integrationName,
       body,
     });
   },
@@ -357,27 +357,16 @@ export const sendReadRequest = createTool({
     { requestContext },
   ) => {
     const { provider, endpoint, headers = {}, installationId } = inputData;
-    const apiKey =
-      requestContext?.get('AMPERSAND_API_KEY')?.toString() ||
-      process.env.AMPERSAND_API_KEY ||
-      '';
-    const projectId =
-      requestContext?.get('AMPERSAND_PROJECT_ID')?.toString() ||
-      process.env.AMPERSAND_PROJECT_ID ||
-      '';
-    const integrationName =
-      requestContext?.get('AMPERSAND_INTEGRATION_NAME')?.toString() ||
-      process.env.AMPERSAND_INTEGRATION_NAME ||
-      '';
+    const creds = resolveCredentials(requestContext);
     return callAmpersandProxy({
       provider,
       endpoint,
       method: 'GET',
       headers,
       installationId,
-      apiKey,
-      projectId,
-      integrationName,
+      apiKey: creds.apiKey,
+      projectId: creds.projectId,
+      integrationName: creds.integrationName,
     });
   },
 });

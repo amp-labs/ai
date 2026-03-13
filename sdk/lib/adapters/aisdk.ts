@@ -42,6 +42,9 @@ import {
 } from './common';
 import { callAmpersandProxy } from './ampersand/core/request';
 
+// Zod v4 schema types don't satisfy AI SDK v6's tool() type parameter directly,
+// so we use `as any` on inputSchema fields. The schemas work correctly at runtime.
+
 /**
  * Creates a new record in the Ampersand system using Vercel AI SDK.
  * @remarks
