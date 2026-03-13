@@ -8,6 +8,7 @@
  */
 
 import { describe, it, expect } from 'bun:test';
+import { http, HttpResponse } from 'msw';
 
 // Import tools from Mastra adapter
 import {
@@ -39,7 +40,7 @@ import {
 } from '../../lib/adapters/common';
 
 // Shared MSW server setup
-import { setupMocks } from '../setup';
+import { setupMocks, mockServer as mswServer } from '../setup';
 setupMocks();
 
 describe('Mastra Adapter - Tool Definitions', () => {
@@ -295,5 +296,211 @@ describe('Mastra Adapter - Schema compatibility with common schemas', () => {
     expect(startOAuth.outputSchema).toBe(startOAuthOutputSchema);
     expect(sendRequest.outputSchema).toBe(sendRequestOutputSchema);
     expect(sendReadRequest.outputSchema).toBe(sendRequestOutputSchema);
+  });
+});
+
+describe('Mastra Adapter - resolveCredentials precedence', () => {
+  it('requestContext overrides env vars', async () => {
+    let capturedApiKey: string | null = null;
+    let capturedBody: Record<string, unknown> | null = null;
+
+    mswServer.use(
+      http.post(
+        'https://api.withampersand.com/v1/oauth-connect',
+        async ({ request }) => {
+          capturedApiKey = request.headers.get('X-Api-Key');
+          capturedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.text(
+            'https://oauth.example.com/authorize?provider=salesforce',
+          );
+        },
+      ),
+    );
+
+    const requestContext = new Map<string, unknown>();
+    requestContext.set('AMPERSAND_PROJECT_ID', 'ctx-project');
+    requestContext.set('AMPERSAND_API_KEY', 'ctx-api-key');
+    requestContext.set('AMPERSAND_GROUP_REF', 'ctx-group');
+
+    process.env.AMPERSAND_PROJECT_ID = 'env-project';
+    process.env.AMPERSAND_API_KEY = 'env-api-key';
+    process.env.AMPERSAND_GROUP_REF = 'env-group';
+
+    try {
+      const result = await startOAuth.execute(
+        {
+          provider: 'salesforce',
+          groupRef: 'input-group',
+          consumerRef: 'user-1',
+        },
+        { requestContext },
+      );
+
+      expect(result.url).toContain('oauth');
+      expect(capturedApiKey).toBe('ctx-api-key');
+      expect(capturedBody?.projectId).toBe('ctx-project');
+      expect(capturedBody?.groupRef).toBe('ctx-group');
+    } finally {
+      delete process.env.AMPERSAND_PROJECT_ID;
+      delete process.env.AMPERSAND_API_KEY;
+      delete process.env.AMPERSAND_GROUP_REF;
+    }
+  });
+
+  it('env vars used when requestContext is empty', async () => {
+    let capturedApiKey: string | null = null;
+    let capturedBody: Record<string, unknown> | null = null;
+
+    mswServer.use(
+      http.post(
+        'https://api.withampersand.com/v1/oauth-connect',
+        async ({ request }) => {
+          capturedApiKey = request.headers.get('X-Api-Key');
+          capturedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.text(
+            'https://oauth.example.com/authorize?provider=salesforce',
+          );
+        },
+      ),
+    );
+
+    process.env.AMPERSAND_PROJECT_ID = 'env-project';
+    process.env.AMPERSAND_API_KEY = 'env-api-key';
+
+    try {
+      const result = await startOAuth.execute(
+        {
+          provider: 'salesforce',
+          groupRef: 'input-group',
+          consumerRef: 'user-1',
+        },
+        { requestContext: new Map() },
+      );
+
+      expect(result.url).toContain('oauth');
+      expect(capturedApiKey).toBe('env-api-key');
+      expect(capturedBody?.projectId).toBe('env-project');
+    } finally {
+      delete process.env.AMPERSAND_PROJECT_ID;
+      delete process.env.AMPERSAND_API_KEY;
+    }
+  });
+
+  it('input param groupRef used when requestContext and env are empty', async () => {
+    let capturedBody: Record<string, unknown> | null = null;
+
+    mswServer.use(
+      http.post(
+        'https://api.withampersand.com/v1/oauth-connect',
+        async ({ request }) => {
+          capturedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.text(
+            'https://oauth.example.com/authorize?provider=salesforce',
+          );
+        },
+      ),
+    );
+
+    delete process.env.AMPERSAND_GROUP_REF;
+    process.env.AMPERSAND_PROJECT_ID = 'test-project';
+    process.env.AMPERSAND_API_KEY = 'test-key';
+
+    try {
+      const result = await startOAuth.execute(
+        {
+          provider: 'salesforce',
+          groupRef: 'input-group',
+          consumerRef: 'user-1',
+        },
+        { requestContext: new Map() },
+      );
+
+      expect(result.url).toContain('oauth');
+      expect(capturedBody?.groupRef).toBe('input-group');
+    } finally {
+      delete process.env.AMPERSAND_PROJECT_ID;
+      delete process.env.AMPERSAND_API_KEY;
+    }
+  });
+});
+
+describe('Mastra Adapter - createRecord execution', () => {
+  it('calls write API with credentials from requestContext', async () => {
+    let capturedApiKey: string | null = null;
+    let capturedUrl: string | null = null;
+    let capturedBody: Record<string, unknown> | null = null;
+
+    mswServer.use(
+      http.post(
+        'https://write.withampersand.com/v1/projects/:projectId/integrations/:integrationName/objects/:objectName',
+        async ({ request }) => {
+          capturedApiKey = request.headers.get('X-Api-Key');
+          capturedUrl = request.url;
+          capturedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({
+            result: { recordId: 'new-record-123', success: true },
+          });
+        },
+      ),
+    );
+
+    const requestContext = new Map<string, unknown>();
+    requestContext.set('AMPERSAND_PROJECT_ID', 'ctx-project');
+    requestContext.set('AMPERSAND_API_KEY', 'ctx-api-key');
+    requestContext.set('AMPERSAND_INTEGRATION_NAME', 'ctx-integration');
+    requestContext.set('AMPERSAND_GROUP_REF', 'ctx-group');
+
+    const result = await createRecord.execute(
+      {
+        objectName: 'Contact',
+        type: 'create',
+        record: { firstName: 'John', lastName: 'Doe' },
+        groupRef: 'input-group',
+      },
+      { requestContext },
+    );
+
+    expect(result.status).toBe('success');
+    expect(capturedApiKey).toBe('ctx-api-key');
+    expect(capturedUrl).toContain('/projects/ctx-project/');
+    expect(capturedUrl).toContain('/integrations/ctx-integration/');
+    expect(capturedUrl).toContain('/objects/Contact');
+    expect(capturedBody?.groupRef).toBe('ctx-group');
+    expect(capturedBody?.type).toBe('create');
+  });
+});
+
+describe('Mastra Adapter - sendRequest execution', () => {
+  it('calls proxy API with credentials from requestContext', async () => {
+    let capturedHeaders: Record<string, string> = {};
+
+    mswServer.use(
+      http.get('https://proxy.withampersand.com/*', async ({ request }) => {
+        capturedHeaders = Object.fromEntries(request.headers.entries());
+        return HttpResponse.json({
+          data: { id: '1', name: 'Test' },
+        });
+      }),
+    );
+
+    const requestContext = new Map<string, unknown>();
+    requestContext.set('AMPERSAND_PROJECT_ID', 'ctx-project');
+    requestContext.set('AMPERSAND_API_KEY', 'ctx-api-key');
+    requestContext.set('AMPERSAND_INTEGRATION_NAME', 'ctx-integration');
+
+    const result = await sendRequest.execute(
+      {
+        provider: 'salesforce',
+        endpoint: 'v60.0/sobjects/Account',
+        method: 'GET',
+        installationId: 'inst-123',
+      },
+      { requestContext },
+    );
+
+    expect(result.status).toBe(200);
+    expect(capturedHeaders['x-api-key']).toBe('ctx-api-key');
+    expect(capturedHeaders['x-amp-project-id']).toBe('ctx-project');
+    expect(capturedHeaders['x-amp-installation-id']).toBe('inst-123');
   });
 });
