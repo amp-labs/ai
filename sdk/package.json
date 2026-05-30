@@ -29,7 +29,10 @@
     "lint:fix": "eslint lib --ext .ts --fix",
     "format": "prettier --write \"lib/**/*.ts\"",
     "format:check": "prettier --check \"lib/**/*.ts\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "bun test",
+    "test:unit": "bun test test/unit",
+    "test:integration": "bun test test/integration"
   },
   "publishConfig": {
     "access": "public",
@@ -55,8 +58,8 @@
     "zod": "^4.1.8"
   },
   "peerDependencies": {
-    "@mastra/core": "^0.9.1",
-    "ai": "^5.0.0"
+    "@mastra/core": "^1.0.0",
+    "ai": "^6.0.0"
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
@@ -70,6 +73,7 @@
     "@types/react-dom": "^18.2.21",
     "@types/rollup": "^0.54.0",
     "events": "^3.3.0",
+    "msw": "^2.12.7",
     "process": "^0.11.10",
     "rollup": "^4.37.0",
     "rollup-plugin-node-polyfills": "^0.2.1",

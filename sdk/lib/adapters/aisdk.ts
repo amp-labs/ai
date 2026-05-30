@@ -42,6 +42,9 @@ import {
 } from './common';
 import { callAmpersandProxy } from './ampersand/core/request';
 
+// Zod v4 schema types don't satisfy AI SDK v6's tool() type parameter directly,
+// so we use `as any` on inputSchema fields. The schemas work correctly at runtime.
+
 /**
  * Creates a new record in the Ampersand system using Vercel AI SDK.
  * @remarks
@@ -122,7 +125,7 @@ export const updateRecord = tool({
  */
 export const checkConnection = tool({
   description: checkConnectionToolDescription,
-  inputSchema: checkConnectionInputSchema,
+  inputSchema: checkConnectionInputSchema as any,
   execute: async (
     params: CheckConnectionInputType,
   ): Promise<CheckConnectionOutputType> => {
@@ -214,7 +217,7 @@ export const startOAuth = tool({
  */
 export const sendRequest = tool({
   description: sendRequestToolDescription,
-  inputSchema: sendRequestInputSchema,
+  inputSchema: sendRequestInputSchema as any,
   execute: async (
     params: SendRequestInputType,
   ): Promise<SendRequestOutputType> => {
@@ -253,7 +256,7 @@ export const sendRequest = tool({
  */
 export const sendReadRequest = tool({
   description: sendReadRequestToolDescription,
-  inputSchema: sendReadRequestInputSchema,
+  inputSchema: sendReadRequestInputSchema as any,
   execute: async (
     params: SendReadRequestInputType,
   ): Promise<SendRequestOutputType> => {

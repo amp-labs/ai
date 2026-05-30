@@ -14,7 +14,8 @@
       "allowJs": true,
       "checkJs": false,
       "declarationMap": true,
-      "skipDefaultLibCheck": true
+      "skipDefaultLibCheck": true,
+      "types": ["node"]
     },
     "include": ["lib/**/*"],
     "exclude": ["node_modules", "dist", "**/node_modules", "../node_modules"]
